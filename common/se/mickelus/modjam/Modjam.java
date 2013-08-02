@@ -22,8 +22,14 @@ public class Modjam {
     }
 	
 	@EventHandler
-	public void chatCommand(FMLServerStartingEvent event) {
-		
+	public void serverStart(FMLServerStartingEvent event){
+		System.out.println("SERVER START");
+		MinecraftServer server = MinecraftServer.getServer();
+		ICommandManager command = server.getCommandManager();
+		ServerCommandManager serverCommand = (ServerCommandManager) command;
+		serverCommand.registerCommand(new SaveCommand());
+		serverCommand.registerCommand(new CreateBlockCommand());
+		serverCommand.registerCommand(new LoadCommand());
 	}
 
 }

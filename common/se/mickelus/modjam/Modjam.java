@@ -1,6 +1,12 @@
 package se.mickelus.modjam;
 
 
+import net.minecraft.command.ICommandManager;
+import net.minecraft.command.ServerCommandManager;
+import net.minecraft.server.MinecraftServer;
+import se.mickelus.modjam.creation.CreateBlockCommand;
+import se.mickelus.modjam.creation.LoadCommand;
+import se.mickelus.modjam.creation.SaveCommand;
 import se.mickelus.modjam.gen.GenerationHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;

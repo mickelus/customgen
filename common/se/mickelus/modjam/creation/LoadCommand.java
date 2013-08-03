@@ -47,7 +47,7 @@ public class LoadCommand implements ICommand {
 			return;
 		}
 		try {
-			File file = MinecraftServer.getServer().getFile(Constants.SAVE_PATH);
+			File file = MinecraftServer.getServer().getFile(Constants.SAVE_PATH + Constants.SAVE_NAME);
 			
 			if(!file.exists()){
 				return;
@@ -55,6 +55,7 @@ public class LoadCommand implements ICommand {
 			
 			FileInputStream filein = new FileInputStream(file);
 			NBTTagCompound nbt = CompressedStreamTools.readCompressed(filein);
+			System.out.println(nbt.getTags());
 			if(nbt.hasKey(astring[0])){
 				NBTTagCompound nbtSegment = nbt.getCompoundTag(astring[0]);
 				if(nbtSegment.hasKey("blocks")){

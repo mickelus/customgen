@@ -63,8 +63,14 @@ public class SaveCommand implements ICommand{
 		}
 		if(icommandsender instanceof EntityPlayer) {
 			EntityPlayer player = (EntityPlayer) icommandsender;
-			File file = MinecraftServer.getServer().getFile(Constants.SAVE_PATH);
+			File dir = new File(Constants.SAVE_PATH);
+			System.out.println(dir);
+			if(!dir.exists()){
+				dir.mkdirs();
+			}
 			
+			File file = MinecraftServer.getServer().getFile(Constants.SAVE_PATH + Constants.SAVE_NAME);
+			System.out.println(file);
 			if(!file.exists()){
 				try {
 					file.createNewFile();

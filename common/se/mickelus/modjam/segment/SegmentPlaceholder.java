@@ -1,13 +1,9 @@
 package se.mickelus.modjam.segment;
 
-public class Segment {
+public class SegmentPlaceholder {
+
 	
-	public final static int TYPE_ANY = 0;
-	public final static int TYPE_START = 1;
-	
-	
-	private int blocks[];
-	
+	// yes, this is ugly
 	public int interfaceTop;
 	public int interfaceBottom;
 	
@@ -17,12 +13,14 @@ public class Segment {
 	public int interfaceEast;
 	public int interfaceWest;
 	
-	int type;
+	public int segmentX;
+	public int segmentY;
+	public int segmentZ;
+	
+	public int type;
 	
 	
-	public Segment(int blocks[], int top, int bottom, int north, int south, int east, int west, int type) {
-		this.blocks = blocks;
-		
+	public SegmentPlaceholder(int x, int y, int z, int top, int bottom, int north, int south, int east, int west, int type) {
 		interfaceTop = top;
 		interfaceBottom = bottom;
 		
@@ -32,9 +30,14 @@ public class Segment {
 		interfaceEast = east;
 		interfaceWest = west;
 		
+		segmentX = x;
+		segmentY = y;
+		segmentZ = z;
+		
 		this.type = type;
 	}
-	
+
+
 	public int getInterfaceTop() {
 		return interfaceTop;
 	}
@@ -63,10 +66,27 @@ public class Segment {
 	public int getInterfaceWest() {
 		return interfaceWest;
 	}
-	
-	public int getType() {
-		return type;
+
+
+	public int getSegmentX() {
+		return segmentX;
 	}
 
 
+	public int getSegmentY() {
+		return segmentY;
+	}
+
+
+	public int getSegmentZ() {
+		return segmentZ;
+	}
+
+
+	public int getType() {
+		return type;
+	}
+	
+	
+	
 }

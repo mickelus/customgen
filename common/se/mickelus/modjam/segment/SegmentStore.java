@@ -1,6 +1,14 @@
 package se.mickelus.modjam.segment;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.util.ArrayList;
+import java.util.Collection;
+
+import net.minecraft.nbt.CompressedStreamTools;
+import net.minecraft.nbt.NBTTagCompound;
+
+import se.mickelus.modjam.Constants;
 
 public class SegmentStore {
 	
@@ -45,5 +53,47 @@ public class SegmentStore {
 		SegmentCollection collection = new SegmentCollection(0);
 		
 		return collection;
+	}
+	
+	public static void loadDataFiles(){
+		File dataDir = new File(Constants.SAVE_PATH);
+		
+		if(!dataDir.exists()){
+			System.out.println("Data folder does not exists.");
+			return;
+		}
+		
+		File[] fileList = dataDir.listFiles();
+		File dataFile = null;
+		FileInputStream filein = null;
+		NBTTagCompound nbt = null;
+		
+		for(int i = 0; i < fileList.length; i++) {
+			if(fileList[i].isFile()) {
+				SegmentCollection sCollection = new SegmentCollection(0);
+				try {
+					dataFile = fileList[i];
+					filein = new FileInputStream(dataFile);
+					nbt = CompressedStreamTools.readCompressed(filein);
+					Collection nbtCollection = nbt.getTags();
+					for (Object tag : nbtCollection) {
+						NBTTagCompound nbtTag = (NBTTagCompound) tag;
+						sCollection.addSegment(new Segment(
+												nbtTag.getIntArray("blocks"), 
+												nbtTag.getInteger("top"), 
+												nbtTag.getInteger("bottom"), 
+												nbtTag.getInteger("north"), 
+												nbtTag.getInteger("south"), 
+												nbtTag.getInteger("east"), 
+												nbtTag.getInteger("west"), 
+												nbtTag.getInteger("type")));
+					}
+					registerSegmentCollection(sCollection);
+				}
+				catch(Exception e) {
+					System.err.println("WRNg WRNg");
+				}
+			}
+		}
 	}
 }

@@ -54,15 +54,14 @@ public class SaveCommand implements ICommand{
 
 	@Override
 	public void processCommand(ICommandSender icommandsender, String[] astring) {
+		EntityPlayer player = (EntityPlayer) icommandsender;
 		if(astring.length != 1){
 			if(icommandsender instanceof EntityPlayer) {
-				EntityPlayer player = (EntityPlayer) icommandsender;
 				player.addChatMessage(getCommandUsage(icommandsender));
 			}
 			return;
 		}
 		if(icommandsender instanceof EntityPlayer) {
-			EntityPlayer player = (EntityPlayer) icommandsender;
 			File dir = new File(Constants.SAVE_PATH);
 			System.out.println(dir);
 			if(!dir.exists()){
@@ -98,9 +97,7 @@ public class SaveCommand implements ICommand{
 				for(int sx = 0; sx < 16; sx++) {
 					for(int sy = 0; sy < 16; sy++) {
 						for(int sz = 0; sz < 16; sz++) {
-							shape[(sx*256+sy*16+sz)] = MinecraftServer.getServer().getConfigurationManager().
-							getPlayerForUsername(icommandsender.getCommandSenderName()).
-							worldObj.getBlockId(x+sx, y+sy, z+sz);
+							shape[(sx*256+sy*16+sz)] = player.worldObj.getBlockId(x+sx, y+sy, z+sz);
 						}
 					}
 				}

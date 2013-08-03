@@ -45,7 +45,26 @@ public class LoadCommand implements ICommand {
 			return;
 		}
 		
-		if(astring.length != 4){
+		int x = 0;
+		int y = 0;
+		int z = 0;
+		
+		if(astring.length == 1) {
+			x = player.chunkCoordX * 16;
+			y = player.chunkCoordY * 16;
+			z = player.chunkCoordZ * 16;			
+		}
+		else if(astring.length == 4) {
+			try {
+				x = Integer.parseInt(astring[1]);
+				y = Integer.parseInt(astring[2]);
+				z = Integer.parseInt(astring[3]);
+			}
+			catch(NumberFormatException e) {
+				
+			}
+		}
+		else {
 			player.addChatMessage(getCommandUsage(icommandsender));
 			return;
 		}
@@ -58,27 +77,18 @@ public class LoadCommand implements ICommand {
 			
 			FileInputStream filein = new FileInputStream(file);
 			NBTTagCompound nbt = CompressedStreamTools.readCompressed(filein);
-			System.out.println(nbt.getTags());
+			
 			if(nbt.hasKey(astring[0])){
 				NBTTagCompound nbtSegment = nbt.getCompoundTag(astring[0]);
 				if(nbtSegment.hasKey("blocks")){
-					try {
-						int x = Integer.parseInt(astring[1]);
-						int y = Integer.parseInt(astring[2]);
-						int z = Integer.parseInt(astring[3]);
-						
-						int[] shape = nbtSegment.getIntArray("blocks");
-						
-						for(int sx = 0; sx < 16; sx++) {
-							for(int sy = 0; sy < 16; sy++) {
-								for(int sz = 0; sz < 16; sz++) {
-									player.worldObj.setBlock(x+sx, y+sy, z+sz, shape[(sx*256+sy*16+sz)]);
-								}
+					int[] shape = nbtSegment.getIntArray("blocks");
+					
+					for(int sx = 0; sx < 16; sx++) {
+						for(int sy = 0; sy < 16; sy++) {
+							for(int sz = 0; sz < 16; sz++) {
+								player.worldObj.setBlock(x+sx, y+sy, z+sz, shape[(sx*256+sy*16+sz)]);
 							}
 						}
-					}
-					catch(NumberFormatException e) {
-						
 					}
 				}
 			}

@@ -42,8 +42,7 @@ public class SaveCommand implements ICommand{
 
 	@Override
 	public String getCommandUsage(ICommandSender icommandsender) {
-		return Constants.SAVE_CMD + " <name>";
-		//return Constants.SAVE_CMD + " <name> <type> <x+> <x-> <y+> <y-> <z+> <z->";
+		return Constants.SAVE_CMD + " <name> <type> <west> <east> <top> <bottom> <south> <north>";
 	}
 
 	@Override
@@ -55,7 +54,7 @@ public class SaveCommand implements ICommand{
 	@Override
 	public void processCommand(ICommandSender icommandsender, String[] astring) {
 		EntityPlayer player = (EntityPlayer) icommandsender;
-		if(astring.length != 1){
+		if(astring.length != 7){
 			if(icommandsender instanceof EntityPlayer) {
 				player.addChatMessage(getCommandUsage(icommandsender));
 			}
@@ -87,12 +86,13 @@ public class SaveCommand implements ICommand{
 				int y = player.chunkCoordY * 16;
 				int z = player.chunkCoordZ * 16;
 				
-				System.out.println("CX: " + player.chunkCoordX);
-				System.out.println("X: " + x);
-				System.out.println("CY: " + player.chunkCoordY);
-				System.out.println("Y: " + y);
-				System.out.println("CZ: " + player.chunkCoordZ);
-				System.out.println("Z: " + z);
+				int type = Integer.parseInt(astring[2]);
+				int west = Integer.parseInt(astring[2]);
+				int east = Integer.parseInt(astring[3]);
+				int top = Integer.parseInt(astring[4]);
+				int bottom = Integer.parseInt(astring[5]);
+				int south = Integer.parseInt(astring[6]);
+				int north = Integer.parseInt(astring[7]);
 				
 				for(int sx = 0; sx < 16; sx++) {
 					for(int sy = 0; sy < 16; sy++) {
@@ -105,6 +105,13 @@ public class SaveCommand implements ICommand{
 				NBTTagCompound nbt = new NBTTagCompound();
 				NBTTagCompound nbtSegment = new NBTTagCompound();
 				nbtSegment.setIntArray("blocks", shape);
+				nbtSegment.setInteger("west", west);
+				nbtSegment.setInteger("east", east);
+				nbtSegment.setInteger("top", top);
+				nbtSegment.setInteger("bottom", bottom);
+				nbtSegment.setInteger("south", south);
+				nbtSegment.setInteger("north", north);
+				nbtSegment.setInteger("type", type);
 				nbt.setCompoundTag(astring[0], nbtSegment);
 			
 				CompressedStreamTools.writeCompressed(nbt, fileos);

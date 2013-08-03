@@ -8,6 +8,7 @@ import se.mickelus.modjam.creation.CreateBlockCommand;
 import se.mickelus.modjam.creation.LoadCommand;
 import se.mickelus.modjam.creation.SaveCommand;
 import se.mickelus.modjam.gen.GenerationHandler;
+import se.mickelus.modjam.segment.SegmentStore;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
@@ -25,6 +26,8 @@ public class Modjam {
     public void init(FMLInitializationEvent event) {
         System.out.println("PRINT INIT");
         new GenerationHandler();
+        
+        SegmentStore.init();
     }
 	
 	@EventHandler

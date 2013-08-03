@@ -12,5 +12,9 @@ public class Constants {
 	public static final String SAVE_CMD = "save";
 	public static final String CREATE_BLOCK_CMD = "cb";
 	public static final String LOAD_CMD = "load";
+	
+	public static final int DUNGEON_CHANCE = 100;
+	
+	
 
 }

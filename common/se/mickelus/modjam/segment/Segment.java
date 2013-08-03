@@ -2,8 +2,10 @@ package se.mickelus.modjam.segment;
 
 public class Segment {
 	
-	public final static int TYPE_ANY = 0;
+	public final static int TYPE_NORMAL = 0;
 	public final static int TYPE_START = 1;
+	public final static int TYPE_LOOT = 2;
+	
 	
 	
 	private int blocks[];
@@ -66,6 +68,10 @@ public class Segment {
 	
 	public int getType() {
 		return type;
+	}
+	
+	public int getBlockID(int x, int y, int z) {
+		return blocks[x*256+y*16+z];
 	}
 
 

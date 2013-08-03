@@ -4,20 +4,20 @@ public class SegmentPlaceholder {
 
 	
 	// yes, this is ugly
-	public int interfaceTop;
-	public int interfaceBottom;
+	private int interfaceTop;
+	private int interfaceBottom;
 	
-	public int interfaceNorth;
-	public int interfaceSouth;
+	private int interfaceNorth;
+	private int interfaceSouth;
 	
-	public int interfaceEast;
-	public int interfaceWest;
+	private int interfaceEast;
+	private int interfaceWest;
 	
-	public int segmentX;
-	public int segmentY;
-	public int segmentZ;
+	private int segmentX;
+	private int segmentY;
+	private int segmentZ;
 	
-	public int type;
+	private int type;
 	
 	
 	public SegmentPlaceholder(int x, int y, int z, int top, int bottom, int north, int south, int east, int west, int type) {
@@ -68,17 +68,17 @@ public class SegmentPlaceholder {
 	}
 
 
-	public int getSegmentX() {
+	public int getX() {
 		return segmentX;
 	}
 
 
-	public int getSegmentY() {
+	public int getY() {
 		return segmentY;
 	}
 
 
-	public int getSegmentZ() {
+	public int getZ() {
 		return segmentZ;
 	}
 

@@ -54,7 +54,7 @@ public class SaveCommand implements ICommand{
 	@Override
 	public void processCommand(ICommandSender icommandsender, String[] astring) {
 		EntityPlayer player = (EntityPlayer) icommandsender;
-		if(astring.length != 7){
+		if(astring.length != 8){
 			if(icommandsender instanceof EntityPlayer) {
 				player.addChatMessage(getCommandUsage(icommandsender));
 			}

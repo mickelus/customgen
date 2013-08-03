@@ -39,11 +39,14 @@ public class LoadCommand implements ICommand {
 
 	@Override
 	public void processCommand(ICommandSender icommandsender, String[] astring) {
+		EntityPlayer player = (EntityPlayer) icommandsender;
+		
+		if(!(icommandsender instanceof EntityPlayer)) {
+			return;
+		}
+		
 		if(astring.length != 4){
-			if(icommandsender instanceof EntityPlayer) {
-				EntityPlayer player = (EntityPlayer) icommandsender;
-				player.addChatMessage(getCommandUsage(icommandsender));
-			}
+			player.addChatMessage(getCommandUsage(icommandsender));
 			return;
 		}
 		try {
@@ -68,9 +71,7 @@ public class LoadCommand implements ICommand {
 						for(int sx = 0; sx < 16; sx++) {
 							for(int sy = 0; sy < 16; sy++) {
 								for(int sz = 0; sz < 16; sz++) {
-									MinecraftServer.getServer().getConfigurationManager().
-									getPlayerForUsername(icommandsender.getCommandSenderName()).
-									worldObj.setBlock(x+sx, y+sy, z+sz, shape[(sx*256+sy*16+sz)]);
+									player.worldObj.setBlock(x+sx, y+sy, z+sz, shape[(sx*256+sy*16+sz)]);
 								}
 							}
 						}

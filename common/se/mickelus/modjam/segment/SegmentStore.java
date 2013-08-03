@@ -13,17 +13,17 @@ import se.mickelus.modjam.Constants;
 public class SegmentStore {
 	
 	private static ArrayList<SegmentCollection> segmentCollections;
-	
-	static {
-		segmentCollections = new ArrayList<>();
-	}
 
-	public static Segment getSegment(int top, int bottom, int north, int south, int east, int west, int type) {
-		Segment result = null;
-		
+	public static Segment getSegment(int top, int bottom, int north, int south, int east, int west, int type) {		
 		for (SegmentCollection segmentCollection : segmentCollections) {
 			for (int i = 0; i < segmentCollection.getNumSegments(); i++) {
 				Segment segment = segmentCollection.getSegment(i);
+				System.out.println(String.format("%d %d %d %d %d %d %d", 
+						top, bottom, north, south, east, west, type));
+				System.out.println(String.format("%d %d %d %d %d %d %d", 
+						segment.getInterfaceTop(), segment.getInterfaceBottom(), segment.getInterfaceNorth(),
+						segment.getInterfaceSouth(), segment.getInterfaceEast(), segment.getInterfaceWest(), segment.getType()));
+				
 				
 				if(
 						type != segment.getType() ||
@@ -36,12 +36,25 @@ public class SegmentStore {
 				) {
 					continue;
 				}
+				return segment;
 				
 			}
 		}
 		
-		
-		return result;
+		System.out.println("could not find proper segment");
+		System.out.println(segmentCollections.size());
+		return null;
+	}
+	
+	public static Segment getSegment(SegmentPlaceholder ph) {
+		return getSegment(ph.getInterfaceTop(), ph.getInterfaceBottom(), 
+				ph.getInterfaceNorth(), ph.getInterfaceSouth(),
+				ph.getInterfaceEast(), ph.getInterfaceWest(), ph.getType());
+	}
+	
+	public static void init() {
+		segmentCollections = new ArrayList<>();
+		loadDataFiles();		
 	}
 	
 	public static void registerSegmentCollection(SegmentCollection collection) {
@@ -55,7 +68,7 @@ public class SegmentStore {
 		return collection;
 	}
 	
-	public static void loadDataFiles(){
+	private static void loadDataFiles(){
 		File dataDir = new File(Constants.SAVE_PATH);
 		
 		if(!dataDir.exists()){

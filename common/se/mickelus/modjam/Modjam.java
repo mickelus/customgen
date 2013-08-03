@@ -26,6 +26,8 @@ public class Modjam {
     public void init(FMLInitializationEvent event) {
         System.out.println("PRINT INIT");
         new GenerationHandler();
+        
+        SegmentStore.init();
     }
 	
 	@EventHandler

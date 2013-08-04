@@ -100,7 +100,7 @@ public class SaveCommand implements ICommand{
 				int y = player.chunkCoordY * 16;
 				int z = player.chunkCoordZ * 16;
 				
-				int type = Integer.parseInt(astring[2]);
+				int type = Integer.parseInt(astring[1]);
 				int west = Integer.parseInt(astring[2]);
 				int east = Integer.parseInt(astring[3]);
 				int top = Integer.parseInt(astring[4]);

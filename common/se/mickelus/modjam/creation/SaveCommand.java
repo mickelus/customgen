@@ -3,6 +3,7 @@ package se.mickelus.modjam.creation;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -69,17 +70,30 @@ public class SaveCommand implements ICommand{
 			
 			File file = MinecraftServer.getServer().getFile(Constants.SAVE_PATH + Constants.SAVE_NAME);
 			System.out.println(file);
+			
+			NBTTagCompound nbt = null;
 			if(!file.exists()){
 				try {
 					file.createNewFile();
+					nbt = new NBTTagCompound();
 				} catch (IOException e) {
 					e.printStackTrace();
 					return;
 				}
 			}
+			else {
+				try {
+					FileInputStream filein = new FileInputStream(file);
+					nbt = CompressedStreamTools.readCompressed(filein);
+					filein.close();
+				}
+				catch(Exception e) {
+					e.printStackTrace();
+				}
+			}
 			
 			try {
-				FileOutputStream fileos = new FileOutputStream(file);
+				
 			
 				int[] shape = new int[4096];
 				int x = player.chunkCoordX * 16;
@@ -102,7 +116,6 @@ public class SaveCommand implements ICommand{
 					}
 				}
 				
-				NBTTagCompound nbt = new NBTTagCompound();
 				NBTTagCompound nbtSegment = new NBTTagCompound();
 				nbtSegment.setIntArray("blocks", shape);
 				nbtSegment.setInteger("west", west);
@@ -114,11 +127,12 @@ public class SaveCommand implements ICommand{
 				nbtSegment.setInteger("type", type);
 				nbt.setCompoundTag(astring[0], nbtSegment);
 			
+				FileOutputStream fileos = new FileOutputStream(file);
 				CompressedStreamTools.writeCompressed(nbt, fileos);
 				fileos.close();
 			}
 			catch(Exception e){
-				System.out.println("IOEXCEPTION");
+				e.printStackTrace();
 			}
 		}
 	}

@@ -67,6 +67,35 @@ public class SegmentPlaceholder {
 		return interfaceWest;
 	}
 
+	public void setInterfaceTop(int interfaceTop) {
+		this.interfaceTop = interfaceTop;
+	}
+
+
+	public void setInterfaceBottom(int interfaceBottom) {
+		this.interfaceBottom = interfaceBottom;
+	}
+
+
+	public void setInterfaceNorth(int interfaceNorth) {
+		this.interfaceNorth = interfaceNorth;
+	}
+
+
+	public void setInterfaceSouth(int interfaceSouth) {
+		this.interfaceSouth = interfaceSouth;
+	}
+
+
+	public void setInterfaceEast(int interfaceEast) {
+		this.interfaceEast = interfaceEast;
+	}
+
+
+	public void setInterfaceWest(int interfaceWest) {
+		this.interfaceWest = interfaceWest;
+	}
+
 
 	public int getX() {
 		return segmentX;

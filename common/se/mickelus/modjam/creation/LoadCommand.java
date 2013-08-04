@@ -78,15 +78,19 @@ public class LoadCommand implements ICommand {
 			FileInputStream filein = new FileInputStream(file);
 			NBTTagCompound nbt = CompressedStreamTools.readCompressed(filein);
 			
+			byte[] shape = null;
+			byte[] data = null;
 			if(nbt.hasKey(astring[0])){
 				NBTTagCompound nbtSegment = nbt.getCompoundTag(astring[0]);
 				if(nbtSegment.hasKey("blocks")){
-					int[] shape = nbtSegment.getIntArray("blocks");
+					shape = nbtSegment.getByteArray("blocks");
+					data = nbtSegment.getByteArray("data");
 					
-					for(int sx = 0; sx < 16; sx++) {
-						for(int sy = 0; sy < 16; sy++) {
-							for(int sz = 0; sz < 16; sz++) {
-								player.worldObj.setBlock(x+sx, y+sy, z+sz, shape[(sx*256+sy*16+sz)]);
+					for(int sy = 0; sy < 16; sy++) {
+						for(int sz = 0; sz < 16; sz++) {
+							for(int sx = 0; sx < 16; sx++) {
+								player.worldObj.setBlock(x+sx, y+sy, z+sz, shape[(sx+sz*16+sy*256)]);
+								player.worldObj.setBlockMetadataWithNotify(x+sx, y+sy, z+sz, data[(sx+sz*16+sy*256)], 2);
 							}
 						}
 					}

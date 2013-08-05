@@ -91,7 +91,7 @@ public class LoadCommand implements ICommand {
 						for(int sz = 0; sz < 16; sz++) {
 							for(int sx = 0; sx < 16; sx++) {
 								int blockID = shape[(sx+sz*16+sy*256)];
-								if(blockID != -1) {
+								if(blockID == -1) {
 									blockID = Constants.EMPTY_ID;	
 								}
 								System.out.println(String.format("set x:%d y:%d z:%d i:%d id:%d", x+sx, y+sy, z+sz, sx+sz*16+sy*256, blockID));

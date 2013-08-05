@@ -99,7 +99,7 @@ public class GenerationHandler implements IWorldGenerator {
 					int blockID = segment.getBlockID(sx, sy, sz);
 					if(blockID != -1) {
 						world.setBlock(x+sx, y+sy+4, z+sz, blockID, segment.getBlockData(sx, sy, sz), 2);
-						if(blockID == 146){
+						if(blockID == 54){
 							TileEntityChest tc = (TileEntityChest) world.getBlockTileEntity(x+sx, y+sy, z+sz);
 							Random rand = new Random();
 							int items = rand.nextInt(5)+1;

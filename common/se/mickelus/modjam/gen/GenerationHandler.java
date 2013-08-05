@@ -10,8 +10,10 @@ import se.mickelus.modjam.segment.Segment;
 import se.mickelus.modjam.segment.SegmentPlaceholder;
 import se.mickelus.modjam.segment.SegmentStore;
 
+import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.IChunkProvider;
+import net.minecraftforge.common.ChestGenHooks;
 import cpw.mods.fml.common.IWorldGenerator;
 import cpw.mods.fml.common.registry.GameRegistry;
 
@@ -97,6 +99,14 @@ public class GenerationHandler implements IWorldGenerator {
 					int blockID = segment.getBlockID(sx, sy, sz);
 					if(blockID != -1) {
 						world.setBlock(x+sx, y+sy+4, z+sz, blockID, segment.getBlockData(sx, sy, sz), 2);
+						if(blockID == 146){
+							TileEntityChest tc = (TileEntityChest) world.getBlockTileEntity(x+sx, y+sy, z+sz);
+							Random rand = new Random();
+							int items = rand.nextInt(5)+1;
+							for(int i = 0; i < items; i++) {
+								tc.setInventorySlotContents(rand.nextInt(tc.getSizeInventory()), ChestGenHooks.getOneItem(ChestGenHooks.DUNGEON_CHEST, rand));
+							}
+						}
 					}
 					
 				}

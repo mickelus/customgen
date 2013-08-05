@@ -95,8 +95,8 @@ public class SaveCommand implements ICommand{
 			try {
 				
 			
-				byte[] shape = new byte[4096];
-				byte[] data = new byte[4096];
+				int[] shape = new int[4096];
+				int[] data = new int[4096];
 				int x = player.chunkCoordX * 16;
 				int y = player.chunkCoordY * 16;
 				int z = player.chunkCoordZ * 16;
@@ -109,22 +109,25 @@ public class SaveCommand implements ICommand{
 				int south = Integer.parseInt(astring[6]);
 				int north = Integer.parseInt(astring[7]);
 				
-				int blockID = 0;
-				int blockData = 0;
 				for(int sy = 0; sy < 16; sy++) {
 					for(int sz = 0; sz < 16; sz++) {
 						for(int sx = 0; sx < 16; sx++) {
-							blockID = player.worldObj.getBlockId(x+sx, y+sy, z+sz);
-							blockData = player.worldObj.getBlockMetadata(x+sx, y+sy, z+sz);
-							shape[(sx+sz*16+sy*256)] = (byte)blockID;
-							data[(sx+sz*16+sy*256)] = (byte)blockData;
+							int blockID = player.worldObj.getBlockId(x+sx, y+sy, z+sz);
+							int blockData = player.worldObj.getBlockMetadata(x+sx, y+sy, z+sz);
+							
+							if(blockID == Constants.EMPTY_ID) {
+								blockID = -1;
+							}
+							System.out.println(String.format("save  x:%d y:%d z:%d i:%d id:%d", x+sx, y+sy, z+sz, sx+sz*16+sy*256, blockID));
+							shape[(sx+sz*16+sy*256)] = blockID;
+							data[(sx+sz*16+sy*256)] = blockData;
 						}
 					}
 				}
 				
 				NBTTagCompound nbtSegment = new NBTTagCompound();
-				nbtSegment.setByteArray("blocks", shape);
-				nbtSegment.setByteArray("data", data);
+				nbtSegment.setIntArray("blocks", shape);
+				nbtSegment.setIntArray("data", data);
 				nbtSegment.setInteger("west", west);
 				nbtSegment.setInteger("east", east);
 				nbtSegment.setInteger("top", top);

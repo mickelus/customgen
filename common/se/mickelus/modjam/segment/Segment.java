@@ -8,7 +8,8 @@ public class Segment {
 	
 	
 	
-	private int blocks[];
+	private int[] blocks;
+	private int[] data;
 	
 	public int interfaceTop;
 	public int interfaceBottom;
@@ -22,14 +23,15 @@ public class Segment {
 	int type;
 	
 	
-	public Segment(int blocks[], int top, int bottom, int north, int south, int east, int west, int type) {
+	public Segment(int[] blocks, int[] data, int top, int bottom, int north, int south, int east, int west, int type) {
 		this.blocks = blocks;
+		this.data = data;
 		
 		interfaceTop = top;
 		interfaceBottom = bottom;
 		
 		interfaceNorth = north;
-		interfaceSouth = west;
+		interfaceSouth = south;
 		
 		interfaceEast = east;
 		interfaceWest = west;
@@ -71,7 +73,11 @@ public class Segment {
 	}
 	
 	public int getBlockID(int x, int y, int z) {
-		return blocks[x*256+y*16+z];
+		return blocks[x+z*16+y*256];
+	}
+	
+	public int getBlockData(int x, int y, int z) {
+		return data[x+z*16+y*256];
 	}
 
 

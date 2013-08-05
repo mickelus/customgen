@@ -39,6 +39,7 @@ public class LoadCommand implements ICommand {
 
 	@Override
 	public void processCommand(ICommandSender icommandsender, String[] astring) {
+		System.out.println("loading");
 		EntityPlayer player = (EntityPlayer) icommandsender;
 		
 		if(!(icommandsender instanceof EntityPlayer)) {
@@ -78,19 +79,25 @@ public class LoadCommand implements ICommand {
 			FileInputStream filein = new FileInputStream(file);
 			NBTTagCompound nbt = CompressedStreamTools.readCompressed(filein);
 			
-			byte[] shape = null;
-			byte[] data = null;
+			int[] shape = null;
+			int[] data = null;
 			if(nbt.hasKey(astring[0])){
 				NBTTagCompound nbtSegment = nbt.getCompoundTag(astring[0]);
 				if(nbtSegment.hasKey("blocks")){
-					shape = nbtSegment.getByteArray("blocks");
-					data = nbtSegment.getByteArray("data");
+					shape = nbtSegment.getIntArray("blocks");
+					data = nbtSegment.getIntArray("data");
 					
 					for(int sy = 0; sy < 16; sy++) {
 						for(int sz = 0; sz < 16; sz++) {
 							for(int sx = 0; sx < 16; sx++) {
-								player.worldObj.setBlock(x+sx, y+sy, z+sz, shape[(sx+sz*16+sy*256)]);
+								int blockID = shape[(sx+sz*16+sy*256)];
+								if(blockID != -1) {
+									blockID = Constants.EMPTY_ID;	
+								}
+								System.out.println(String.format("set x:%d y:%d z:%d i:%d id:%d", x+sx, y+sy, z+sz, sx+sz*16+sy*256, blockID));
+								player.worldObj.setBlock(x+sx, y+sy, z+sz, blockID);
 								player.worldObj.setBlockMetadataWithNotify(x+sx, y+sy, z+sz, data[(sx+sz*16+sy*256)], 2);
+								
 							}
 						}
 					}
@@ -100,7 +107,7 @@ public class LoadCommand implements ICommand {
 			filein.close();
 		}
 		catch(Exception e) {
-			
+			e.printStackTrace();
 		}
 	}
 

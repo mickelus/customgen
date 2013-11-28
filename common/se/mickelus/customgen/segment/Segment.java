@@ -1,4 +1,7 @@
-package se.mickelus.modjam.segment;
+package se.mickelus.customgen.segment;
+
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 
 public class Segment {
 	
@@ -11,19 +14,22 @@ public class Segment {
 	private int[] blocks;
 	private int[] data;
 	
-	public int interfaceTop;
-	public int interfaceBottom;
+	private NBTTagCompound[] tilesEntityNBTArray;
 	
-	public int interfaceNorth;
-	public int interfaceSouth;
+	private int interfaceTop;
+	private int interfaceBottom;
 	
-	public int interfaceEast;
-	public int interfaceWest;
+	private int interfaceNorth;
+	private int interfaceSouth;
+	
+	private int interfaceEast;
+	private int interfaceWest;
+	
 	
 	int type;
 	
 	
-	public Segment(int[] blocks, int[] data, int top, int bottom, int north, int south, int east, int west, int type) {
+	public Segment(int[] blocks, int[] data, int top, int bottom, int north, int south, int east, int west, int type, NBTTagList tileEntityNBTList) {
 		this.blocks = blocks;
 		this.data = data;
 		
@@ -37,6 +43,11 @@ public class Segment {
 		interfaceWest = west;
 		
 		this.type = type;
+		
+		tilesEntityNBTArray = new NBTTagCompound[tileEntityNBTList.tagCount()];
+		for (int i = 0; i < tilesEntityNBTArray.length; i++) {
+			tilesEntityNBTArray[i] = (NBTTagCompound)tileEntityNBTList.tagAt(i);
+		}
 	}
 	
 	public int getInterfaceTop() {
@@ -78,6 +89,14 @@ public class Segment {
 	
 	public int getBlockData(int x, int y, int z) {
 		return data[x+z*16+y*256];
+	}
+	
+	public int getNumTileEntities() {
+		return tilesEntityNBTArray.length;
+	}
+	
+	public NBTTagCompound getTileEntityNBT(int index) {
+		return (NBTTagCompound)tilesEntityNBTArray[index].copy();
 	}
 
 

@@ -1,15 +1,20 @@
-package se.mickelus.modjam.segment;
+package se.mickelus.customgen.segment;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Random;
 
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.World;
 
-import se.mickelus.modjam.Constants;
+import se.mickelus.customgen.Constants;
 
 public class SegmentStore {
 	
@@ -17,35 +22,6 @@ public class SegmentStore {
 
 		
 	public static void init() {
-		System.out.println("INIT SEGMENT STORE");
-		System.out.println("INIT SEGMENT STORE");
-		System.out.println("INIT SEGMENT STORE");
-		System.out.println("INIT SEGMENT STORE");
-		System.out.println("INIT SEGMENT STORE");
-		System.out.println("INIT SEGMENT STORE");
-		System.out.println("INIT SEGMENT STORE");
-		System.out.println("INIT SEGMENT STORE");
-		System.out.println("INIT SEGMENT STORE");
-		System.out.println("INIT SEGMENT STORE");
-		System.out.println("INIT SEGMENT STORE");
-		System.out.println("INIT SEGMENT STORE");
-		System.out.println("INIT SEGMENT STORE");
-		System.out.println("INIT SEGMENT STORE");
-		System.out.println("INIT SEGMENT STORE");
-		System.out.println("INIT SEGMENT STORE");
-		System.out.println("INIT SEGMENT STORE");
-		System.out.println("INIT SEGMENT STORE");
-		System.out.println("INIT SEGMENT STORE");
-		System.out.println("INIT SEGMENT STORE");
-		System.out.println("INIT SEGMENT STORE");
-		System.out.println("INIT SEGMENT STORE");
-		System.out.println("INIT SEGMENT STORE");
-		System.out.println("INIT SEGMENT STORE");
-		System.out.println("INIT SEGMENT STORE");
-		System.out.println("INIT SEGMENT STORE");
-		System.out.println("INIT SEGMENT STORE");
-		System.out.println("INIT SEGMENT STORE");
-		System.out.println("INIT SEGMENT STORE");
 		segmentCollections = new ArrayList<SegmentCollection>();
 		loadDataFiles();		
 	}
@@ -132,7 +108,8 @@ public class SegmentStore {
 								nbtTag.getInteger("south"), 
 								nbtTag.getInteger("east"), 
 								nbtTag.getInteger("west"), 
-								nbtTag.getInteger("type"));
+								nbtTag.getInteger("type"),
+								nbtTag.getTagList("tileEntities"));
 						sCollection.addSegment(segment);
 						System.out.println(String.format("%d %d %d %d %d %d %d", 
 								segment.getInterfaceTop(), segment.getInterfaceBottom(), segment.getInterfaceNorth(),
@@ -144,6 +121,103 @@ public class SegmentStore {
 					System.err.println("WRNg WRNg");
 				}
 			}
+		}
+	}
+	
+	public static void addSegment(String segmentCollectionName, String segmentName, World world, int x, int y, int z) {
+		
+		/* check for directory, create if non-existant */
+		File dir = new File(Constants.SAVE_PATH);
+		System.out.println(dir);
+		if(!dir.exists()){
+			dir.mkdirs();
+		}
+		
+		File file = MinecraftServer.getServer().getFile(Constants.SAVE_PATH + segmentCollectionName + "." + Constants.FILE_EXT);
+		System.out.println(file);
+		
+		NBTTagCompound nbt = null;
+		if(!file.exists()){
+			try {
+				file.createNewFile();
+				nbt = new NBTTagCompound();
+			} catch (IOException e) {
+				e.printStackTrace();
+				return;
+			}
+		}
+		else {
+			try {
+				FileInputStream filein = new FileInputStream(file);
+				nbt = CompressedStreamTools.readCompressed(filein);
+				filein.close();
+			}
+			catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
+		try {
+		
+			int[] blockIDs = new int[4096];
+			int[] metadata = new int[4096];
+			
+			
+			NBTTagList tileEntityList = new NBTTagList("tileEntities");	
+
+			int west = 0;
+			int east = 0;
+			int top = 0;
+			int bottom = 0;
+			int south = 0;
+			int north = 0;
+			
+			for(int sy = 0; sy < 16; sy++) {
+				for(int sz = 0; sz < 16; sz++) {
+					for(int sx = 0; sx < 16; sx++) {
+						int blockID = world.getBlockId(x+sx, y+sy, z+sz);
+						int blockData = world.getBlockMetadata(x+sx, y+sy, z+sz);
+						if(world.blockHasTileEntity(x+sx, y+sy, z+sz)) {
+							NBTTagCompound tagCompound = new NBTTagCompound();
+							world.getBlockTileEntity(x+sx, y+sy, z+sz).writeToNBT(tagCompound);
+							tagCompound.setInteger("x", sx);
+							tagCompound.setInteger("y", sy);
+							tagCompound.setInteger("z", sz);
+							tileEntityList.appendTag(tagCompound);
+							System.out.println("TAGCOMPOUND:");
+							System.out.println(tagCompound);
+						}
+						
+						if(blockID == Constants.EMPTY_ID || blockID == Constants.INTERFACEBLOCK_ID) {
+							blockID = -1;
+						}
+						//System.out.println(String.format("save  x:%d y:%d z:%d i:%d id:%d", x+sx, y+sy, z+sz, sx+sz*16+sy*256, blockID));
+						blockIDs[(sx+sz*16+sy*256)] = blockID;
+						metadata[(sx+sz*16+sy*256)] = blockData;
+					}
+				}
+			}
+			
+			NBTTagCompound nbtSegment = new NBTTagCompound();
+			nbtSegment.setIntArray("blocks", blockIDs);
+			nbtSegment.setIntArray("data", metadata);
+			nbtSegment.setInteger("west", west);
+			nbtSegment.setInteger("east", east);
+			nbtSegment.setInteger("top", top);
+			nbtSegment.setInteger("bottom", bottom);
+			nbtSegment.setInteger("south", south);
+			nbtSegment.setInteger("north", north);
+			nbtSegment.setTag("tileEntities", tileEntityList);
+			
+			System.out.println(nbtSegment);
+			
+			nbt.setCompoundTag(segmentName, nbtSegment);
+		
+			FileOutputStream fileos = new FileOutputStream(file);
+			CompressedStreamTools.writeCompressed(nbt, fileos);
+			fileos.close();
+		} catch ( Exception e) {
+			e.printStackTrace();
 		}
 	}
 }

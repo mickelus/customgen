@@ -1,8 +1,8 @@
-package se.mickelus.modjam.creation;
+package se.mickelus.customgen.creation;
 
 import java.util.List;
 
-import se.mickelus.modjam.Constants;
+import se.mickelus.customgen.Constants;
 
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.command.ICommand;
@@ -36,6 +36,12 @@ public class CreateBlockCommand implements ICommand {
 
 	@Override
 	public void processCommand(ICommandSender icommandsender, String[] astring) {
+		if(!(icommandsender instanceof EntityPlayer) || !(((EntityPlayer) icommandsender).capabilities.isCreativeMode)) {
+			EntityPlayer player = (EntityPlayer) icommandsender;
+			player.addChatMessage("You need to be in creative mode to do this.");
+			return;
+		}
+		
 		if(astring.length != 4) {
 			if(icommandsender instanceof EntityPlayer) {
 				EntityPlayer player = (EntityPlayer) icommandsender;

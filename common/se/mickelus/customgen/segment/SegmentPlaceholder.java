@@ -1,4 +1,4 @@
-package se.mickelus.modjam.segment;
+package se.mickelus.customgen.segment;
 
 public class SegmentPlaceholder {
 

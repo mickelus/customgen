@@ -1,8 +1,8 @@
-package se.mickelus.modjam.creation;
+package se.mickelus.customgen.creation;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import se.mickelus.modjam.Constants;
+import se.mickelus.customgen.Constants;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IconRegister;

@@ -1,10 +1,11 @@
-package se.mickelus.modjam.creation;
+package se.mickelus.customgen.creation;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.List;
+import java.util.Random;
 
-import se.mickelus.modjam.Constants;
+import se.mickelus.customgen.Constants;
 
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
@@ -12,6 +13,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.tileentity.TileEntityChest;
+import net.minecraftforge.common.ChestGenHooks;
 
 public class LoadCommand implements ICommand {
 
@@ -39,6 +42,11 @@ public class LoadCommand implements ICommand {
 
 	@Override
 	public void processCommand(ICommandSender icommandsender, String[] astring) {
+		if(!(icommandsender instanceof EntityPlayer) || !(((EntityPlayer) icommandsender).capabilities.isCreativeMode)) {
+			EntityPlayer player = (EntityPlayer) icommandsender;
+			player.addChatMessage("You need to be in creative mode to do this.");
+			return;
+		}
 		System.out.println("loading");
 		EntityPlayer player = (EntityPlayer) icommandsender;
 		
@@ -97,6 +105,14 @@ public class LoadCommand implements ICommand {
 								System.out.println(String.format("set x:%d y:%d z:%d i:%d id:%d", x+sx, y+sy, z+sz, sx+sz*16+sy*256, blockID));
 								player.worldObj.setBlock(x+sx, y+sy, z+sz, blockID);
 								player.worldObj.setBlockMetadataWithNotify(x+sx, y+sy, z+sz, data[(sx+sz*16+sy*256)], 2);
+								if(blockID == 54){
+									TileEntityChest tc = (TileEntityChest) player.worldObj.getBlockTileEntity(x+sx, y+sy, z+sz);
+									Random rand = new Random();
+									int items = rand.nextInt(5)+1;
+									for(int i = 0; i < items; i++) {
+										tc.setInventorySlotContents(rand.nextInt(tc.getSizeInventory()), ChestGenHooks.getOneItem(ChestGenHooks.DUNGEON_CHEST, rand));
+									}
+								}
 								
 							}
 						}

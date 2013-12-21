@@ -1,4 +1,4 @@
-package se.mickelus.customgen.creation;
+package se.mickelus.customgen.blocks;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;

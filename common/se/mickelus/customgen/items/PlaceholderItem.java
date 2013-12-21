@@ -1,4 +1,4 @@
-package se.mickelus.customgen.creation;
+package se.mickelus.customgen.items;
 
 import se.mickelus.customgen.Constants;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -23,7 +23,7 @@ public class PlaceholderItem extends Item {
         
         maxStackSize = 64;
         setCreativeTab(CreativeTabs.tabMisc);
-        setUnlocalizedName("PlaceholderItem");
+        setUnlocalizedName(Constants.PLACEHOLDERITEM_UNLOC_NAME);
     }
 
     @Override

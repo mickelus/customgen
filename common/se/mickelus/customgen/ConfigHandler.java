@@ -2,6 +2,7 @@ package se.mickelus.customgen;
 
 import java.io.File;
 
+
 import net.minecraftforge.common.Configuration;
 
 public class ConfigHandler {

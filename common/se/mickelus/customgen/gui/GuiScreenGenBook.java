@@ -513,7 +513,11 @@ public class GuiScreenGenBook extends GuiScreen {
     		}
     		MLogger.logf("l2:%d", listLength);
     		
-    		drawList.add(new GuiText("segments:", 38, 30));
+    		drawList.add(new GuiText("segments", 38, 30));
+    		drawList.add(new GuiText("name", 38, 40));
+    		drawList.add(new GuiText("#E", 116, 40, GuiText.RIGHT_ALIGN));
+    		drawList.add(new GuiText("#TE", 138, 40, GuiText.RIGHT_ALIGN));
+    		drawList.add(new GuiText("S", 148, 40, GuiText.RIGHT_ALIGN));
     		
     		// list buttons based on offset
         	for (int i = 0; i < listLength; i++) {
@@ -527,9 +531,13 @@ public class GuiScreenGenBook extends GuiScreen {
         			isStart = false;
         		}
         		
+        		// separator
+            	drawList.add(GuiTexture.createDashedLineTexture(37, 49 + i*16));
+        		
+            	// button
     			buttonList.add(new GuiButtonSegmentListItem(listOffset + i, 
     				(width - bookImageWidth) / 2 + 37,
-             		(height - bookImageHeight) / 2 + 36 + i*16,
+             		(height - bookImageHeight) / 2 + 50 + i*16,
     				segment.getName(), segment.getNumTileEntities(), segment.getNumTileEntities(), isStart));
     		}
     		

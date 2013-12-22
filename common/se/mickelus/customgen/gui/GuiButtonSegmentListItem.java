@@ -17,12 +17,10 @@ public class GuiButtonSegmentListItem extends GuiButton {
 	public GuiButtonSegmentListItem(int index, int left, int top, String name, int entityCount, int tileEntityCount, boolean isStart) {
 		super(0, left, top, 112, 15, name);
 		
-		MLogger.log("creating a button");
-		
 		nameText = new GuiText(name, left + 1, top + (height - 8) / 2);
 		
-		entityCountText = new GuiText(entityCount + "", left + 111, top + (height - 8) / 2, GuiText.RIGHT_ALIGN);
-		tileEntityCountText = new GuiText(tileEntityCount + "", left + 111, top + (height - 8) / 2, GuiText.RIGHT_ALIGN);
+		entityCountText = new GuiText(entityCount + "", left + 79, top + (height - 8) / 2, GuiText.RIGHT_ALIGN);
+		tileEntityCountText = new GuiText(tileEntityCount + "", left + 101, top + (height - 8) / 2, GuiText.RIGHT_ALIGN);
 		if(isStart) {
 			isStartText = new GuiText("S", left + 111, top + (height - 8) / 2, GuiText.RIGHT_ALIGN);
 		}

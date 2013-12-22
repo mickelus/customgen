@@ -69,7 +69,7 @@ public class FileHandler {
 		File packsFolder = new File(Constants.PACKS_PATH);
 		
 		if(!packsFolder.isDirectory()) {
-			System.out.println("Unable to parse gens: resourcepacks/assets directory missing.\n");
+			MLogger.log("Unable to parse gens: resourcepacks/assets directory missing.\n");
 			return null;
 		}
 		

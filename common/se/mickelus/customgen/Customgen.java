@@ -73,9 +73,12 @@ public class Customgen {
 		
 		GenManager genManager = new GenManager();
         Gen[] gens = FileHandler.parseAllGens();
-        for (int i = 0; i < gens.length; i++) {
-			genManager.addGen(gens[i]);
-		}
+        if(gens != null) {
+        	for (int i = 0; i < gens.length; i++) {
+    			genManager.addGen(gens[i]);
+    		}
+        }
+        
 	}
 	
 	private void setupBlocks() {

@@ -89,8 +89,9 @@ public class GuiScreenGenBook extends GuiScreen {
     private List<GuiButtonCheckBox> biomeCheckBoxes;
     
     // segment view states
-    private int stateSegmentIndex = 0;
+    private int stateViewSegmentOffset = 0;
     private Segment stateviewSegment;
+    private boolean stateViewSegmentIsStart;
     
 	private String stateAddViewGen = "";
 	private String stateAddViewPack = "";
@@ -186,7 +187,7 @@ public class GuiScreenGenBook extends GuiScreen {
 	    		break;
 	    		
 	    	case SEGMENT_VIEW_STATE:
-	    		showSegmentView(stateviewSegment);
+	    		showSegmentView(stateviewSegment, stateViewSegmentIsStart);
 	    		break;
 
 	    	case SEGMENT_ADD_STATE:
@@ -577,8 +578,45 @@ public class GuiScreenGenBook extends GuiScreen {
 		MLogger.logf("len %d", gen.getNumSegments()+gen.getNumStartingSegments());
     }
     
-    private void showSegmentView(Segment segment) {
+    private void showSegmentView(final Segment segment, boolean isStart) {
     	
+    	// title
+    	drawList.add(new GuiText("Segment: " + segment.getName(), 38, 17));
+    	
+    	// title separator
+    	drawList.add(GuiTexture.createDashedLineTexture(37, 26));
+    	
+    	drawList.add(new GuiText("gen: " + stateViewGen.getName(), 38, 30));
+    	
+    	drawList.add(new GuiText("pack: " + stateViewGen.getResourcePack(), 38, 40));
+    	
+    	drawList.add(new GuiText("start: " + (isStart ? "yes" : "no"), 38, 50));
+    
+    	buttonList.add(new GuiButtonOutlined(0,
+    			(width - bookImageWidth) / 2 + 38,
+    			(height - bookImageHeight) / 2 + 151,
+    			"generate", 50, new Observer() {
+    				
+    				@Override
+    				public void update(Observable o, Object arg) {
+    					MLogger.logf("generate segment: %s", segment.getName());
+    					PacketHandler.sendSegmentGenerationRequest(segment.getName(), 
+    							stateViewGen.getName(), stateViewGen.getResourcePack(), false);
+    				}
+    			}));
+    	
+    	buttonList.add(new GuiButtonOutlined(0,
+    			(width - bookImageWidth) / 2 + 98,
+    			(height - bookImageHeight) / 2 + 151,
+    			"load", 50, new Observer() {
+    				
+    				@Override
+    				public void update(Observable o, Object arg) {
+    					MLogger.logf("load segment: %s", segment.getName());
+    					PacketHandler.sendSegmentGenerationRequest(segment.getName(), 
+    							stateViewGen.getName(), stateViewGen.getResourcePack(), true);
+    				}
+    			}));
     }
     
     private void showSegmentAddView(String genName, String packName) {
@@ -839,6 +877,22 @@ public class GuiScreenGenBook extends GuiScreen {
     			if(stateViewGen != null && stateViewGen.getName().equals(genNames[index]) && stateViewGen.getName().equals(genNames[index])) {
     				showView(state);
     			}
+    		} else if (pressedButton instanceof GuiButtonSegmentListItem) {
+    			
+    			// get segment name
+    			String segmentName = ((GuiButtonSegmentListItem) pressedButton).getSegmentName();
+    			
+    			// get gen name
+    			String genName = stateViewGen.getName();
+    			
+    			// get rp name
+    			String packName = stateViewGen.getResourcePack();
+    			
+    			// set state
+    			state = SEGMENT_VIEW_STATE;
+    			
+    			// send segment request
+    			PacketHandler.sendSegmentRequest(segmentName, genName, packName);
     			
     		} else if (pressedButton instanceof GuiButtonChangePage) {
     			GuiButtonChangePage button = (GuiButtonChangePage) pressedButton;
@@ -911,10 +965,19 @@ public class GuiScreenGenBook extends GuiScreen {
     public void setGenData(Gen gen) {
     	stateViewGen = gen;
     	
-    	MLogger.logf("set len: %d", gen.getNumSegments()+gen.getNumStartingSegments());
-    	
     	if(state == GEN_VIEW_STATE) {
     		showView(GEN_VIEW_STATE);
+    	}
+    }
+    
+    public void setSegmentData(Segment segment, boolean isStart) {
+    	stateviewSegment = segment;
+    	stateViewSegmentIsStart = isStart;
+    	
+    	MLogger.log("set segment data");
+    	
+    	if(state == SEGMENT_VIEW_STATE) {
+    		showView(SEGMENT_VIEW_STATE);
     	}
     }
     

@@ -49,7 +49,7 @@ public class GuiButtonSegmentListItem extends GuiButton {
         }
 	}
 	
-	public String getGenName() {
+	public String getSegmentName() {
 		return displayString;
 	}
 	

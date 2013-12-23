@@ -48,6 +48,11 @@ public class Segment {
 	}
 	
 	public void setBlock(int x, int y, int z, int blockID, int blockData) {
+		if(blockID == Constants.EMPTY_ID) {
+			blockID = -1;
+		} else if (blockID == Constants.INTERFACEBLOCK_ID) {
+			blockID = -2;
+		}
 		blocks[x+z*16+y*256] = blockID;
 		data[x+z*16+y*256] = blockData;
 	}

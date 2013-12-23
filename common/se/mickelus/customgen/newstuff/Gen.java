@@ -336,6 +336,32 @@ public class Gen {
 	}
 	
 	/**
+	 * Returns a segment which name matches the given name. This segment
+	 * can be either a normal segment or a starting segment.
+	 * @param name The name of the requested segment
+	 * @return A segment or null if there is no segment with a matching name
+	 */
+	public Segment getSegmentByName(String name) {
+		
+		// iterate over normal segments
+		for (Segment segment : segmentList) {
+			if(segment.getName().equals(name)) {
+				return segment;
+			}
+		}
+		
+		// iterate over starting segments
+		for (Segment segment : startingSegments) {
+			if(segment.getName().equals(name)) {
+				return segment;
+			}
+		}
+		
+		// return null if there is no matching segment
+		return null;
+	}
+	
+	/**
 	 * Converts this gen into a NBT tag, making it easy to save and send between the server and the clients.
 	 * This will also write all segments in this gen.
 	 * @return A NBT tag that can be used to rebuild this gen.

@@ -38,6 +38,7 @@ public class ForgeGenerator implements IWorldGenerator  {
 	public void generateSegment(int chunkX, int chunkZ, int y, Segment segment, World world, boolean generatePlaceholders) {
 		
 		MLogger.log("generating segment");
+		MLogger.logf("gph %b", generatePlaceholders);
 		
 		int x = chunkX * 16;
 		int z = chunkZ * 16;
@@ -55,24 +56,24 @@ public class ForgeGenerator implements IWorldGenerator  {
 				for(int sx = 0; sx < 16; sx++) {
 					int blockID = segment.getBlockID(sx, sy, sz);
 					
-						if(generatePlaceholders) {
-							switch(blockID) {
-								case -1:
-									blockID = Constants.EMPTY_ID;
-									break;
-								case -2:
-									blockID = Constants.INTERFACEBLOCK_ID;
-									break;
-										
-								case -3:
+					if(generatePlaceholders) {
+						switch(blockID) {
+							case -1:
+								blockID = Constants.EMPTY_ID;
+								break;
+							case -2:
+								blockID = Constants.INTERFACEBLOCK_ID;
+								break;
 									
-									break;
-							}
+							case -3:
+								
+								break;
 						}
-						
-						if(blockID >= 0) {
-							world.setBlock(x+sx, y+sy, z+sz, blockID, segment.getBlockData(sx, sy, sz), 2);
-						}
+					}
+					
+					if(blockID >= 0) {
+						world.setBlock(x+sx, y+sy, z+sz, blockID, segment.getBlockData(sx, sy, sz), 2);
+					}
 						
 						
 				}

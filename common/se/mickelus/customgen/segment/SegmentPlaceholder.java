@@ -4,96 +4,37 @@ public class SegmentPlaceholder {
 
 	
 	// yes, this is ugly
-	private int interfaceTop;
-	private int interfaceBottom;
-	
-	private int interfaceNorth;
-	private int interfaceSouth;
-	
-	private int interfaceEast;
-	private int interfaceWest;
+	private int[] interfaces;
 	
 	private int segmentX;
 	private int segmentY;
 	private int segmentZ;
 	
-	private int type;
-	
-	
-	public SegmentPlaceholder(int x, int y, int z, int top, int bottom, int north, int south, int east, int west, int type) {
-		interfaceTop = top;
-		interfaceBottom = bottom;
+	private boolean occupied = false;
 		
-		interfaceNorth = north;
-		interfaceSouth = west;
-		
-		interfaceEast = east;
-		interfaceWest = west;
+	public SegmentPlaceholder(int x, int y, int z, int[] interfaces) {
+		this.interfaces = interfaces; 
 		
 		segmentX = x;
 		segmentY = y;
 		segmentZ = z;
-		
-		this.type = type;
+	}
+	
+	public SegmentPlaceholder(int x, int y, int z) {
+		this(x, y, z, new int[6]);
 	}
 
 
-	public int getInterfaceTop() {
-		return interfaceTop;
+	public int getInterface(int side) {
+		return interfaces[side];
+	}
+	
+	public int[] getInterfaces() {
+		return interfaces.clone();
 	}
 
-
-	public int getInterfaceBottom() {
-		return interfaceBottom;
-	}
-
-
-	public int getInterfaceNorth() {
-		return interfaceNorth;
-	}
-
-
-	public int getInterfaceSouth() {
-		return interfaceSouth;
-	}
-
-
-	public int getInterfaceEast() {
-		return interfaceEast;
-	}
-
-
-	public int getInterfaceWest() {
-		return interfaceWest;
-	}
-
-	public void setInterfaceTop(int interfaceTop) {
-		this.interfaceTop = interfaceTop;
-	}
-
-
-	public void setInterfaceBottom(int interfaceBottom) {
-		this.interfaceBottom = interfaceBottom;
-	}
-
-
-	public void setInterfaceNorth(int interfaceNorth) {
-		this.interfaceNorth = interfaceNorth;
-	}
-
-
-	public void setInterfaceSouth(int interfaceSouth) {
-		this.interfaceSouth = interfaceSouth;
-	}
-
-
-	public void setInterfaceEast(int interfaceEast) {
-		this.interfaceEast = interfaceEast;
-	}
-
-
-	public void setInterfaceWest(int interfaceWest) {
-		this.interfaceWest = interfaceWest;
+	public void setInterface(int side, int value) {
+		interfaces[side] = value;
 	}
 
 
@@ -110,12 +51,13 @@ public class SegmentPlaceholder {
 	public int getZ() {
 		return segmentZ;
 	}
-
-
-	public int getType() {
-		return type;
+	
+	public void setOccupied(boolean occupied) {
+		this.occupied = occupied;
 	}
 	
-	
+	public boolean isOccupied() {
+		return occupied;
+	}
 	
 }

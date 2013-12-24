@@ -263,7 +263,7 @@ public class Gen {
 	 * @param random a properly seeded Random-object.
 	 * @return a random starting segment in this gen.
 	 */
-	public Segment getStartSegment(Random random) {
+	public Segment getStartingSegment(Random random) {
 		int index = random.nextInt(startingSegments.size());
 		return startingSegments.get(index);
 	}

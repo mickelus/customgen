@@ -65,7 +65,7 @@ public class FileHandler {
 	public static Gen[] parseAllGens() {
 		List<Gen> genList = new LinkedList<Gen>();
 		Gen[] genArray;
-		System.out.println("parsing gens");
+		MLogger.log("parsing gens");
 		File packsFolder = new File(Constants.PACKS_PATH);
 		
 		if(!packsFolder.isDirectory()) {
@@ -77,7 +77,7 @@ public class FileHandler {
 		
 		for (int i = 0; i < packNames.length; i++) {
 			File genDir = new File(String.format(Constants.GENS_PATH, packNames[i]));
-			System.out.println(genDir.getAbsolutePath());
+			MLogger.logf("path: %s", genDir.getAbsolutePath());
 			if(genDir.isDirectory()) {
 				System.out.printf("Resourcepack \"%s\" has gens!\n", packNames[i]);
 				String[] genNames = genDir.list();

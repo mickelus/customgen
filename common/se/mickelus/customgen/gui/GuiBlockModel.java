@@ -72,6 +72,16 @@ public class GuiBlockModel extends Gui implements Drawable {
         float blue = 1;
         float red = 1;
 
+        switch(itemID) {
+        	case -1:
+        		itemID = Constants.EMPTY_ID;
+        		break;
+        	
+        	case -2:
+        		itemID = Constants.INTERFACEBLOCK_ID;
+        		break;
+        }
+        
         Block block = (itemID < Block.blocksList.length ? Block.blocksList[itemID] : null);
         if (block != null && RenderBlocks.renderItemIn3d(Block.blocksList[itemID].getRenderType()))
         {

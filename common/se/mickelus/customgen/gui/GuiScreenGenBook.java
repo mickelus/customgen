@@ -553,6 +553,7 @@ public class GuiScreenGenBook extends GuiScreen {
 				@Override
 				public void update(Observable o, Object arg) {
 					MLogger.logf("generate: %s", gen.getName());
+					PacketHandler.getInstance().sendGenGenerationRequest(gen.getName(), gen.getResourcePack());
 				}
 			}));
 

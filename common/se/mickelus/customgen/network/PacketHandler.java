@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.util.Random;
 import java.util.logging.Logger;
 
 import se.mickelus.customgen.Constants;
@@ -111,6 +112,10 @@ public class PacketHandler implements IPacketHandler {
 				
 				case SEGMENT_GENERATE_PACKET:
 					handleSegmentGenerationRequest(stream, player);
+					break;
+					
+				case GEN_GENERATE_PACKET:
+					handleGenGenerationRequest(stream, player);
 					break;
 					
 				default:
@@ -635,6 +640,61 @@ public class PacketHandler implements IPacketHandler {
 			} else {
 				MLogger.log("Found no matching segment.");
 			}
+		} else {
+			MLogger.logf("Found no matching gen for gen: %s, pack: %s.", genName, packName);
+		}
+	}
+	
+	public static void sendGenGenerationRequest(String genName, String packName) {
+		ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+		DataOutputStream dataStream = new DataOutputStream(byteStream);
+
+		try {
+			// write packet type
+			dataStream.writeByte(GEN_GENERATE_PACKET);
+
+			// write strings
+			dataStream.writeChars(genName);
+			dataStream.writeChar(0);
+			
+			dataStream.writeChars(packName);
+			dataStream.writeChar(0);
+
+			dataStream.close();
+			
+			// send packet
+			PacketDispatcher.sendPacketToServer(PacketDispatcher.getPacket(Constants.CHANNEL, byteStream.toByteArray()));
+			
+		}catch(IOException e) {
+			MLogger.log("An error occured when sending the gen request packet.");
+			e.printStackTrace();
+		}
+	}
+	
+	private void handleGenGenerationRequest(DataInputStream stream, Player player) throws IOException {
+		String genName = readString(stream);
+		String packName = readString(stream);
+		
+		Gen gen = GenManager.getInstance().getGenByName(genName, packName);
+		
+		EntityPlayer ePlayer = (EntityPlayer) player;
+		Vec3 position = ePlayer.getPosition(0);
+		int chunkX = (int) (position.xCoord)/16;
+		int y = ((int) (position.yCoord)/16)*16;
+		int chunkZ = (int) (position.zCoord)/16;
+		
+		// due to the division, negative coordinates end up being offset by one, this fixes that
+		if(position.xCoord<0) {
+			chunkX--;
+		}
+		if(position.zCoord<0) {
+			chunkZ--;
+		}	
+		
+		
+		
+		if(gen != null) {
+			ForgeGenerator.getInstance().generateGen(chunkX, chunkZ, ePlayer.worldObj, gen, new Random());
 		} else {
 			MLogger.logf("Found no matching gen for gen: %s, pack: %s.", genName, packName);
 		}

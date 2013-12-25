@@ -35,8 +35,8 @@ public class Segment {
 	
 	public Segment(String name) {
 		
-		blocks = new int[Constants.SEGMENT_SIZE*Constants.SEGMENT_SIZE*Constants.SEGMENT_SIZE];
-		data = new int[Constants.SEGMENT_SIZE*Constants.SEGMENT_SIZE*Constants.SEGMENT_SIZE];
+		blocks = new int[4096];
+		data = new int[4096];
 		
 		tileEntityNBTList = new ArrayList<NBTTagCompound>();
 		entityNBTList = new ArrayList<NBTTagCompound>();
@@ -129,6 +129,7 @@ public class Segment {
 		nbt.setIntArray(INTERFACE_KEY, interfaces);
 
 		if(writeBlocks) {
+			MLogger.log("WRITING BLOCKS");
 			nbt.setIntArray(BLOCKS_KEY, blocks);
 
 			nbt.setIntArray(DATA_KEY, data);
@@ -170,7 +171,8 @@ public class Segment {
 			entityArray[i] = (NBTTagCompound)entityList.tagAt(i);
 		}
 		
-		if(blocks.length == 16 && data.length == 16) {
+		if(blocks.length == 4096 && data.length == 4096) {
+			MLogger.log("reading blocks and data");
 			for (int x = 0; x < 16; x++) {
 				for (int y = 0; y < 16; y++) {
 					for (int z = 0; z < 16; z++) {
@@ -178,6 +180,8 @@ public class Segment {
 					}
 				}
 			}
+		} else {
+			MLogger.logf("Failed to read blocks and data from segment %s", segment.getName());
 		}
 		
 

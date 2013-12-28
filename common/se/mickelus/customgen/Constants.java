@@ -13,6 +13,7 @@ public class Constants {
 	
 	public static final int SEGMENT_SIZE = 16;
 	public static final int DUNGEON_CHANCE = 100;
+	public static final int SEGMENT_LIMIT = 50;
 	
 	public static final String CHANNEL = MOD_ID;
 	

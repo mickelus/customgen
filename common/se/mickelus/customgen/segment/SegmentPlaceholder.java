@@ -1,5 +1,9 @@
 package se.mickelus.customgen.segment;
 
+import java.util.Arrays;
+
+import se.mickelus.customgen.MLogger;
+
 public class SegmentPlaceholder {
 
 	
@@ -21,7 +25,13 @@ public class SegmentPlaceholder {
 	}
 	
 	public SegmentPlaceholder(int x, int y, int z) {
-		this(x, y, z, new int[6]);
+		interfaces = new int[6];
+		
+		Arrays.fill(interfaces, -1);
+		
+		segmentX = x;
+		segmentY = y;
+		segmentZ = z;
 	}
 
 
@@ -58,6 +68,37 @@ public class SegmentPlaceholder {
 	
 	public boolean isOccupied() {
 		return occupied;
+	}
+	
+	public boolean hasProperInterfaces() {
+		
+		for (int i = 0; i < interfaces.length; i++) {
+			if(interfaces[i] > 0) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	@Override
+	public String toString() {
+		String string = "PH:[";
+		for (int i = 0; i < interfaces.length; i++) {
+			if(interfaces[i] != -1) {
+				string += String.format("%2d", interfaces[i]);
+			} else {
+				string += "  ";
+			}
+			
+			if(i != interfaces.length-1) {
+				string += ",";
+			}
+		}
+		string += "] [" + getX() + "," + getY() + "," + getZ() + "] ";
+		
+		string += isOccupied() ? "occupied" : "unoccupied";
+		return string;
 	}
 	
 }

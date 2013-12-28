@@ -167,7 +167,8 @@ public class Gen {
 	 * @param biomes An array of biome types.
 	 */
 	public Type[] getBiomes() {
-		return (Type[])biomes.clone();
+		Type[] types = new Type[biomes.size()];
+		return biomes.toArray(types);
 		
 	}
 	
@@ -286,8 +287,9 @@ public class Gen {
 		for (Segment segment : segmentList) {
 			boolean match = true;
 			for (int i = 0; i < interfaces.length; i++) {
-				if(interfaces[i] != segment.getInterface(i)) {
+				if(interfaces[i] != -1 && interfaces[i] != segment.getInterface(i)) {
 					match = false;
+					break;
 				}
 			}
 			if(match) {

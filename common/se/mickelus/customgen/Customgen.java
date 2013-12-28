@@ -54,10 +54,6 @@ public class Customgen {
         setupBlocks();
         setupItems();
         
-        //new GuiHandler();
-        
-        
-        
         proxy.init();
     }
 	
@@ -65,13 +61,19 @@ public class Customgen {
 	@EventHandler
 	public void serverStart(FMLServerStartingEvent event){
 		System.out.println("SERVER START");
-		MinecraftServer server = MinecraftServer.getServer();
-		ICommandManager command = server.getCommandManager();
-		ServerCommandManager serverCommand = (ServerCommandManager) command;
 		
-		new ForgeGenerator();
-		
-		GenManager genManager = new GenManager();
+		if(ForgeGenerator.getInstance() == null) {
+			new ForgeGenerator();
+		}
+
+		/* when playing singleplayer this lets us update Gens by restarting the world
+		 * instead of restarting the game */
+		GenManager genManager;
+		//if(GenManager.getInstance() == null) {
+			genManager = new GenManager();
+		/*} else {
+			genManager = GenManager.getInstance();
+		}*/
         Gen[] gens = FileHandler.parseAllGens();
         if(gens != null) {
         	for (int i = 0; i < gens.length; i++) {

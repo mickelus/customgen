@@ -12,6 +12,7 @@ import net.minecraft.nbt.NBTTagIntArray;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.BiomeDictionary.Type;
 
 public class Segment {
@@ -132,9 +133,7 @@ public class Segment {
 
 		// write block IDs and meta
 		if(writeBlocks) {
-			MLogger.log("WRITING BLOCKS");
 			nbt.setIntArray(BLOCKS_KEY, blocks);
-
 			nbt.setIntArray(DATA_KEY, data);
 		}
 		
@@ -188,6 +187,7 @@ public class Segment {
 		for (int i = 0; i < tileEntityList.tagCount(); i++) {
 			tileEntityArray[i] = (NBTTagCompound)tileEntityList.tagAt(i);
 		}
+		segment.setTileEntityNBTs(tileEntityArray);
 		
 		for (int i = 0; i < entityList.tagCount(); i++) {
 			entityArray[i] = (NBTTagCompound)entityList.tagAt(i);
@@ -208,6 +208,8 @@ public class Segment {
 		int xOffset = chunkX*16;
 		int yOffset = chunkY;
 		int zOffset = chunkZ*16;
+		
+		ArrayList<NBTTagCompound> tileEntityNBTList = new ArrayList<NBTTagCompound>();
 		
 		
 		// set blocks
@@ -256,6 +258,25 @@ public class Segment {
 		for (int i = 0; i < interfaces.length; i++) {
 			setInterface(i, interfaces[i]);
 		}
+		
+		// set tile entities
+		for (int x = 0; x < 16; x++) {
+			for (int y = 0; y < 16; y++) {
+				for (int z = 0; z < 16; z++) {
+					if(world.blockHasTileEntity(xOffset+x, yOffset+y, zOffset+z)) {
+						NBTTagCompound tagCompound = new NBTTagCompound();
+				        world.getBlockTileEntity(xOffset+x, yOffset+y, zOffset+z).writeToNBT(tagCompound);
+				        tagCompound.setInteger("x", x);
+				        tagCompound.setInteger("y", y);
+				        tagCompound.setInteger("z", z);
+				        tileEntityNBTList.add(tagCompound);
+					}
+					
+				}
+			}
+		}
+		setTileEntityNBTs(tileEntityNBTList.toArray(new NBTTagCompound[tileEntityNBTList.size()]));
+		
 	}
 	
 	@Override

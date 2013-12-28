@@ -10,6 +10,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.BiomeDictionary.Type;
@@ -24,12 +25,9 @@ public class ForgeGenerator implements IWorldGenerator  {
 	
 	private static ForgeGenerator instance;
 	
-	List<SegmentPlaceholder> pendingSegments;
-	
 	
 	public ForgeGenerator() {
-		
-		pendingSegments = new ArrayList<SegmentPlaceholder>();
+
 		GameRegistry.registerWorldGenerator(this);
 		
 		instance = this;
@@ -81,16 +79,25 @@ public class ForgeGenerator implements IWorldGenerator  {
 			}
 		}
 		
+		
 		// spawn tile entities
-		/*for (int i = 0; i < segment.getNumTileEntities(); i++) {
-			NBTTagCompound tag = updateTileEntityNBT(segment.getTileEntityNBT(i), x, y, z);
+		for (int i = 0; i < segment.getNumTileEntities(); i++) {
+			NBTTagCompound tag = updateTileEntityNBT(segment.getTileEntityNBT(i), chunkX*16, y, chunkZ*16);
 			TileEntity tileEntity = TileEntity.createAndLoadEntity(tag);
 			
 			if (tileEntity != null) {
-                world.getChunkFromBlockCoords(x, z).addTileEntity(tileEntity);
+                world.getChunkFromChunkCoords(chunkX, chunkZ).addTileEntity(tileEntity);
             }
-		}*/
+		}
 	}
+	
+	private NBTTagCompound updateTileEntityNBT(NBTTagCompound tileEntityNBT, int x, int y, int z) {
+        tileEntityNBT.setInteger("x", tileEntityNBT.getInteger("x") + x);
+        tileEntityNBT.setInteger("y", tileEntityNBT.getInteger("y") + y);
+        tileEntityNBT.setInteger("z", tileEntityNBT.getInteger("z") + z);
+        
+        return tileEntityNBT;
+}
 	
 	private void createPlaceholders(int chunkX, int chunkZ, int y, Segment segment, 
 			List<SegmentPlaceholder> placeholderList) {

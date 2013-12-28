@@ -702,11 +702,11 @@ public class GuiScreenGenBook extends GuiScreen {
     		
     		drawList.add(new GuiText("bottom: " + stateAddViewSegment.getInterface(1), 90, 140, GuiText.CENTER_ALIGN));
     		
-    		drawList.add(new GuiText("N: " + stateAddViewSegment.getInterface(2), 70, 41, GuiText.RIGHT_ALIGN));
+    		drawList.add(new GuiText("S: " + stateAddViewSegment.getInterface(4), 70, 41, GuiText.RIGHT_ALIGN));
     		
     		drawList.add(new GuiText("E: " + stateAddViewSegment.getInterface(3), 112, 41));
     		
-    		drawList.add(new GuiText("S: " + stateAddViewSegment.getInterface(4), 112, 128));
+    		drawList.add(new GuiText("N: " + stateAddViewSegment.getInterface(2), 112, 128));
     		
     		drawList.add(new GuiText("W: " + stateAddViewSegment.getInterface(5), 65, 128, GuiText.RIGHT_ALIGN));
     		

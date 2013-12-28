@@ -124,10 +124,13 @@ public class Segment {
 		NBTTagList tileEntityTagList = new NBTTagList();
 		NBTTagList entityTagList = new NBTTagList();
 		
-		
+		// write name
 		nbt.setString(NAME_KEY, name);
+		
+		// write interfaces
 		nbt.setIntArray(INTERFACE_KEY, interfaces);
 
+		// write block IDs and meta
 		if(writeBlocks) {
 			MLogger.log("WRITING BLOCKS");
 			nbt.setIntArray(BLOCKS_KEY, blocks);
@@ -135,12 +138,13 @@ public class Segment {
 			nbt.setIntArray(DATA_KEY, data);
 		}
 		
-
+		// write tile entities
 		for (NBTTagCompound nbtTagCompound : tileEntityNBTList) {
 			tileEntityTagList.appendTag(nbtTagCompound);
 		}
 		nbt.setTag(TILE_ENTITY_KEY, tileEntityTagList);
 		
+		// write entities
 		for (NBTTagCompound nbtTagCompound : entityNBTList) {
 			entityTagList.appendTag(nbtTagCompound);
 		}
@@ -162,6 +166,24 @@ public class Segment {
 		int[] blocks = nbt.getIntArray(BLOCKS_KEY);
 		int[] data = nbt.getIntArray(DATA_KEY);
 		
+		if(interfaces.length == 6) {
+			for (int i = 0; i < interfaces.length; i++) {
+				segment.setInterface(i, interfaces[i]);
+			}
+		} else {
+			MLogger.logf("Failed to read interfaces for %s, %d", segment.getName(), interfaces.length);
+		}
+		
+		if(blocks.length == 4096 && data.length == 4096) {
+			//MLogger.log("reading blocks and data");
+			for (int x = 0; x < 16; x++) {
+				for (int y = 0; y < 16; y++) {
+					for (int z = 0; z < 16; z++) {
+						segment.setBlock(x, y, z, blocks[x+z*16+y*256], data[x+z*16+y*256]);
+					}
+				}
+			}
+		}
 		
 		for (int i = 0; i < tileEntityList.tagCount(); i++) {
 			tileEntityArray[i] = (NBTTagCompound)tileEntityList.tagAt(i);
@@ -171,18 +193,10 @@ public class Segment {
 			entityArray[i] = (NBTTagCompound)entityList.tagAt(i);
 		}
 		
-		if(blocks.length == 4096 && data.length == 4096) {
-			MLogger.log("reading blocks and data");
-			for (int x = 0; x < 16; x++) {
-				for (int y = 0; y < 16; y++) {
-					for (int z = 0; z < 16; z++) {
-						segment.setBlock(x, y, z, blocks[x+z*16+y*256], data[x+z*16+y*256]);
-					}
-				}
-			}
-		} else {
-			MLogger.logf("Failed to read blocks and data from segment %s", segment.getName());
-		}
+		/* else {
+			MLogger.logf("Failed to read blocks and data from segment %s, invalid lengths %d %d",
+					segment.getName(), blocks.length, data.length);
+		}*/
 		
 
 		return segment;
@@ -244,6 +258,20 @@ public class Segment {
 		}
 	}
 	
-	
+	@Override
+	public String toString() {
+		String string = "SEGM:";
+		string += getName();
+		string += "[";
+		for (int i = 0; i < interfaces.length; i++) {
+			string += String.format("%2d", interfaces[i]);
+			if(i != interfaces.length-1) {
+				string += ",";
+			}
+		}
+		string += "]";
+
+		return string;
+	}
 
 }

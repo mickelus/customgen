@@ -84,7 +84,11 @@ public class FileHandler {
 				for (int j = 0; j < genNames.length; j++) {
 					
 					System.out.println("file:" + genNames[j]);
-					genList.add(parseGen(genNames[j], packNames[i]));
+					Gen gen = parseGen(genNames[j], packNames[i]);
+					if(gen != null) {
+						genList.add(gen);
+					}
+					
 				}
 			}
 			

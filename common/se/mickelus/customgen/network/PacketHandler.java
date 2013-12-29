@@ -636,7 +636,7 @@ public class PacketHandler implements IPacketHandler {
 			
 			if(segment != null) {
 				ForgeGenerator.getInstance().generateSegment(chunkX, chunkZ, y,
-						segment, ePlayer.worldObj, load);
+						segment, ePlayer.worldObj, load, new Random());
 			} else {
 				MLogger.log("Found no matching segment.");
 			}

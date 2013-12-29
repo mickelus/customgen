@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
+import net.minecraft.inventory.IInventory;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
@@ -14,6 +15,7 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.BiomeDictionary.Type;
+import net.minecraftforge.common.ChestGenHooks;
 import cpw.mods.fml.common.IWorldGenerator;
 import cpw.mods.fml.common.registry.GameRegistry;
 import se.mickelus.customgen.Constants;
@@ -37,7 +39,8 @@ public class ForgeGenerator implements IWorldGenerator  {
 		return instance;
 	}
 
-	public void generateSegment(int chunkX, int chunkZ, int y, Segment segment, World world, boolean generatePlaceholders) {
+	public void generateSegment(int chunkX, int chunkZ, int y,
+			Segment segment, World world, boolean generatePlaceholders, Random random) {
 		int x = chunkX * 16;
 		int z = chunkZ * 16;
 		
@@ -46,8 +49,6 @@ public class ForgeGenerator implements IWorldGenerator  {
 			MLogger.log("Unable to generate segment");
 			return;
 		}
-		
-		generatePlaceholders = true;
 
 		// generate blocks
 		for(int sy = 0; sy < 16; sy++) {
@@ -86,6 +87,17 @@ public class ForgeGenerator implements IWorldGenerator  {
 			TileEntity tileEntity = TileEntity.createAndLoadEntity(tag);
 			
 			if (tileEntity != null) {
+				if(tileEntity instanceof IInventory) {
+					IInventory inventory = (IInventory) tileEntity;
+					
+					for (int j = 0; j < inventory.getSizeInventory(); j++) {
+						if(!generatePlaceholders && inventory.getStackInSlot(j) != null
+								&& inventory.getStackInSlot(j).itemID == Constants.PLACEHOLDERITEM_ID + 256) {
+							inventory.setInventorySlotContents(j, 
+									ChestGenHooks.getOneItem(ChestGenHooks.DUNGEON_CHEST, random));
+						}
+					}
+				}
                 world.getChunkFromChunkCoords(chunkX, chunkZ).addTileEntity(tileEntity);
             }
 		}
@@ -275,7 +287,7 @@ public class ForgeGenerator implements IWorldGenerator  {
 			createPlaceholders(chunkX, chunkZ, startY, startingSegment, placeholderList);
 			
 			// generate starting segment
-			generateSegment(chunkX, chunkZ, startY, startingSegment, world, false);
+			generateSegment(chunkX, chunkZ, startY, startingSegment, world, false, random);
 			
 			//MLogger.log("   [+y,-y,-z,+x,+z,-x]");
 			
@@ -299,7 +311,7 @@ public class ForgeGenerator implements IWorldGenerator  {
 			
 			if(segment != null) {
 				// generate segment
-				generateSegment(ph.getX(), ph.getZ(), ph.getY(), segment, world, false);
+				generateSegment(ph.getX(), ph.getZ(), ph.getY(), segment, world, false, random);
 				
 				// update placeholder list based on segment
 				createPlaceholders(ph.getX(), ph.getZ(), ph.getY(), segment, placeholderList);

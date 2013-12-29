@@ -1,9 +1,9 @@
 package se.mickelus.customgen.newstuff;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import net.minecraft.world.World;
-
 import se.mickelus.customgen.segment.Segment;
 
 public class Utilities {
@@ -115,6 +115,6 @@ public class Utilities {
 	}
 	
 	public static void generateTemplate(int chunkX, int chunkZ, int y, World world, int templateID) {
-		ForgeGenerator.getInstance().generateSegment(chunkX, chunkZ, y, templates.get(templateID), world, true);
+		ForgeGenerator.getInstance().generateSegment(chunkX, chunkZ, y, templates.get(templateID), world, true, new Random());
 	}
 }

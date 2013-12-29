@@ -140,6 +140,15 @@ public class Segment {
 		// write tile entities
 		for (NBTTagCompound nbtTagCompound : tileEntityNBTList) {
 			tileEntityTagList.appendTag(nbtTagCompound);
+			if(nbtTagCompound.hasKey("Items")) {
+				NBTTagList list = nbtTagCompound.getTagList("Items");
+				for (int i = 0; i < list.tagCount(); i++) {
+					NBTTagCompound item = (NBTTagCompound)list.tagAt(i);
+					if(item.getShort("id") == Constants.PLACEHOLDERITEM_ID) {
+						item.setShort("id", (short)-1);
+					}
+				}
+			}
 		}
 		nbt.setTag(TILE_ENTITY_KEY, tileEntityTagList);
 		
@@ -186,6 +195,15 @@ public class Segment {
 		
 		for (int i = 0; i < tileEntityList.tagCount(); i++) {
 			tileEntityArray[i] = (NBTTagCompound)tileEntityList.tagAt(i);
+			if(tileEntityArray[i].hasKey("Items")) {
+				NBTTagList list = tileEntityArray[i].getTagList("Items");
+				for (int j = 0; j < list.tagCount(); j++) {
+					NBTTagCompound item = (NBTTagCompound)list.tagAt(j);
+					if(item.getShort("id") == -1) {
+						item.setShort("id", (short)Constants.PLACEHOLDERITEM_ID);
+					}
+				}
+			}
 		}
 		segment.setTileEntityNBTs(tileEntityArray);
 		

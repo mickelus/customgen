@@ -30,13 +30,6 @@ import se.mickelus.customgen.MLogger;
 
 public class FileHandler {
 	
-	public static void main(String[] args){
-		Gen[] gens = parseAllGens();
-		for (Gen gen : gens) {
-			System.out.println(gen);
-		}
-	}
-	
 	private static Gen[] parseAllZippedGens() {
 		ArrayList<Gen> genList = new ArrayList<Gen>();
 		

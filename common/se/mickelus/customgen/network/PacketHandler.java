@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.util.Random;
 import java.util.logging.Logger;
 
 import se.mickelus.customgen.Constants;
@@ -17,13 +18,13 @@ import se.mickelus.customgen.Customgen;
 import se.mickelus.customgen.MLogger;
 import se.mickelus.customgen.gui.GuiScreenGenBook;
 import se.mickelus.customgen.newstuff.FileHandler;
+import se.mickelus.customgen.newstuff.ForgeGenerator;
 import se.mickelus.customgen.newstuff.Gen;
 import se.mickelus.customgen.newstuff.GenManager;
 import se.mickelus.customgen.newstuff.Utilities;
 import se.mickelus.customgen.proxy.ClientProxy;
 import se.mickelus.customgen.proxy.Proxy;
 import se.mickelus.customgen.segment.Segment;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.CompressedStreamTools;
@@ -39,12 +40,16 @@ import cpw.mods.fml.common.network.Player;
 public class PacketHandler implements IPacketHandler {
 	
 	public static final int GENLIST_PACKET = 0;
-	public static final int GENREQ_PACKET = 1;
+	public static final int GEN_REQUEST_PACKET = 1;
 	public static final int GEN_RESPONSE_PACKET = 2;
 	public static final int GEN_ADD_PACKET = 3;
 	public static final int TEMPLATE_PACKET = 4;
-	public static final int SEGM_ADD_PACKET = 5;
-	public static final int GENLIST_REQ_PACKET = 6;
+	public static final int SEGMENT_ADD_PACKET = 5;
+	public static final int GENLIST_REQUEST_PACKET = 6;
+	public static final int SEGMENT_REQUEST_PACKET = 7;
+	public static final int SEGMENT_RESPONSE_PACKET = 8;
+	public static final int SEGMENT_GENERATE_PACKET = 9;
+	public static final int GEN_GENERATE_PACKET = 10;
 	
 	private static PacketHandler instance;
 	
@@ -74,7 +79,7 @@ public class PacketHandler implements IPacketHandler {
 					handleGenListPacket(stream);
 					break;
 					
-				case GENREQ_PACKET:
+				case GEN_REQUEST_PACKET:
 					handleGenRequest(stream, player);
 					break;
 					
@@ -89,12 +94,28 @@ public class PacketHandler implements IPacketHandler {
 					handleTemplateGeneration(stream, player);
 					break;
 					
-				case SEGM_ADD_PACKET:
+				case SEGMENT_ADD_PACKET:
 					handleSegmentAddPacket(stream, player);
 					break;
 				
-				case GENLIST_REQ_PACKET:
+				case GENLIST_REQUEST_PACKET:
 					handleGenListRequestPacket(player);
+					break;
+					
+				case SEGMENT_REQUEST_PACKET:
+					handleSegmentRequest(stream, player);
+					break;
+					
+				case SEGMENT_RESPONSE_PACKET:
+					handleSegmentResponse(stream, player);
+					break;
+				
+				case SEGMENT_GENERATE_PACKET:
+					handleSegmentGenerationRequest(stream, player);
+					break;
+					
+				case GEN_GENERATE_PACKET:
+					handleGenGenerationRequest(stream, player);
 					break;
 					
 				default:
@@ -116,7 +137,7 @@ public class PacketHandler implements IPacketHandler {
 		DataOutputStream dataStream = new DataOutputStream(byteStream);
 
 		try {
-			dataStream.writeByte(GENLIST_REQ_PACKET);
+			dataStream.writeByte(GENLIST_REQUEST_PACKET);
 			
 			dataStream.close();
 			
@@ -203,7 +224,7 @@ public class PacketHandler implements IPacketHandler {
 
 		try {
 			// write packet type
-			dataStream.writeByte(GENREQ_PACKET);
+			dataStream.writeByte(GEN_REQUEST_PACKET);
 
 			// write gen name
 			dataStream.writeChars(genName);
@@ -329,7 +350,7 @@ public class PacketHandler implements IPacketHandler {
 
 		try {
 			// write packet type
-			dataStream.writeByte(SEGM_ADD_PACKET);
+			dataStream.writeByte(SEGMENT_ADD_PACKET);
 
 			// write segment name
 			dataStream.writeChars(segmentName);
@@ -432,6 +453,251 @@ public class PacketHandler implements IPacketHandler {
 		}	
 				
 		Utilities.generateTemplate(chunkX, chunkZ, y, ePlayer.getEntityWorld(), templateID);
+	}
+	
+	public static void sendSegmentRequest(String segmentName, String genName, String packName) {
+		ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+		DataOutputStream dataStream = new DataOutputStream(byteStream);
+
+		try {
+			// write packet type
+			dataStream.writeByte(SEGMENT_REQUEST_PACKET);
+
+			// write strings
+			dataStream.writeChars(segmentName);
+			dataStream.writeChar(0);
+			
+			dataStream.writeChars(genName);
+			dataStream.writeChar(0);
+			
+			dataStream.writeChars(packName);
+			dataStream.writeChar(0);
+			
+			
+			dataStream.close();
+			
+			// send packet
+			PacketDispatcher.sendPacketToServer(PacketDispatcher.getPacket(Constants.CHANNEL, byteStream.toByteArray()));
+			
+		}catch(IOException e) {
+			MLogger.log("An error occured when sending the gen request packet.");
+			e.printStackTrace();
+		}
+	}
+	
+	private void handleSegmentRequest(DataInputStream stream, Player player) throws IOException {
+		// read strings
+		String segmentName = readString(stream);
+		String genName = readString(stream);
+		String packName = readString(stream);
+		boolean isStart = false;
+		
+		// get gen
+		Gen gen = GenManager.getInstance().getGenByName(genName, packName);
+		
+		Segment segment = null;
+		
+		if(gen != null) {
+			for (int i = 0; i < gen.getNumSegments(); i++) {
+				if(gen.getSegment(i).getName().equals(segmentName)) {
+					segment = gen.getSegment(i);
+					break;
+				}
+			}
+			
+			for (int i = 0; i < gen.getNumStartingSegments(); i++) {
+				if(gen.getStartingSegment(i).getName().equals(segmentName)) {
+					segment = gen.getStartingSegment(i);
+					isStart = true;
+					break;
+				}
+			}
+			
+			if(segment!= null) {
+				sendSegmentResponse(player, segment, isStart);
+			} else {
+				MLogger.log("Found no matching segment.");
+			}
+		} else {
+			MLogger.logf("Found no matching gen for gen: %s, pack: %s.", genName, packName);
+		}
+		
+		
+	}
+	
+	private void sendSegmentResponse(Player player, Segment segment, boolean isStart) {
+		ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+		DataOutputStream dataStream = new DataOutputStream(byteStream);
+		NBTTagCompound nbt = new NBTTagCompound();
+
+		try {
+			// write packet type
+			dataStream.writeByte(SEGMENT_RESPONSE_PACKET);
+			
+			dataStream.writeBoolean(isStart);
+
+			// convert segment to nbt
+			nbt = segment.writeToNBT(false);
+			
+			// write nbt to stream
+			CompressedStreamTools.write(nbt, dataStream);
+			
+			
+			dataStream.close();
+			
+			// send packet
+			PacketDispatcher.sendPacketToPlayer(PacketDispatcher.getPacket(Constants.CHANNEL, byteStream.toByteArray()), player);
+			
+		}catch(IOException e) {
+			MLogger.log("An error occured when sending the gen request packet.");
+			e.printStackTrace();
+		}
+	}
+	
+	private void handleSegmentResponse(DataInputStream stream, Player player) throws IOException {
+		NBTTagCompound nbt;
+		boolean isStart;
+		Segment segment;
+		
+		
+		// read start boolean
+		isStart = stream.readBoolean();
+		
+		// read segment nbt
+		nbt = CompressedStreamTools.read(stream);
+		
+		// create segment
+		segment = Segment.readFromNBT(nbt);
+		
+		// notify gui
+		GuiScreenGenBook.getInstance().setSegmentData(segment, isStart);
+	}
+	
+	public static void sendSegmentGenerationRequest(String segmentName, String genName, String packName, boolean load) {
+		ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+		DataOutputStream dataStream = new DataOutputStream(byteStream);
+
+		try {
+			// write packet type
+			dataStream.writeByte(SEGMENT_GENERATE_PACKET);
+
+			// write strings
+			dataStream.writeChars(segmentName);
+			dataStream.writeChar(0);
+			
+			dataStream.writeChars(genName);
+			dataStream.writeChar(0);
+			
+			dataStream.writeChars(packName);
+			dataStream.writeChar(0);
+			
+			dataStream.writeBoolean(load);
+			
+			dataStream.close();
+			
+			// send packet
+			PacketDispatcher.sendPacketToServer(PacketDispatcher.getPacket(Constants.CHANNEL, byteStream.toByteArray()));
+			
+		}catch(IOException e) {
+			MLogger.log("An error occured when sending the gen request packet.");
+			e.printStackTrace();
+		}
+	}
+	
+	private void handleSegmentGenerationRequest(DataInputStream stream, Player player) throws IOException {
+		String segmentName = readString(stream);
+		String genName = readString(stream);
+		String packName = readString(stream);
+		boolean load = stream.readBoolean();
+		
+		MLogger.logf("load %b", load);
+		
+		Gen gen = GenManager.getInstance().getGenByName(genName, packName);
+		Segment segment;
+		
+		EntityPlayer ePlayer = (EntityPlayer) player;
+		Vec3 position = ePlayer.getPosition(0);
+		int chunkX = (int) (position.xCoord)/16;
+		int y = ((int) (position.yCoord)/16)*16;
+		int chunkZ = (int) (position.zCoord)/16;
+		
+		// due to the division, negative coordinates end up being offset by one, this fixes that
+		if(position.xCoord<0) {
+			chunkX--;
+		}
+		if(position.zCoord<0) {
+			chunkZ--;
+		}	
+		
+		
+		
+		if(gen != null) {
+			segment = gen.getSegmentByName(segmentName);
+			
+			if(segment != null) {
+				ForgeGenerator.getInstance().generateSegment(chunkX, chunkZ, y,
+						segment, ePlayer.worldObj, load, new Random());
+			} else {
+				MLogger.log("Found no matching segment.");
+			}
+		} else {
+			MLogger.logf("Found no matching gen for gen: %s, pack: %s.", genName, packName);
+		}
+	}
+	
+	public static void sendGenGenerationRequest(String genName, String packName) {
+		ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+		DataOutputStream dataStream = new DataOutputStream(byteStream);
+
+		try {
+			// write packet type
+			dataStream.writeByte(GEN_GENERATE_PACKET);
+
+			// write strings
+			dataStream.writeChars(genName);
+			dataStream.writeChar(0);
+			
+			dataStream.writeChars(packName);
+			dataStream.writeChar(0);
+
+			dataStream.close();
+			
+			// send packet
+			PacketDispatcher.sendPacketToServer(PacketDispatcher.getPacket(Constants.CHANNEL, byteStream.toByteArray()));
+			
+		}catch(IOException e) {
+			MLogger.log("An error occured when sending the gen request packet.");
+			e.printStackTrace();
+		}
+	}
+	
+	private void handleGenGenerationRequest(DataInputStream stream, Player player) throws IOException {
+		String genName = readString(stream);
+		String packName = readString(stream);
+		
+		Gen gen = GenManager.getInstance().getGenByName(genName, packName);
+		
+		EntityPlayer ePlayer = (EntityPlayer) player;
+		Vec3 position = ePlayer.getPosition(0);
+		int chunkX = (int) (position.xCoord)/16;
+		int y = ((int) (position.yCoord)/16)*16;
+		int chunkZ = (int) (position.zCoord)/16;
+		
+		// due to the division, negative coordinates end up being offset by one, this fixes that
+		if(position.xCoord<0) {
+			chunkX--;
+		}
+		if(position.zCoord<0) {
+			chunkZ--;
+		}	
+		
+		
+		
+		if(gen != null) {
+			ForgeGenerator.getInstance().generateGen(chunkX, chunkZ, ePlayer.worldObj, gen, new Random());
+		} else {
+			MLogger.logf("Found no matching gen for gen: %s, pack: %s.", genName, packName);
+		}
 	}
 	
 	private String readString(DataInput input) throws IOException{

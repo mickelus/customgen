@@ -1,99 +1,50 @@
 package se.mickelus.customgen.segment;
 
+import java.util.Arrays;
+
+import se.mickelus.customgen.MLogger;
+
 public class SegmentPlaceholder {
 
 	
 	// yes, this is ugly
-	private int interfaceTop;
-	private int interfaceBottom;
-	
-	private int interfaceNorth;
-	private int interfaceSouth;
-	
-	private int interfaceEast;
-	private int interfaceWest;
+	private int[] interfaces;
 	
 	private int segmentX;
 	private int segmentY;
 	private int segmentZ;
 	
-	private int type;
-	
-	
-	public SegmentPlaceholder(int x, int y, int z, int top, int bottom, int north, int south, int east, int west, int type) {
-		interfaceTop = top;
-		interfaceBottom = bottom;
+	private boolean occupied = false;
 		
-		interfaceNorth = north;
-		interfaceSouth = west;
-		
-		interfaceEast = east;
-		interfaceWest = west;
+	public SegmentPlaceholder(int x, int y, int z, int[] interfaces) {
+		this.interfaces = interfaces; 
 		
 		segmentX = x;
 		segmentY = y;
 		segmentZ = z;
+	}
+	
+	public SegmentPlaceholder(int x, int y, int z) {
+		interfaces = new int[6];
 		
-		this.type = type;
+		Arrays.fill(interfaces, -1);
+		
+		segmentX = x;
+		segmentY = y;
+		segmentZ = z;
 	}
 
 
-	public int getInterfaceTop() {
-		return interfaceTop;
+	public int getInterface(int side) {
+		return interfaces[side];
+	}
+	
+	public int[] getInterfaces() {
+		return interfaces.clone();
 	}
 
-
-	public int getInterfaceBottom() {
-		return interfaceBottom;
-	}
-
-
-	public int getInterfaceNorth() {
-		return interfaceNorth;
-	}
-
-
-	public int getInterfaceSouth() {
-		return interfaceSouth;
-	}
-
-
-	public int getInterfaceEast() {
-		return interfaceEast;
-	}
-
-
-	public int getInterfaceWest() {
-		return interfaceWest;
-	}
-
-	public void setInterfaceTop(int interfaceTop) {
-		this.interfaceTop = interfaceTop;
-	}
-
-
-	public void setInterfaceBottom(int interfaceBottom) {
-		this.interfaceBottom = interfaceBottom;
-	}
-
-
-	public void setInterfaceNorth(int interfaceNorth) {
-		this.interfaceNorth = interfaceNorth;
-	}
-
-
-	public void setInterfaceSouth(int interfaceSouth) {
-		this.interfaceSouth = interfaceSouth;
-	}
-
-
-	public void setInterfaceEast(int interfaceEast) {
-		this.interfaceEast = interfaceEast;
-	}
-
-
-	public void setInterfaceWest(int interfaceWest) {
-		this.interfaceWest = interfaceWest;
+	public void setInterface(int side, int value) {
+		interfaces[side] = value;
 	}
 
 
@@ -110,12 +61,44 @@ public class SegmentPlaceholder {
 	public int getZ() {
 		return segmentZ;
 	}
-
-
-	public int getType() {
-		return type;
+	
+	public void setOccupied(boolean occupied) {
+		this.occupied = occupied;
 	}
 	
+	public boolean isOccupied() {
+		return occupied;
+	}
 	
+	public boolean hasProperInterfaces() {
+		
+		for (int i = 0; i < interfaces.length; i++) {
+			if(interfaces[i] > 0) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	@Override
+	public String toString() {
+		String string = "PH:[";
+		for (int i = 0; i < interfaces.length; i++) {
+			if(interfaces[i] != -1) {
+				string += String.format("%2d", interfaces[i]);
+			} else {
+				string += "  ";
+			}
+			
+			if(i != interfaces.length-1) {
+				string += ",";
+			}
+		}
+		string += "] [" + getX() + "," + getY() + "," + getZ() + "] ";
+		
+		string += isOccupied() ? "occupied" : "unoccupied";
+		return string;
+	}
 	
 }

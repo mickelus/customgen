@@ -167,7 +167,8 @@ public class Gen {
 	 * @param biomes An array of biome types.
 	 */
 	public Type[] getBiomes() {
-		return (Type[])biomes.clone();
+		Type[] types = new Type[biomes.size()];
+		return biomes.toArray(types);
 		
 	}
 	
@@ -262,7 +263,7 @@ public class Gen {
 	 * @param random a properly seeded Random-object.
 	 * @return a random starting segment in this gen.
 	 */
-	public Segment getStartSegment(Random random) {
+	public Segment getStartingSegment(Random random) {
 		int index = random.nextInt(startingSegments.size());
 		return startingSegments.get(index);
 	}
@@ -285,8 +286,9 @@ public class Gen {
 		for (Segment segment : segmentList) {
 			boolean match = true;
 			for (int i = 0; i < interfaces.length; i++) {
-				if(interfaces[i] != segment.getInterface(i)) {
+				if(interfaces[i] != -1 && interfaces[i] != segment.getInterface(i)) {
 					match = false;
+					break;
 				}
 			}
 			if(match) {
@@ -332,6 +334,32 @@ public class Gen {
 	 */
 	public Segment getStartingSegment(int index) {
 		return startingSegments.get(index);
+	}
+	
+	/**
+	 * Returns a segment which name matches the given name. This segment
+	 * can be either a normal segment or a starting segment.
+	 * @param name The name of the requested segment
+	 * @return A segment or null if there is no segment with a matching name
+	 */
+	public Segment getSegmentByName(String name) {
+		
+		// iterate over normal segments
+		for (Segment segment : segmentList) {
+			if(segment.getName().equals(name)) {
+				return segment;
+			}
+		}
+		
+		// iterate over starting segments
+		for (Segment segment : startingSegments) {
+			if(segment.getName().equals(name)) {
+				return segment;
+			}
+		}
+		
+		// return null if there is no matching segment
+		return null;
 	}
 	
 	/**

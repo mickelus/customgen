@@ -179,6 +179,7 @@ public class FileHandler {
 	 * @return An array of gens from all resource packs
 	 */
 	public static Gen[] parseAllGens() {
+
 		Gen[] zippedGens = parseAllZippedGens();
 		ArrayList<Gen> allGens = new ArrayList<Gen>(Arrays.asList(parseAllDirectoryGens()));
 		
@@ -191,6 +192,7 @@ public class FileHandler {
 					exists = true;
 					break;
 					
+
 				}
 			}
 			if(!exists) {

@@ -215,7 +215,6 @@ public class Gen {
 	 */
 	public void addSegment(Segment segment, boolean isStart) {
 		boolean found = false;
-		MLogger.logf("=== adding segment to gen %s ===", name);
 
 			// iterate over starting segments
 			for (int i = 0; i < startingSegments.size(); i++) {
@@ -403,6 +402,11 @@ public class Gen {
 		
 		
 		return gen;
+	}
+	
+	@Override
+	public String toString() {
+		return String.format("GEN:%s [PACK:%s B#:%d LVL:%d V:%b]", getName(), getResourcePack(), biomes.size(), getLevel(), isVillageGen());
 	}
 	
 }

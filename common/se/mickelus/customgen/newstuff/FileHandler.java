@@ -5,8 +5,21 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.DirectoryStream;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipException;
+import java.util.zip.ZipFile;
 
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
@@ -16,13 +29,116 @@ import se.mickelus.customgen.Constants;
 import se.mickelus.customgen.MLogger;
 
 public class FileHandler {
+	
+	public static void main(String[] args){
+		Gen[] gens = parseAllGens();
+		for (Gen gen : gens) {
+			System.out.println(gen);
+		}
+	}
+	
+	private static Gen[] parseAllZippedGens() {
+		ArrayList<Gen> genList = new ArrayList<Gen>();
+		
+		File dir = new File(Constants.PACKS_PATH);
+		String[] packNames = dir.list();
+		
+		for (int i = 0; i < packNames.length; i++) {
+			
+			File file = new File(String.format("%s/%s", Constants.PACKS_PATH, packNames[i]));
+			
+		
+			if(file.exists()
+					&& file.canRead()  
+					&& !file.isHidden()
+					&& file.getName().endsWith(".zip")) {
+				try {
+					
+					ZipFile zip = new ZipFile(file);
+					
+					Enumeration<? extends ZipEntry> entries = zip.entries();
+					
+					System.out.println(packNames[i] + " is a zip.");
+					
+					while(entries.hasMoreElements()) {
+						ZipEntry current = entries.nextElement();
+						String name = current.getName();
+						if(name.contains(Constants.GENS_REL_PATH)
+								&& name.endsWith(Constants.FILE_EXT)) {
+							Gen gen = parseZippedGen(zip, current);
+							
+							if(gen!= null) {
+								genList.add(gen);
+							} else {
+								System.out.println(String.format("Failed to read gen \"%s\" from \"%s\"",
+									name.substring(name.lastIndexOf('/')+1), packNames[i]));
+							}
+						}
+						
+					}
+					
+					zip.close();
+				} catch (Exception e) {
+					System.out.println(String.format("An error occured when reading gens from %s", packNames[i]));
+				}
+			}
+			
+			
+			
+		}
+		
+		return genList.toArray(new Gen[genList.size()]);
+	}
+	
+	
+	/**
+	 * Parses a gen from a zip file
+	 * @param file
+	 * @param entry
+	 * @return
+	 */
+	private static Gen parseZippedGen(ZipFile file, ZipEntry entry) {
+		Gen gen;
+		try {
+			gen = Gen.readFromNBT(CompressedStreamTools.readCompressed(file.getInputStream(entry)));
+			return gen;
+		} catch (IOException e) {
+			return null;
+		}
+	}
+	
+	private static Gen[] parseAllDirectoryGens() {
+		List<Gen> genList = new LinkedList<Gen>();
+		Gen[] genArray;
+		File packsFolder = new File(Constants.PACKS_PATH);
+		
+		if(!packsFolder.isDirectory()) {
+			System.out.println("Unable to parse gens: resourcepacks/assets directory missing.\n");
+			return null;
+		}
+		
+		String[] packNames = new File(Constants.PACKS_PATH).list();
+		
+		for (int i = 0; i < packNames.length; i++) {
+			File genDir = new File(String.format(Constants.GENS_PATH, packNames[i]));
+			if(genDir.isDirectory()) {
+				String[] genNames = genDir.list();
+				for (int j = 0; j < genNames.length; j++) {
+					genList.add(parseDirectoryGen(genNames[j], packNames[i]));
+				}
+			}
+			
+		}
+		
+		return genList.toArray(new Gen[genList.size()]);
+	}
 
 	/**
-	 * Parse a gen file, returning a Gen object.
+	 * Parse a gen file from a directory, returning a Gen object.
 	 * @param name the name of the gen
 	 * @return
 	 */
-	private static Gen parseGen(String name, String resourcePack) {
+	private static Gen parseDirectoryGen(String name, String resourcePack) {
 		NBTTagCompound nbt;
 		FileInputStream stream;
 		File file = new File(String.format(Constants.FILE_PATH, resourcePack, name));
@@ -63,36 +179,27 @@ public class FileHandler {
 	 * @return An array of gens from all resource packs
 	 */
 	public static Gen[] parseAllGens() {
-		List<Gen> genList = new LinkedList<Gen>();
-		Gen[] genArray;
-		System.out.println("parsing gens");
-		File packsFolder = new File(Constants.PACKS_PATH);
+		Gen[] zippedGens = parseAllZippedGens();
+		ArrayList<Gen> allGens = new ArrayList<Gen>(Arrays.asList(parseAllDirectoryGens()));
 		
-		if(!packsFolder.isDirectory()) {
-			System.out.println("Unable to parse gens: resourcepacks/assets directory missing.\n");
-			return null;
-		}
-		
-		String[] packNames = new File(Constants.PACKS_PATH).list();
-		
-		for (int i = 0; i < packNames.length; i++) {
-			File genDir = new File(String.format(Constants.GENS_PATH, packNames[i]));
-			System.out.println(genDir.getAbsolutePath());
-			if(genDir.isDirectory()) {
-				System.out.printf("Resourcepack \"%s\" has gens!\n", packNames[i]);
-				String[] genNames = genDir.list();
-				for (int j = 0; j < genNames.length; j++) {
+		for (int i = 0; i < zippedGens.length; i++) {
+			boolean exists = false;
+			for (Gen gen : allGens) {
+				if(gen.getName().equals(zippedGens[i].getName())
+						&& gen.getResourcePack().equals(zippedGens[i].getResourcePack())) {
+					System.out.println("skipping: " + zippedGens[i]);
+					exists = true;
+					break;
 					
-					System.out.println("file:" + genNames[j]);
-					genList.add(parseGen(genNames[j], packNames[i]));
 				}
 			}
-			
+			if(!exists) {
+				System.out.println("adding: " + zippedGens[i]);
+				allGens.add(zippedGens[i]);
+			}
 		}
 		
-		genArray = new Gen[genList.size()];
-		genList.toArray(genArray);
-		return genArray;
+		return allGens.toArray(new Gen[allGens.size()]);
 	}
 	
 	/**

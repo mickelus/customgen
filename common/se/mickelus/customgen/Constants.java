@@ -6,8 +6,9 @@ public class Constants {
 	public static final String MOD_NAME = "customgen";
 	public static final String VERSION = "0.1";
 	
-	public static final String PACKS_PATH = "resourcepacks/assets";
-	public static final String GENS_PATH = PACKS_PATH + "/%s/" + MOD_NAME;
+	public static final String PACKS_PATH = "resourcepacks";
+	public static final String GENS_PATH = PACKS_PATH + "/%s/assets/" + MOD_NAME;
+	public static final String GENS_REL_PATH = "assets/" + MOD_NAME;
 	public static final String FILE_PATH = GENS_PATH + "/%s";
 	public static final String FILE_EXT = ".nbt";
 	

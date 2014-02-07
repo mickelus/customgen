@@ -41,6 +41,30 @@ public class Constants {
 	public static final String BOOKITEM_UNLOC_NAME = "CustomGenerationBook";
 	public static final String BOOKITEM_NAME = "Book of Custom Generation";	
 	
+	public static final String TUTORIAL_INTRO = 
+			  "This is a tutorial on how to create new terrain generation features "
+			+ "for the " + MOD_NAME + " mod. This is done using two components: "
+			+ "Gens and Components, Gens contains segments and a set of rules, "
+			+ "Components consists of blocks and some more rules.";
 	
+	public static final String TUTORIAL_GEN1 = 
+			  "A gen consists of:\n"
+			+ "- Name: The gen has to have a name.\n"
+			+ "- Resource pack (rp): The name of the resource pack this gen should be in.\n"
+			+ "- Level: Decides what y level this gen will generate at. \"underground\" will"
+			+ " cause the starting";
+	
+	public static final String TUTORIAL_GEN2 =
+			  "segment to generate at level 4, 20, or 36. \"surface\" will cause it to generate "
+			+ "on the surface. \"sea floor\" works similar surface but will generate at the bottom "
+			+ "of lakes, rivers and seas.\n"
+			+ "- biomes: The biome types this gen can generate in, specifying";
+	
+	public static final String TUTORIAL_GEN3 =
+			  "specifying zero biomes will cause it to generate in all biomes.\n"
+			+ "- Segments: One or more segments. There has to be at least one starting "
+			+ "segment.";
+	
+			  
 
 }

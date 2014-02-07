@@ -93,11 +93,15 @@ public class GuiScreenGenBook extends GuiScreen {
     private Segment stateviewSegment;
     private boolean stateViewSegmentIsStart;
     
+    // segment add states
 	private String stateAddViewGen = "";
 	private String stateAddViewPack = "";
 	private Segment stateAddViewSegment;
 	private boolean stateAddViewIsStart = false;
 	private int stateAddViewPage = 0;
+	
+	// tutorial states
+	private int stateHelpOffset = 0;
 	
 	private List<Drawable> blockList;
 	private Drawable blockDrawer;
@@ -108,9 +112,13 @@ public class GuiScreenGenBook extends GuiScreen {
     static final int SEGMENT_VIEW_STATE = 4;
     static final int SEGMENT_ADD_STATE = 5;
     static final int UTILITY_STATE = 6;
+    static final int HELP_STATE = 7;
     
     private static final int GEN_LIST_MAX_LENGTH = 7;
-    private static final int SEGMENT_LIST_MAX_LENGTH = 7;
+    private static final int SEGMENT_LIST_MAX_LENGTH = 6;
+    
+    private static final int SEGMENT_PAGES_COUNT = 2;
+    private static final int HELP_PAGES_COUNT = 7;
     
     private EntityPlayer player;
 
@@ -121,7 +129,7 @@ public class GuiScreenGenBook extends GuiScreen {
 		
 		drawList = new ArrayList<Drawable>();
 		
-		state = 0;
+		state = 7;
 		
 		instance = this;
 		
@@ -170,6 +178,12 @@ public class GuiScreenGenBook extends GuiScreen {
          		(height - bookImageHeight) / 2 + 57,
          		"utilities",
          		0.7f, 0.7f, 1));
+         
+         buttonList.add(new GuiButtonTab(HELP_STATE,
+          		width / 2 + 61,
+          		(height - bookImageHeight) / 2 + 78,
+          		"tutorial",
+          		1f, 0.7f, 1));
     	
     	// show the view that matches the current state
     	switch(state) {
@@ -193,8 +207,13 @@ public class GuiScreenGenBook extends GuiScreen {
 	    	case SEGMENT_ADD_STATE:
 	    		showSegmentAddView(stateAddViewGen, stateAddViewPack);
 	    		break;
+	    		
 	    	case UTILITY_STATE:
 	    		showUtilityView();
+	    		break;
+	    		
+	    	case HELP_STATE:
+	    		showHelpView(stateHelpOffset);
 	    		break;
 	    	
     	}
@@ -504,13 +523,13 @@ public class GuiScreenGenBook extends GuiScreen {
         	}
     	} else { // on the other pages we draw the segments
     		
-    		int listOffset = (offset-1) * GEN_LIST_MAX_LENGTH;
+    		int listOffset = (offset-1) * SEGMENT_LIST_MAX_LENGTH;
     		int listLength = gen.getNumSegments() + gen.getNumStartingSegments();
     		MLogger.logf("o:%d l1:%d", listOffset, listLength);
-    		if(listOffset + GEN_LIST_MAX_LENGTH > listLength) {
+    		if(listOffset + SEGMENT_LIST_MAX_LENGTH > listLength) {
     			listLength = listLength - listOffset;
     		} else {
-    			listLength = GEN_LIST_MAX_LENGTH;
+    			listLength = SEGMENT_LIST_MAX_LENGTH;
     		}
     		MLogger.logf("l2:%d", listLength);
     		
@@ -558,7 +577,7 @@ public class GuiScreenGenBook extends GuiScreen {
 			}));
 
     	// show next button
-		if(offset * GEN_LIST_MAX_LENGTH < gen.getNumSegments()+gen.getNumStartingSegments()) {
+		if(offset * SEGMENT_LIST_MAX_LENGTH < gen.getNumSegments()+gen.getNumStartingSegments()) {
 			buttonList.add(new GuiButtonChangePage(2, offset + 1,
 				(width - bookImageWidth) / 2 + 134,
 				(height - bookImageHeight) / 2 + 153,
@@ -574,7 +593,7 @@ public class GuiScreenGenBook extends GuiScreen {
 		}
 		
 		// current page number
-		drawList.add(new GuiText((offset + 1) + "/" + ((gen.getNumSegments()+gen.getNumStartingSegments()-1 + GEN_LIST_MAX_LENGTH)/GEN_LIST_MAX_LENGTH + 1), 122, 155, GuiText.CENTER_ALIGN));
+		drawList.add(new GuiText((offset + 1) + "/" + ((gen.getNumSegments()+gen.getNumStartingSegments()-1 + SEGMENT_LIST_MAX_LENGTH)/SEGMENT_LIST_MAX_LENGTH + 1), 122, 155, GuiText.CENTER_ALIGN));
     	
 		MLogger.logf("len %d", gen.getNumSegments()+gen.getNumStartingSegments());
     }
@@ -734,7 +753,7 @@ public class GuiScreenGenBook extends GuiScreen {
 			}));
     	
     	// show next button
-		if(stateAddViewPage < 3) {
+		if(stateAddViewPage < SEGMENT_PAGES_COUNT - 1) {
 			buttonList.add(new GuiButtonChangePage(1, stateAddViewPage + 1,
 				(width - bookImageWidth) / 2 + 134,
 				(height - bookImageHeight) / 2 + 153,
@@ -750,13 +769,13 @@ public class GuiScreenGenBook extends GuiScreen {
 		}
 		
 		// current page number
-		drawList.add(new GuiText((stateAddViewPage + 1) + "/3", 122, 155, GuiText.CENTER_ALIGN));
+		drawList.add(new GuiText((stateAddViewPage + 1) + "/" + SEGMENT_PAGES_COUNT, 122, 155, GuiText.CENTER_ALIGN));
     	
     }
     
     private void showUtilityView() {
     	drawList.add(new GuiText("Utility functions", 93, 17, GuiText.CENTER_ALIGN));
-    	drawList.add(new GuiText("Templates:", 38, 30));
+    	drawList.add(new GuiText("Generate templates:", 38, 30));
     	buttonList.add(new GuiButtonOutlined(0,
     			(width - bookImageWidth) / 2 + 38,
     			(height - bookImageHeight) / 2 + 40,
@@ -800,6 +819,53 @@ public class GuiScreenGenBook extends GuiScreen {
 				PacketHandler.sendTemplateGeneration(Utilities.FILL_TEMPLATE);
 			}
 		}));
+    }
+    
+    private void showHelpView(int offset) {
+    	drawList.add(new GuiText("Tutorial", 93, 17, GuiText.CENTER_ALIGN));
+    	
+    	switch(offset) {
+	    	case 0:
+	    		drawList.add(new GuiSplitText(Constants.TUTORIAL_INTRO, 36, 30, 116));
+	    		break;
+	    	case 1:
+	    		drawList.add(new GuiText("Gens", 36, 30));
+	    		drawList.add(new GuiLine(35, 38, fontRenderer.getStringWidth("Gens"), true));
+	    		
+	    		drawList.add(new GuiSplitText(Constants.TUTORIAL_GEN1, 36, 40, 116));
+	    		break;
+	    	case 2:
+	    		drawList.add(new GuiText("Gens", 36, 30));
+	    		drawList.add(new GuiLine(35, 38, fontRenderer.getStringWidth("Gens"), true));
+	    		
+	    		drawList.add(new GuiSplitText(Constants.TUTORIAL_GEN2, 36, 40, 116));
+	    		break;
+	    	case 3:
+	    		drawList.add(new GuiText("Gens", 36, 30));
+	    		drawList.add(new GuiLine(35, 38, fontRenderer.getStringWidth("Gens"), true));
+	    		
+	    		drawList.add(new GuiSplitText(Constants.TUTORIAL_GEN3, 36, 40, 116));
+	    		break;
+    	}
+    	
+    	// show next button
+		if(offset < HELP_PAGES_COUNT - 1) {
+			buttonList.add(new GuiButtonChangePage(3, offset + 1,
+				(width - bookImageWidth) / 2 + 134,
+				(height - bookImageHeight) / 2 + 153,
+				true));
+		}
+		
+		// back button
+		if(offset>0) {
+			buttonList.add(new GuiButtonChangePage(3, offset - 1,
+				(width - bookImageWidth) / 2 + 95,
+				(height - bookImageHeight) / 2 + 153,
+				false));
+		}
+		
+		// current page number
+		drawList.add(new GuiText((offset + 1) + "/" + HELP_PAGES_COUNT, 122, 155, GuiText.CENTER_ALIGN));
     }
     
     private void showSegment(Segment segment, int xOffset, int yOffset) {      
@@ -905,6 +971,9 @@ public class GuiScreenGenBook extends GuiScreen {
     				showView(state);
     			} else if(button.getPageID() == 2) {
     				stateViewGenIndex = button.getOffset();
+    				showView(state);
+    			} else if(button.getPageID() == 3) {
+    				stateHelpOffset = button.getOffset();
     				showView(state);
     			}
     			

@@ -57,4 +57,8 @@ public class GuiTexture extends Gui implements Drawable {
 	public static GuiTexture createDashedLineTexture(int left, int top) {
 		return new GuiTexture(textureRef, left, top, 112, 1, 0, 32);
 	}
+	
+	public static GuiTexture createDashedLineTexture(int left, int top, int width) {
+		return new GuiTexture(textureRef, left, top, width, 1, 0, 32);
+	}
 }

@@ -6,33 +6,32 @@ import net.minecraft.entity.player.EntityPlayer;
 
 public class GenListRequestPacket extends AbstractPacket {
 	
-	// empty constructor used on receiving end
 	public GenListRequestPacket() {
 		
 	}
 
 	@Override
 	public void encodeInto(ChannelHandlerContext ctx, ByteBuf buffer) {
-		// this request has no body
-
+		// empty packet
+		
 	}
 
 	@Override
 	public void decodeInto(ChannelHandlerContext ctx, ByteBuf buffer) {
-		// no body to decode
-
+		// empty packet
+		
 	}
 
 	@Override
 	public void handleClientSide(EntityPlayer player) {
-		// clients should not receive this
-
+		// empty packet
+		
 	}
 
-	-@Override
+	@Override
 	public void handleServerSide(EntityPlayer player) {
-		// send gen list to requesting player
-
+		// empty packet
+		
 	}
 
 }

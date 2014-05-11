@@ -3,43 +3,46 @@ package se.mickelus.customgen.blocks;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import se.mickelus.customgen.Constants;
+import se.mickelus.customgen.CustomgenCreativeTabs;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 
 public class InterfaceBlock extends Block {
 	
 	@SideOnly(Side.CLIENT)
-	protected Icon[] icons;
+	protected IIcon[] icons;
 
-	 
+	private static InterfaceBlock instance;
 
-	public InterfaceBlock(int id) {
-		super(id, Material.ground);
+	public InterfaceBlock() {
+		super(Material.ground);
 		
-		setCreativeTab(CreativeTabs.tabMisc);
+		setBlockName(Constants.INTERFACEBLOCK_UNLOC_NAME);
+		setCreativeTab(CustomgenCreativeTabs.getInstance());
 		
-		setUnlocalizedName(Constants.INTERFACEBLOCK_UNLOC_NAME);
+		instance = this;
 	}
 	
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister iconRegister) {
-		icons = new Icon[9];
+	public void registerBlockIcons(IIconRegister iconRegister) {
+		icons = new IIcon[9];
 		for (int i = 0; i < 9; i++) {
 			icons[i] = iconRegister.registerIcon(Constants.TEXTURE_LOCATION + ":" + Constants.INTERFACEBLOCK_TEXTURE + (i+1));
 		}
 		
 	}
 	
+	
 	@Override
 	@SideOnly(Side.CLIENT)
-	public Icon getIcon(int side, int meta) {
-		if(meta < 9) {
+	public IIcon getIcon(int side, int meta) {
+		if(meta < icons.length) {
 			return icons[meta];
 		}
 		return icons[0];
@@ -72,40 +75,44 @@ public class InterfaceBlock extends Block {
 	public int onBlockPlaced(World world, int x, int y, int z,
 			int side, float par6, float par7, float par8, int meta) {
 		
-		int clickedBlockID = -1;
+		Block clickedBlock = null;
 		int clickedBlockMeta = -1;
 		switch(side) {
 			case 0:
-				clickedBlockID = world.getBlockId(x, y+1, z);
+				clickedBlock = world.getBlock(x, y+1, z);
 				clickedBlockMeta = world.getBlockMetadata(x, y+1, z);
 				break;
 			case 1:
-				clickedBlockID = world.getBlockId(x, y-1, z);
+				clickedBlock = world.getBlock(x, y-1, z);
 				clickedBlockMeta = world.getBlockMetadata(x, y-1, z);
 				break;
 			case 2:
-				clickedBlockID = world.getBlockId(x, y, z+1);
+				clickedBlock = world.getBlock(x, y, z+1);
 				clickedBlockMeta = world.getBlockMetadata(x, y, z+1);
 				break;
 			case 3:
-				clickedBlockID = world.getBlockId(x, y, z-1);
+				clickedBlock = world.getBlock(x, y, z-1);
 				clickedBlockMeta = world.getBlockMetadata(x, y, z-1);
 				break;
 			case 4:
-				clickedBlockID = world.getBlockId(x+1, y, z);
+				clickedBlock = world.getBlock(x+1, y, z);
 				clickedBlockMeta = world.getBlockMetadata(x+1, y, z);
 				break;
 			case 5:
-				clickedBlockID = world.getBlockId(x-1, y, z);
+				clickedBlock = world.getBlock(x-1, y, z);
 				clickedBlockMeta = world.getBlockMetadata(x-1, y, z);
 				break;
 		}
-		if(clickedBlockID == Constants.INTERFACEBLOCK_ID) {
+		if(getInstance().equals(clickedBlock)) {
 			return clickedBlockMeta;
 		}
 		
 		return super.onBlockPlaced(world, x, y, z, side, par6, par7, par8,
 				meta);
+	}
+	
+	public static InterfaceBlock getInstance() {
+		return instance;
 	}
 
 }

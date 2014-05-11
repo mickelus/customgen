@@ -2,42 +2,34 @@ package se.mickelus.customgen.items;
 
 import se.mickelus.customgen.Constants;
 import se.mickelus.customgen.Customgen;
-import se.mickelus.customgen.MLogger;
+import se.mickelus.customgen.CustomgenCreativeTabs;
 import se.mickelus.customgen.gui.GuiScreenGenBook;
+import se.mickelus.customgen.network.GenListReponsePacket;
 import se.mickelus.customgen.network.PacketHandler;
 import se.mickelus.customgen.newstuff.Gen;
 import se.mickelus.customgen.newstuff.GenManager;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.network.FMLNetworkHandler;
-import cpw.mods.fml.common.network.PacketDispatcher;
-import cpw.mods.fml.common.network.Player;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityClientPlayerMP;
-import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.packet.Packet250CustomPayload;
 import net.minecraft.world.World;
 
 public class GenBookItem extends Item {
+	
+	private static GenBookItem instance;
 
-	public GenBookItem(int itemID) {
-    super(itemID);
+	public GenBookItem() {
+    super();
         
         maxStackSize = 1;
-        setCreativeTab(CreativeTabs.tabMisc);
-        setUnlocalizedName("PlaceholderItem");
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void registerIcons(IconRegister iconRegister) {
-        this.itemIcon = iconRegister.registerIcon(Constants.TEXTURE_LOCATION + ":" + Constants.BOOKITEM_TEXTURE);
+        setUnlocalizedName(Constants.BOOKITEM_UNLOC_NAME);
+        
+        setTextureName(Constants.TEXTURE_LOCATION + ":" + Constants.BOOKITEM_TEXTURE);
+        
+        setCreativeTab(CustomgenCreativeTabs.getInstance());
+        
+        instance = this;
     }
     
     @Override
@@ -58,20 +50,14 @@ public class GenBookItem extends Item {
     
     private void openBook(EntityPlayer player, World world) {
     	if(!world.isRemote) {
-    		
-    		// send array of gen names to client
-    		GenManager genManager = GenManager.getInstance();
-    		Gen[] gens = new Gen[genManager.getNumGens()];
-    		for (int i = 0; i < gens.length; i++) {
-				gens[i] = genManager.getGenByIndex(i);
-			}
-    		
-    		
-    		PacketHandler.sendGenList(gens, (Player)player);
-    		
+    		PacketHandler.sendGenListResponse(player);
     	} else {
     		GuiScreenGenBook.getInstance().SetPlayer(player);
     	}
+    }
+    
+    public static GenBookItem getInstance() {
+    	return instance;
     }
     
 }

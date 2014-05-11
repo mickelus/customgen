@@ -3,12 +3,19 @@ package se.mickelus.customgen;
 
 import net.minecraft.command.ICommandManager;
 import net.minecraft.command.ServerCommandManager;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
 import se.mickelus.customgen.blocks.EmptyBlock;
 import se.mickelus.customgen.blocks.InterfaceBlock;
 import se.mickelus.customgen.items.GenBookItem;
 import se.mickelus.customgen.items.PlaceholderItem;
+import se.mickelus.customgen.network.GenAddRequestPacket;
+import se.mickelus.customgen.network.GenListReponsePacket;
+import se.mickelus.customgen.network.GenListRequestPacket;
+import se.mickelus.customgen.network.GenRequestPacket;
+import se.mickelus.customgen.network.GenResponsePacket;
 import se.mickelus.customgen.network.PacketHandler;
 import se.mickelus.customgen.network.PacketPipeline;
 import se.mickelus.customgen.newstuff.FileHandler;
@@ -21,6 +28,7 @@ import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
 //import cpw.mods.fml.common.network.NetworkMod;
@@ -43,19 +51,33 @@ public class Customgen {
 	
 	@EventHandler
     public void preInit(FMLPreInitializationEvent event) {
-		packetPipeline.postInitialize();
         ConfigHandler.init(event.getSuggestedConfigurationFile());
+        
+        new CustomgenCreativeTabs();
+        setupBlocks();
+        setupItems();
                   
     }
 	
 	@EventHandler
     public void init(FMLInitializationEvent event) {  
 		packetPipeline.initialize();
-        setupBlocks();
-        setupItems();
+		packetPipeline.registerPacket(GenListRequestPacket.class);
+		packetPipeline.registerPacket(GenListReponsePacket.class);
+		
+		packetPipeline.registerPacket(GenAddRequestPacket.class);
+		
+		packetPipeline.registerPacket(GenRequestPacket.class);
+		packetPipeline.registerPacket(GenResponsePacket.class);
         
         proxy.init();
     }
+	
+	@EventHandler
+	public void postInit(FMLPostInitializationEvent event) {
+		packetPipeline.postInitialize();
+		
+	}
 	
 	
 	@EventHandler
@@ -84,23 +106,24 @@ public class Customgen {
 	}
 	
 	private void setupBlocks() {
-		System.out.println(Constants.EMPTY_ID);
-		System.out.println(Constants.INTERFACEBLOCK_ID);
-		EmptyBlock empty = new EmptyBlock(Constants.EMPTY_ID);
-		GameRegistry.registerBlock(empty, Constants.EMPTY_UNLOC_NAME);
-		LanguageRegistry.addName(empty, Constants.EMPTY_NAME);
+
 		
-		InterfaceBlock interfaceBlock = new InterfaceBlock(Constants.INTERFACEBLOCK_ID);
-		GameRegistry.registerBlock(interfaceBlock, Constants.INTERFACEBLOCK_UNLOC_NAME);
-		LanguageRegistry.addName(interfaceBlock, Constants.INTERFACEBLOCK_NAME);
+		EmptyBlock empty = new EmptyBlock();
+		GameRegistry.registerBlock(empty, empty.getUnlocalizedName().substring(5));
+		System.out.println("registered block: " + GameRegistry.findUniqueIdentifierFor(empty).toString());
+
+		InterfaceBlock interfaceBlock = new InterfaceBlock();
+		GameRegistry.registerBlock(interfaceBlock, interfaceBlock.getUnlocalizedName());
+
 	}
 	
 	private void setupItems() {
-		PlaceholderItem placeholder = new PlaceholderItem(Constants.PLACEHOLDERITEM_ID);
-		LanguageRegistry.addName(placeholder, Constants.PLACEHOLDERITEM_NAME);
+		PlaceholderItem placeholder = new PlaceholderItem();
+		GameRegistry.registerItem(placeholder, placeholder.getUnlocalizedName());
 		
-		GenBookItem bookItem = new GenBookItem(Constants.BOOKITEM_ID);
-		LanguageRegistry.addName(bookItem, Constants.BOOKITEM_NAME);
+		GenBookItem bookItem = new GenBookItem();
+		GameRegistry.registerItem(bookItem, bookItem.getUnlocalizedName());
+
 	}
 
 }

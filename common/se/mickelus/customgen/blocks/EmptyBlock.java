@@ -1,28 +1,29 @@
 package se.mickelus.customgen.blocks;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+
 import se.mickelus.customgen.Constants;
+import se.mickelus.customgen.CustomgenCreativeTabs;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraftforge.common.Configuration;
+
 
 public class EmptyBlock extends Block {
+	
+	private static EmptyBlock instance;
 
-	public EmptyBlock(int id) {
-		super(id, Material.ground);
+	public EmptyBlock() {
+		super(Material.ground);		
 		
-		setCreativeTab(CreativeTabs.tabMisc);
+		setBlockName(Constants.EMPTY_UNLOC_NAME);
+		setCreativeTab(CustomgenCreativeTabs.getInstance());
+		setBlockTextureName(Constants.MOD_ID + ":" + Constants.EMPTY_TEXTURE);
 		
-		setUnlocalizedName(Constants.EMPTY_UNLOC_NAME);
+		instance = this;
 	}
 	
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister iconRegister) {
-		blockIcon = iconRegister.registerIcon(Constants.TEXTURE_LOCATION + ":" + Constants.EMPTY_TEXTURE);
+	public static EmptyBlock getInstance() {
+		return instance;
 	}
 
 }

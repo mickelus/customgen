@@ -13,7 +13,7 @@ import net.minecraft.util.ResourceLocation;
 
 public class GuiButtonCheckBox extends GuiButton {
 	
-	private static final ResourceLocation textures = new ResourceLocation(Constants.MOD_NAME, Constants.BOOKGUI_TEXTURE);
+	private static final ResourceLocation textures = new ResourceLocation(Constants.MOD_ID, Constants.BOOKGUI_TEXTURE);
 	
 	private boolean checked;
 	

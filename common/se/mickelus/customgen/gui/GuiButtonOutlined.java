@@ -16,7 +16,7 @@ public class GuiButtonOutlined extends GuiButton {
 	
 	private GuiText guiText;
 	
-	private static final ResourceLocation textures = new ResourceLocation(Constants.MOD_NAME, Constants.BOOKGUI_TEXTURE);
+	private static final ResourceLocation textures = new ResourceLocation(Constants.MOD_ID, Constants.BOOKGUI_TEXTURE);
 	
 	private Observer onClickObserver;
 	
@@ -43,7 +43,7 @@ public class GuiButtonOutlined extends GuiButton {
 	
 	@Override
 	public void drawButton(Minecraft minecraft, int mouseX, int mouseY) {
-		if (this.drawButton) {
+		if (this.visible) {
 			
 			// draw highlight if hovering
 			if(mouseX >= xPosition && mouseX <= xPosition+width

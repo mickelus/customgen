@@ -17,7 +17,7 @@ import net.minecraft.util.ResourceLocation;
 @SideOnly(Side.CLIENT)
 public class GuiButtonTab extends GuiButton {
 	
-	private static final ResourceLocation texture = new ResourceLocation(Constants.MOD_NAME, "textures/gui/book.png");
+	private static final ResourceLocation texture = new ResourceLocation(Constants.MOD_ID, "textures/gui/book.png");
 		
 	private float red, green, blue;
 	
@@ -33,7 +33,7 @@ public class GuiButtonTab extends GuiButton {
 	
 	@Override
 	public void drawButton(Minecraft minecraft, int mouseX, int mouseY) {
-		if (this.drawButton)
+		if (this.visible)
         {
 			
 			

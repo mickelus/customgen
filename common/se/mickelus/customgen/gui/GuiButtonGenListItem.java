@@ -33,7 +33,7 @@ public class GuiButtonGenListItem extends GuiButton {
 	
 	@Override
 	public void drawButton(Minecraft minecraft, int mouseX, int mouseY) {
-		if (this.drawButton) {
+		if (this.visible) {
 			
 			// draw highlight if hovering
 			if(mouseX >= xPosition && mouseX <= xPosition+width

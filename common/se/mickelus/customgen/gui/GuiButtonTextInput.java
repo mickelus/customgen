@@ -27,7 +27,7 @@ public class GuiButtonTextInput extends GuiButton {
 	}
 	
 	public void drawButton(Minecraft minecraft, int mouseX, int mouseY) {
-		if (this.drawButton) {
+		if (this.visible) {
 			
 			drawCounter++;
 			if(drawCounter>30) {

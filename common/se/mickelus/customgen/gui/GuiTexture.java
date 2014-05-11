@@ -10,7 +10,7 @@ import net.minecraft.util.ResourceLocation;
 
 public class GuiTexture extends Gui implements Drawable {
 
-	private static final ResourceLocation textureRef = new ResourceLocation(Constants.MOD_NAME, Constants.BOOKGUI_TEXTURE);
+	private static final ResourceLocation textureRef = new ResourceLocation(Constants.MOD_ID, Constants.BOOKGUI_TEXTURE);
 	private ResourceLocation texture;
 	private int left, top;
 	private int width, height;

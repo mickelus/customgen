@@ -20,7 +20,7 @@ public class GuiButtonChangePage extends GuiButton {
     private int offset;
     int test;
     
-    private static final ResourceLocation textures = new ResourceLocation(Constants.MOD_NAME, Constants.BOOKGUI_TEXTURE);
+    private static final ResourceLocation textures = new ResourceLocation(Constants.MOD_ID, Constants.BOOKGUI_TEXTURE);
 
     public GuiButtonChangePage( int id, int offset, int left, int top, boolean shouldIncrement) {
         super(0, left, top, 14, 11, "");
@@ -37,7 +37,7 @@ public class GuiButtonChangePage extends GuiButton {
      * Draws this button to the screen.
      */
     public void drawButton(Minecraft minecraft, int mouseX, int mouseY) {
-        if (drawButton) {
+        if (this.visible) {
             int rectLeft = 0;	
             
             // show hover texture if mouse is hovering over button

@@ -27,29 +27,14 @@ import se.mickelus.customgen.proxy.Proxy;
 import se.mickelus.customgen.segment.Segment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.INetworkManager;
-import net.minecraft.network.packet.Packet250CustomPayload;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
-import cpw.mods.fml.common.network.IPacketHandler;
-import cpw.mods.fml.common.network.PacketDispatcher;
-import cpw.mods.fml.common.network.Player;
 
-public class PacketHandler implements IPacketHandler {
-	
-	public static final int GENLIST_PACKET = 0;
-	public static final int GEN_REQUEST_PACKET = 1;
-	public static final int GEN_RESPONSE_PACKET = 2;
-	public static final int GEN_ADD_PACKET = 3;
-	public static final int TEMPLATE_PACKET = 4;
-	public static final int SEGMENT_ADD_PACKET = 5;
-	public static final int GENLIST_REQUEST_PACKET = 6;
-	public static final int SEGMENT_REQUEST_PACKET = 7;
-	public static final int SEGMENT_RESPONSE_PACKET = 8;
-	public static final int SEGMENT_GENERATE_PACKET = 9;
-	public static final int GEN_GENERATE_PACKET = 10;
+
+public class PacketHandler{
 	
 	private static PacketHandler instance;
 	
@@ -60,221 +45,49 @@ public class PacketHandler implements IPacketHandler {
 	public static PacketHandler getInstance() {
 		return instance;
 	}
-
-	@Override
-	public void onPacketData(INetworkManager manager,
-			Packet250CustomPayload packet, Player player) {
-		
-		
-		
-		DataInputStream stream = new DataInputStream(new ByteArrayInputStream(packet.data));
-		
-		try {
-			byte type = stream.readByte();
-			
-			MLogger.log("got packet, type: " + type);
-
-			switch (type) {
-				case GENLIST_PACKET:
-					handleGenListPacket(stream);
-					break;
-					
-				case GEN_REQUEST_PACKET:
-					handleGenRequest(stream, player);
-					break;
-					
-				case GEN_RESPONSE_PACKET:
-					handleGenResponse(stream);
-					break;
-					
-				case GEN_ADD_PACKET:
-					handleGenAddPacket(stream, player);
-					break;
-				case TEMPLATE_PACKET:
-					handleTemplateGeneration(stream, player);
-					break;
-					
-				case SEGMENT_ADD_PACKET:
-					handleSegmentAddPacket(stream, player);
-					break;
-				
-				case GENLIST_REQUEST_PACKET:
-					handleGenListRequestPacket(player);
-					break;
-					
-				case SEGMENT_REQUEST_PACKET:
-					handleSegmentRequest(stream, player);
-					break;
-					
-				case SEGMENT_RESPONSE_PACKET:
-					handleSegmentResponse(stream, player);
-					break;
-				
-				case SEGMENT_GENERATE_PACKET:
-					handleSegmentGenerationRequest(stream, player);
-					break;
-					
-				case GEN_GENERATE_PACKET:
-					handleGenGenerationRequest(stream, player);
-					break;
-					
-				default:
-					MLogger.logf("Retreived invalid packet %d", type);
-					break;
-			}
-			
-			stream.close();
-			
-		} catch (IOException e) {
-			MLogger.log("An error occured when reading a packet.");
-			e.printStackTrace();
-		}
-		
-	}
 	
 	public static void sendGenListRequest() {
-		ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
-		DataOutputStream dataStream = new DataOutputStream(byteStream);
-
-		try {
-			dataStream.writeByte(GENLIST_REQUEST_PACKET);
-			
-			dataStream.close();
-			
-			PacketDispatcher.sendPacketToServer(PacketDispatcher.getPacket(Constants.CHANNEL, byteStream.toByteArray()));
-
-		}catch(IOException e) {
-			MLogger.log("An error occured when sending the genlist request packet.");
-			e.printStackTrace();
-		}
+		GenListRequestPacket packet = new GenListRequestPacket();
+		Customgen.packetPipeline.sendToServer(packet);
 	}
 	
-	private void handleGenListRequestPacket(Player player) {
-
+	public static void sendGenListResponse(EntityPlayer player) {
+		// send arrays of gen data to client
 		GenManager genManager = GenManager.getInstance();
-		Gen[] gens = new Gen[genManager.getNumGens()];
-		for (int i = 0; i < gens.length; i++) {
-			gens[i] = genManager.getGenByIndex(i);
+		int numGens = genManager.getNumGens();
+		String[] genNames = new String[numGens];
+		String[] packNames = new String[numGens];
+		int[] segmentCounts = new int[numGens];
+		
+		for (int i = 0; i < numGens; i++) {
+			Gen gen = genManager.getGenByIndex(i);
+			genNames[i] = gen.getName();
+			packNames[i] = gen.getResourcePack();
+			segmentCounts[i] = gen.getNumSegments() + gen.getNumStartingSegments();
 		}
 		
-		sendGenList(gens, player);
+		// creates and sends gen list packet
+		GenListReponsePacket packet = new GenListReponsePacket(genNames, packNames, segmentCounts);
+		Customgen.packetPipeline.sendTo(packet, (EntityPlayerMP)player);
 	}
 	
-	public static void sendGenList(Gen[] gens, Player player) {
-		ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
-		DataOutputStream dataStream = new DataOutputStream(byteStream);
-
-		try {
-			dataStream.writeByte(GENLIST_PACKET);
-			
-			dataStream.writeInt(gens.length);
-			
-			for (int i = 0; i < gens.length; i++) {
-				dataStream.writeChars(gens[i].getName());
-				dataStream.writeChar(0);
-				dataStream.writeChars(gens[i].getResourcePack());
-				dataStream.writeChar(0);
-				dataStream.writeInt(gens[i].getNumSegments() + gens[i].getNumStartingSegments());
-			}
-			
-			dataStream.close();
-			
-			PacketDispatcher.sendPacketToPlayer(PacketDispatcher.getPacket(Constants.CHANNEL, byteStream.toByteArray()), player);
-
-		}catch(IOException e) {
-			MLogger.log("An error occured when sending the genlist packet.");
-			e.printStackTrace();
-		}
-	}
-	
-	private void handleGenListPacket(DataInputStream stream) throws IOException {
-		
-		// read and store length of list
-		int length = stream.readInt();
-		
-		String[] genNames = new String[length];
-		String[] packNames = new String[length];
-		int[] segmentCounts = new int[length];
-
-		// for each gen
-		for (int i = 0; i < length; i++) {
-			
-			// read its name
-			genNames[i] = readString(stream);
-			
-			// read the resource pack name
-			packNames[i] = readString(stream);
-			
-			// read the amount of segments in this gen
-			segmentCounts[i] = stream.readInt();
-			
-		}
-		
-		GuiScreenGenBook.getInstance().setGenListData(genNames, packNames, segmentCounts);
-	}
 	
 	/**
 	 * Sends a gen request to the server.
 	 * @param genName
-	 * @param resourcePack
+	 * @param packName
 	 */
-	public static void sendGenRequest(String genName, String resourcePack) {
-		ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
-		DataOutputStream dataStream = new DataOutputStream(byteStream);
-
-		try {
-			// write packet type
-			dataStream.writeByte(GEN_REQUEST_PACKET);
-
-			// write gen name
-			dataStream.writeChars(genName);
-			dataStream.writeChar(0);
-			
-			// write resource pack name
-			dataStream.writeChars(resourcePack);
-			dataStream.writeChar(0);
-			
-			dataStream.close();
-			
-			// send packet
-			PacketDispatcher.sendPacketToServer(PacketDispatcher.getPacket(Constants.CHANNEL, byteStream.toByteArray()));
-			
-		}catch(IOException e) {
-			MLogger.log("An error occured when sending the gen request packet.");
-			e.printStackTrace();
-		}
-		
+	public static void sendGenRequest(String genName, String packName) {
+		GenRequestPacket packet = new GenRequestPacket(genName, packName);
+		Customgen.packetPipeline.sendToServer(packet);
 	}
 	
-	private void handleGenRequest(DataInputStream inStream, Player player) throws IOException {
-		String genName;
-		String packName;
+	public static void sendGenResponse(Gen gen, EntityPlayer player) {
 		
-		Gen gen;
-		NBTTagCompound nbt;
 		
-		ByteArrayOutputStream outByteStream = new ByteArrayOutputStream();
-		DataOutputStream outDataStream = new DataOutputStream(outByteStream);
-		
-		// read request
-		genName = readString(inStream);
-		packName = readString(inStream);
 
-		// get requested gen
-		gen = GenManager.getInstance().getGenByName(genName, packName);
-		
-		// convert gen to nbt
-		nbt = gen.writeToNBT(false);
-		
-		
-		// write packet type
-		outDataStream.writeByte(GEN_RESPONSE_PACKET);
-		
-		// write nbt to stream
-		CompressedStreamTools.write(nbt, outDataStream);
-		
-		// send response packet
-		PacketDispatcher.sendPacketToPlayer(PacketDispatcher.getPacket(Constants.CHANNEL, outByteStream.toByteArray()), player);
+		GenResponsePacket packet = new GenResponsePacket(gen);
+		Customgen.packetPipeline.sendTo(packet, (EntityPlayerMP) player);
 		
 	}
 	
@@ -294,28 +107,8 @@ public class PacketHandler implements IPacketHandler {
 	}
 	
 	public static void sendAddGen(Gen gen) {
-		ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
-		DataOutputStream dataStream = new DataOutputStream(byteStream);
-		NBTTagCompound nbt;
-
-		try {
-			// convert gen to nbt
-			nbt = gen.writeToNBT(true);
-			
-			// write packet type
-			dataStream.writeByte(GEN_ADD_PACKET);
-			
-			// write nbt to stream
-			CompressedStreamTools.write(nbt, dataStream);
-			
-			// send response packet
-			PacketDispatcher.sendPacketToServer(PacketDispatcher.getPacket(Constants.CHANNEL, byteStream.toByteArray()));
-			
-		}catch(IOException e) {
-			MLogger.log("An error occured when sending the gen request packet.");
-			e.printStackTrace();
-		}
-		
+		GenAddRequestPacket packet = new GenAddRequestPacket(gen);
+		Customgen.packetPipeline.sendToServer(packet);
 	}
 	
 	private void handleGenAddPacket(DataInputStream stream, Player player) throws IOException {

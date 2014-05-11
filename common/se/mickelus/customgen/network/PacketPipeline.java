@@ -2,6 +2,7 @@ package se.mickelus.customgen.network;
 
 import java.util.*;
 
+import se.mickelus.customgen.MLogger;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandler;
@@ -41,17 +42,17 @@ public class PacketPipeline extends MessageToMessageCodec<FMLProxyPacket, Abstra
      */
     public boolean registerPacket(Class<? extends AbstractPacket> clazz) {
         if (this.packets.size() > 256) {
-            // You should log here!!
+            MLogger.log("Attempted to register packet but packet list is full: " + clazz.toString());
             return false;
         }
 
         if (this.packets.contains(clazz)) {
-            // You should log here!!
+        	MLogger.log("Attempted to register packet but packet is already in list: " + clazz.toString());
             return false;
         }
 
         if (this.isPostInitialized) {
-            // You should log here!!
+        	MLogger.log("Attempted to register packet but after postinitialization: " + clazz.toString());
             return false;
         }
 

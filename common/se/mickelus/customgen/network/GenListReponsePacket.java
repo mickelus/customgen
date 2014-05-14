@@ -29,7 +29,6 @@ public class GenListReponsePacket extends AbstractPacket {
 
 	@Override
 	public void encodeInto(ChannelHandlerContext ctx, ByteBuf buffer) {
-		System.out.println("encode context: " + ctx.name());
 		
 		int length = genNames.length;
 		buffer.writeInt(length);
@@ -87,7 +86,6 @@ public class GenListReponsePacket extends AbstractPacket {
 
 	@Override
 	public void handleClientSide(EntityPlayer player) {
-		MLogger.log("Received genlist packet on client");
 		GuiScreenGenBook.getInstance().setGenListData(genNames, packNames, segmentCounts);
 	}
 

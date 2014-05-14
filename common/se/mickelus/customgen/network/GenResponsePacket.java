@@ -45,8 +45,6 @@ public class GenResponsePacket extends AbstractPacket {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-
 	}
 
 	@Override
@@ -66,13 +64,11 @@ public class GenResponsePacket extends AbstractPacket {
 		} catch (IOException e) {
 			
 		}
-
 	}
 
 	@Override
 	public void handleClientSide(EntityPlayer player) {
 		GuiScreenGenBook.getInstance().setGenData(gen);
-
 	}
 
 	@Override

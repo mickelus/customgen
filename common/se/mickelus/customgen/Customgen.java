@@ -12,12 +12,18 @@ import se.mickelus.customgen.blocks.InterfaceBlock;
 import se.mickelus.customgen.items.GenBookItem;
 import se.mickelus.customgen.items.PlaceholderItem;
 import se.mickelus.customgen.network.GenAddRequestPacket;
+import se.mickelus.customgen.network.GenGenerationRequestPacket;
 import se.mickelus.customgen.network.GenListReponsePacket;
 import se.mickelus.customgen.network.GenListRequestPacket;
 import se.mickelus.customgen.network.GenRequestPacket;
 import se.mickelus.customgen.network.GenResponsePacket;
-import se.mickelus.customgen.network.PacketHandler;
+import se.mickelus.customgen.network.PacketBuilder;
 import se.mickelus.customgen.network.PacketPipeline;
+import se.mickelus.customgen.network.SegmentAddRequestPacket;
+import se.mickelus.customgen.network.SegmentGenerationRequestPacket;
+import se.mickelus.customgen.network.SegmentRequestPacket;
+import se.mickelus.customgen.network.SegmentResponsePacket;
+import se.mickelus.customgen.network.TemplateGenerationRequestPacket;
 import se.mickelus.customgen.newstuff.FileHandler;
 import se.mickelus.customgen.newstuff.ForgeGenerator;
 import se.mickelus.customgen.newstuff.Gen;
@@ -62,13 +68,18 @@ public class Customgen {
 	@EventHandler
     public void init(FMLInitializationEvent event) {  
 		packetPipeline.initialize();
-		packetPipeline.registerPacket(GenListRequestPacket.class);
-		packetPipeline.registerPacket(GenListReponsePacket.class);
 		
 		packetPipeline.registerPacket(GenAddRequestPacket.class);
-		
+		packetPipeline.registerPacket(GenGenerationRequestPacket.class);
+		packetPipeline.registerPacket(GenListReponsePacket.class);
+		packetPipeline.registerPacket(GenListRequestPacket.class);
 		packetPipeline.registerPacket(GenRequestPacket.class);
 		packetPipeline.registerPacket(GenResponsePacket.class);
+		packetPipeline.registerPacket(SegmentAddRequestPacket.class);
+		packetPipeline.registerPacket(SegmentGenerationRequestPacket.class);
+		packetPipeline.registerPacket(SegmentRequestPacket.class);
+		packetPipeline.registerPacket(SegmentResponsePacket.class);
+		packetPipeline.registerPacket(TemplateGenerationRequestPacket.class);
         
         proxy.init();
     }

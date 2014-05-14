@@ -1,18 +1,14 @@
 package se.mickelus.customgen.newstuff;
 
 import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.List;
 import java.util.Random;
 
-import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraftforge.common.BiomeDictionary.Type;
-
 import se.mickelus.customgen.MLogger;
-import se.mickelus.customgen.gui.GuiText;
 import se.mickelus.customgen.segment.Segment;
 
 public class Gen {
@@ -216,40 +212,40 @@ public class Gen {
 	 */
 	public void addSegment(Segment segment, boolean isStart) {
 		boolean found = false;
+		
+		// iterate over starting segments
+		for (int i = 0; i < startingSegments.size(); i++) {
+			if(startingSegments.get(i).getName().equals(segment.getName())) {
+				
+				if(isStart) { // replace segment if isStart and it exists
+					startingSegments.set(i, segment);
+					return;
+				} else { // remove segment if !isStart and it exists
+					startingSegments.remove(i);
+					found = true;
+					break;
+				}
+				
+			}
+		}
 
-			// iterate over starting segments
-			for (int i = 0; i < startingSegments.size(); i++) {
-				if(startingSegments.get(i).getName().equals(segment.getName())) {
+		// iterate over normal segments if we have not already found a match
+		if(!found) {
+			for (int i = 0; i < segmentList.size(); i++) {
+				if(segmentList.get(i).getName().equals(segment.getName())) {
 					
-					if(isStart) { // replace segment if isStart and it exists
-						startingSegments.set(i, segment);
+					if(!isStart) { // replace segment if !isStart and it exists
+						segmentList.set(i, segment);
 						return;
-					} else { // remove segment if !isStart and it exists
-						startingSegments.remove(i);
-						found = true;
+					} else { // remove segment if isStart and it exists
+						segmentList.remove(i);
 						break;
 					}
-					
 				}
 			}
-
-			// iterate over normal segments if we have not already found a match
-			if(!found) {
-				for (int i = 0; i < segmentList.size(); i++) {
-					if(segmentList.get(i).getName().equals(segment.getName())) {
-						
-						if(!isStart) { // replace segment if !isStart and it exists
-							segmentList.set(i, segment);
-							return;
-						} else { // remove segment if isStart and it exists
-							segmentList.remove(i);
-							break;
-						}
-					}
-				}
-				
-				
-			}
+			
+			
+		}
 		
 		if(isStart) {
 			startingSegments.add(segment);
@@ -381,17 +377,19 @@ public class Gen {
 		nbt.setInteger(LEVEL_KEY, genLevel);
 		nbt.setBoolean(VILLAGE_KEY, isVillageGen());
 		
+		// biomes
 		for (Type type : biomes) {
-			biomeTagList.appendTag(new NBTTagString(BIOME_KEY, type.toString()));
+			biomeTagList.appendTag(new NBTTagString(type.toString()));
 		}
 		nbt.setTag(BIOME_KEY, biomeTagList);
 		
-		
+		// regular segments
 		for (Segment segment : segmentList) {			
 			segmentTagList.appendTag(segment.writeToNBT(writeBlocks));
 		}
 		nbt.setTag(SEGMENT_KEY, segmentTagList);
 		
+		// starting segments
 		for (Segment segment : startingSegments) {			
 			segmentStartTagList.appendTag(segment.writeToNBT(writeBlocks));
 		}
@@ -408,27 +406,30 @@ public class Gen {
 	 */
 	public static Gen readFromNBT(NBTTagCompound nbt) {
 		Gen gen = new Gen(nbt.getString(NAME_KEY), nbt.getString(RESOURCEPACK_KEY));
-		NBTTagList biomeTagList = nbt.getTagList(BIOME_KEY);
-		NBTTagList segmentTagList = nbt.getTagList(SEGMENT_KEY);
-		NBTTagList segmentStartTagList = nbt.getTagList(SEGMENT_START_KEY);
+		
+		// 10 is the tagid for compound tags, 8 is for string tags
+		NBTTagList biomeTagList = nbt.getTagList(BIOME_KEY, 8);
+		NBTTagList segmentTagList = nbt.getTagList(SEGMENT_KEY, 10);
+		NBTTagList segmentStartTagList = nbt.getTagList(SEGMENT_START_KEY, 10);
 		String[] biomes = new String[biomeTagList.tagCount()];
 		
 		gen.setLevel(nbt.getInteger(LEVEL_KEY));
 		gen.setVillageGen(nbt.getBoolean(VILLAGE_KEY));
 		
+		// biomes
 		for (int i = 0; i < biomeTagList.tagCount(); i++) {
-			
-			biomes[i] = biomeTagList.tagAt(i).toString();
+			biomes[i] = biomeTagList.getStringTagAt(i);
 		}
 		gen.setBiomes(biomes);
 		
-		
+		// regular segments
 		for (int i = 0; i < segmentTagList.tagCount(); i++) {
-			gen.addSegment(Segment.readFromNBT((NBTTagCompound) segmentTagList.tagAt(i)), false);
+			gen.addSegment(Segment.readFromNBT((NBTTagCompound) segmentTagList.getCompoundTagAt(i)), false);
 		}
 		
+		// starting segments
 		for (int i = 0; i < segmentStartTagList.tagCount(); i++) {
-			gen.addSegment(Segment.readFromNBT((NBTTagCompound) segmentStartTagList.tagAt(i)), true);
+			gen.addSegment(Segment.readFromNBT((NBTTagCompound) segmentStartTagList.getCompoundTagAt(i)), true);
 		}
 		
 		

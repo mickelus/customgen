@@ -5,7 +5,7 @@ import se.mickelus.customgen.Customgen;
 import se.mickelus.customgen.CustomgenCreativeTabs;
 import se.mickelus.customgen.gui.GuiScreenGenBook;
 import se.mickelus.customgen.network.GenListReponsePacket;
-import se.mickelus.customgen.network.PacketHandler;
+import se.mickelus.customgen.network.PacketBuilder;
 import se.mickelus.customgen.newstuff.Gen;
 import se.mickelus.customgen.newstuff.GenManager;
 import net.minecraft.creativetab.CreativeTabs;
@@ -50,7 +50,7 @@ public class GenBookItem extends Item {
     
     private void openBook(EntityPlayer player, World world) {
     	if(!world.isRemote) {
-    		PacketHandler.sendGenListResponse(player);
+    		PacketBuilder.sendGenListResponse(player);
     	} else {
     		GuiScreenGenBook.getInstance().SetPlayer(player);
     	}

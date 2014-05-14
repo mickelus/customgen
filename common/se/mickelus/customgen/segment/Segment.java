@@ -1,12 +1,25 @@
 package se.mickelus.customgen.segment;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+import com.sun.xml.internal.messaging.saaj.util.ByteOutputStream;
+import com.sun.xml.internal.ws.encoding.soap.SerializationException;
+
+import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.common.registry.GameRegistry.UniqueIdentifier;
 import se.mickelus.customgen.Constants;
 import se.mickelus.customgen.MLogger;
 import se.mickelus.customgen.newstuff.Gen;
 import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagIntArray;
 import net.minecraft.nbt.NBTTagList;
@@ -20,14 +33,17 @@ public class Segment {
 	public static final String NAME_KEY = "name";
 	public static final String BLOCKS_KEY = "blocks";
 	public static final String DATA_KEY = "data";
+	public static final String MAP_KEY = "map";
 	public static final String TILE_ENTITY_KEY = "tileentity";
 	public static final String ENTITY_KEY = "entity";
 	public static final String INTERFACE_KEY = "interfaces";
 	
 	private String name;
 	
+	private BiMap<Integer, Block> blockMap;
+	
 	private int[] blocks;
-	private int[] data;
+	private byte[] data;
 	
 	private ArrayList<NBTTagCompound> tileEntityNBTList;
 	private ArrayList<NBTTagCompound> entityNBTList;
@@ -36,8 +52,12 @@ public class Segment {
 	
 	public Segment(String name) {
 		
+		blockMap = HashBiMap.create();
+		
+		blockMap.put(0, Blocks.air);
+		
 		blocks = new int[4096];
-		data = new int[4096];
+		data = new byte[4096];
 		
 		tileEntityNBTList = new ArrayList<NBTTagCompound>();
 		entityNBTList = new ArrayList<NBTTagCompound>();
@@ -48,14 +68,26 @@ public class Segment {
 				
 	}
 	
-	public void setBlock(int x, int y, int z, int blockID, int blockData) {
-		if(blockID == Constants.EMPTY_ID) {
-			blockID = -1;
-		} else if (blockID == Constants.INTERFACEBLOCK_ID) {
-			blockID = -2;
+	public void setBlock(int x, int y, int z, Block block, int blockData) {
+		
+		int blockID;
+		
+		// check if block exists in segment
+		if(!blockMap.containsValue(block)) {
+			
+			// index for this block will be the size of the array
+			blockID = blockMap.size();
+			// add block if it does not exist
+			blockMap.put(blockID, block);
+		} else {
+			blockID = blockMap.inverse().get(block);
 		}
+		
+		
+		System.out.println(getName() + ":" + blockID);
+		
 		blocks[x+z*16+y*256] = blockID;
-		data[x+z*16+y*256] = blockData;
+		data[x+z*16+y*256] = (byte)blockData;
 	}
 	
 	/**
@@ -87,11 +119,24 @@ public class Segment {
 		interfaces[side] = value;
 	}
 
-	
-	public int getBlockID(int x, int y, int z) {
-		return blocks[x+z*16+y*256];
+	/**
+	 * Returns the block at the given position in this segment.
+	 * @param x The x coordinate, a value between 0 and 15 (inclusive)
+	 * @param y The y coordinate, a value between 0 and 15 (inclusive)
+	 * @param z The z coordinate, a value between 0 and 15 (inclusive)
+	 * @return 
+	 */
+	public Block getBlock(int x, int y, int z) {
+		return blockMap.get(blocks[x+z*16+y*256]);
 	}
 	
+	/**
+	 * Returns the metadata for the block at the given position in this segment.
+	 * @param x The x coordinate, a value between 0 and 15 (inclusive)
+	 * @param y The y coordinate, a value between 0 and 15 (inclusive)
+	 * @param z The z coordinate, a value between 0 and 15 (inclusive)
+	 * @return 
+	 */
 	public int getBlockData(int x, int y, int z) {
 		return data[x+z*16+y*256];
 	}
@@ -131,25 +176,54 @@ public class Segment {
 		// write interfaces
 		nbt.setIntArray(INTERFACE_KEY, interfaces);
 
-		// write block IDs and meta
+		// write blocks and meta
 		if(writeBlocks) {
+			
+			// store block "ID"s
 			nbt.setIntArray(BLOCKS_KEY, blocks);
-			nbt.setIntArray(DATA_KEY, data);
+			nbt.setByteArray(DATA_KEY, data);
+			
+			// convert id to block mapping to a storable format
+			Map<Integer, String> nameMap = new HashMap<Integer, String>(blockMap.size());
+			for (int key : blockMap.keySet()) {
+				Block block = blockMap.get(key);
+				UniqueIdentifier identifier = GameRegistry.findUniqueIdentifierFor(block);
+				nameMap.put(key, identifier.toString());
+			}
+			
+			for (int key : nameMap.keySet()) {
+				System.out.println(nameMap.get(key));
+			}
+			
+			// serialize to byte array
+			try {
+				ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+				ObjectOutputStream objectStream = new ObjectOutputStream(byteStream);
+				objectStream.writeObject(nameMap);
+				objectStream.close();
+				
+				nbt.setByteArray(MAP_KEY, byteStream.toByteArray());
+				
+			} catch (IOException e) {
+				MLogger.log("Encountered an exception when writing block map to nbt");
+			}
+			
+			
 		}
 		
 		// write tile entities
-		for (NBTTagCompound nbtTagCompound : tileEntityNBTList) {
+		/*for (NBTTagCompound nbtTagCompound : tileEntityNBTList) {
 			tileEntityTagList.appendTag(nbtTagCompound);
 			if(nbtTagCompound.hasKey("Items")) {
-				NBTTagList list = nbtTagCompound.getTagList("Items");
+				NBTTagList list = nbtTagCompound.getTagList("Items", 10);
 				for (int i = 0; i < list.tagCount(); i++) {
-					NBTTagCompound item = (NBTTagCompound)list.tagAt(i);
+					NBTTagCompound item = (NBTTagCompound)list.getCompoundTagAt(i);
 					if(item.getShort("id") == Constants.PLACEHOLDERITEM_ID) {
 						item.setShort("id", (short)-1);
 					}
 				}
 			}
-		}
+		}*/
 		nbt.setTag(TILE_ENTITY_KEY, tileEntityTagList);
 		
 		// write entities
@@ -164,15 +238,16 @@ public class Segment {
 	public static Segment readFromNBT(NBTTagCompound nbt) {
 		Segment segment = new Segment(nbt.getString("name"));
 		
-		NBTTagList tileEntityList = nbt.getTagList(TILE_ENTITY_KEY);
-		NBTTagList entityList = nbt.getTagList(ENTITY_KEY);
+		NBTTagList tileEntityList = nbt.getTagList(TILE_ENTITY_KEY, 10);
+		NBTTagList entityList = nbt.getTagList(ENTITY_KEY, 10);
 		NBTTagCompound[] tileEntityArray = new NBTTagCompound[tileEntityList.tagCount()];
 		NBTTagCompound[] entityArray = new NBTTagCompound[entityList.tagCount()];
 		
+		
 		int[] interfaces = nbt.getIntArray(INTERFACE_KEY);
 		
-		int[] blocks = nbt.getIntArray(BLOCKS_KEY);
-		int[] data = nbt.getIntArray(DATA_KEY);
+		int[] blockIDs = nbt.getIntArray(BLOCKS_KEY);
+		byte[] data = nbt.getByteArray(DATA_KEY);
 		
 		if(interfaces.length == 6) {
 			for (int i = 0; i < interfaces.length; i++) {
@@ -182,18 +257,19 @@ public class Segment {
 			MLogger.logf("Failed to read interfaces for %s, %d", segment.getName(), interfaces.length);
 		}
 		
-		if(blocks.length == 4096 && data.length == 4096) {
+		if(blockIDs.length == 4096 && data.length == 4096) {
 			//MLogger.log("reading blocks and data");
 			for (int x = 0; x < 16; x++) {
 				for (int y = 0; y < 16; y++) {
 					for (int z = 0; z < 16; z++) {
-						segment.setBlock(x, y, z, blocks[x+z*16+y*256], data[x+z*16+y*256]);
+
+						//segment.setBlock(x, y, z, blockIDs[x+z*16+y*256], data[x+z*16+y*256]);
 					}
 				}
 			}
 		}
 		
-		for (int i = 0; i < tileEntityList.tagCount(); i++) {
+		/*for (int i = 0; i < tileEntityList.tagCount(); i++) {
 			tileEntityArray[i] = (NBTTagCompound)tileEntityList.tagAt(i);
 			if(tileEntityArray[i].hasKey("Items")) {
 				NBTTagList list = tileEntityArray[i].getTagList("Items");
@@ -209,7 +285,7 @@ public class Segment {
 		
 		for (int i = 0; i < entityList.tagCount(); i++) {
 			entityArray[i] = (NBTTagCompound)entityList.tagAt(i);
-		}
+		}*/
 		
 		/* else {
 			MLogger.logf("Failed to read blocks and data from segment %s, invalid lengths %d %d",
@@ -234,9 +310,9 @@ public class Segment {
 		for (int x = 0; x < 16; x++) {
 			for (int y = 0; y < 16; y++) {
 				for (int z = 0; z < 16; z++) {
-					setBlock(x, y, z,
+					/*setBlock(x, y, z,
 							world.getBlockId(xOffset+x, yOffset+y, zOffset+z),
-							world.getBlockMetadata(xOffset+x, yOffset+y, zOffset+z));
+							world.getBlockMetadata(xOffset+x, yOffset+y, zOffset+z));*/
 				}
 			}
 		}
@@ -245,7 +321,7 @@ public class Segment {
 		for (int i = 0; i < 16; i++) {
 			for (int j = 0; j < 16; j++) {
 				// top
-				if(world.getBlockId(xOffset+i, yOffset+15, zOffset+j) == Constants.INTERFACEBLOCK_ID) {
+				/*if(world.getBlockId(xOffset+i, yOffset+15, zOffset+j) == Constants.INTERFACEBLOCK_ID) {
 					interfaces[0] += 1 + world.getBlockMetadata(xOffset+i, yOffset+15, zOffset+j);
 				}
 				// bottom
@@ -269,7 +345,7 @@ public class Segment {
 				// west
 				if(world.getBlockId(xOffset, yOffset+i, zOffset+j) == Constants.INTERFACEBLOCK_ID) {
 					interfaces[5] += 1 + world.getBlockMetadata(xOffset, yOffset+i, zOffset+j);
-				}
+				}*/
 			}
 		}
 		
@@ -281,14 +357,14 @@ public class Segment {
 		for (int x = 0; x < 16; x++) {
 			for (int y = 0; y < 16; y++) {
 				for (int z = 0; z < 16; z++) {
-					if(world.blockHasTileEntity(xOffset+x, yOffset+y, zOffset+z)) {
+					/*if(world.blockHasTileEntity(xOffset+x, yOffset+y, zOffset+z)) {
 						NBTTagCompound tagCompound = new NBTTagCompound();
 				        world.getBlockTileEntity(xOffset+x, yOffset+y, zOffset+z).writeToNBT(tagCompound);
 				        tagCompound.setInteger("x", x);
 				        tagCompound.setInteger("y", y);
 				        tagCompound.setInteger("z", z);
 				        tileEntityNBTList.add(tagCompound);
-					}
+					}*/
 					
 				}
 			}

@@ -14,7 +14,7 @@ import org.lwjgl.opengl.GL12;
 
 import se.mickelus.customgen.Constants;
 import se.mickelus.customgen.MLogger;
-import se.mickelus.customgen.network.PacketHandler;
+import se.mickelus.customgen.network.PacketBuilder;
 import se.mickelus.customgen.newstuff.Gen;
 import se.mickelus.customgen.newstuff.Utilities;
 import se.mickelus.customgen.segment.Segment;
@@ -36,8 +36,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
-import net.minecraft.network.packet.Packet;
-import net.minecraft.network.packet.Packet250CustomPayload;
 import net.minecraft.util.ChatAllowedCharacters;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ResourceLocation;
@@ -50,7 +48,7 @@ public class GuiScreenGenBook extends GuiScreen {
 	private static GuiScreenGenBook instance;
 	
 	private static final ResourceLocation vanillaBookTexture = new ResourceLocation("textures/gui/book.png");
-	private static final ResourceLocation texture = new ResourceLocation(Constants.MOD_NAME, Constants.BOOKGUI_TEXTURE);
+	private static final ResourceLocation texture = new ResourceLocation(Constants.MOD_ID, Constants.BOOKGUI_TEXTURE);
 	
 
     /** Update ticks since the gui was opened */
@@ -431,7 +429,7 @@ public class GuiScreenGenBook extends GuiScreen {
 					if(!stateAddGen.getName().equals("") && !stateAddGen.getResourcePack().equals("")
 							&& stateAddGen.getLevel() != -1) {
 						
-						PacketHandler.sendAddGen(stateAddGen);
+						PacketBuilder.sendAddGen(stateAddGen);
 						stateAddGen = new Gen("", "");
 						state = GEN_LIST_STATE;
 
@@ -572,7 +570,7 @@ public class GuiScreenGenBook extends GuiScreen {
 				@Override
 				public void update(Observable o, Object arg) {
 					MLogger.logf("generate: %s", gen.getName());
-					PacketHandler.getInstance().sendGenGenerationRequest(gen.getName(), gen.getResourcePack());
+					PacketBuilder.getInstance().sendGenGenerationRequest(gen.getName(), gen.getResourcePack());
 				}
 			}));
 
@@ -620,7 +618,7 @@ public class GuiScreenGenBook extends GuiScreen {
     				@Override
     				public void update(Observable o, Object arg) {
     					MLogger.logf("generate segment: %s", segment.getName());
-    					PacketHandler.sendSegmentGenerationRequest(segment.getName(), 
+    					PacketBuilder.sendSegmentGenerationRequest(segment.getName(), 
     							stateViewGen.getName(), stateViewGen.getResourcePack(), false);
     				}
     			}));
@@ -633,7 +631,7 @@ public class GuiScreenGenBook extends GuiScreen {
     				@Override
     				public void update(Observable o, Object arg) {
     					MLogger.logf("load segment: %s", segment.getName());
-    					PacketHandler.sendSegmentGenerationRequest(segment.getName(), 
+    					PacketBuilder.sendSegmentGenerationRequest(segment.getName(), 
     							stateViewGen.getName(), stateViewGen.getResourcePack(), true);
     				}
     			}));
@@ -745,7 +743,10 @@ public class GuiScreenGenBook extends GuiScreen {
 				public void update(Observable o, Object arg) {
 					if(!stateAddViewSegment.getName().equals("") && !stateAddViewGen.equals("")
 							&& !stateAddViewPack.equals("")) {
-						PacketHandler.sendAddSegment(stateAddViewSegment.getName(),
+						
+						state = SEGMENT_VIEW_STATE;
+						
+						PacketBuilder.sendAddSegment(stateAddViewSegment.getName(),
 							stateAddViewGen, stateAddViewPack, stateAddViewIsStart);
 					}
 					
@@ -783,7 +784,7 @@ public class GuiScreenGenBook extends GuiScreen {
 			
 			@Override
 			public void update(Observable arg0, Object arg1) {
-				PacketHandler.sendTemplateGeneration(Utilities.CORNER_TEMPLATE);
+				PacketBuilder.sendTemplateGeneration(Utilities.CORNER_TEMPLATE);
 			}
 		}));
     	
@@ -794,7 +795,7 @@ public class GuiScreenGenBook extends GuiScreen {
 			
 			@Override
 			public void update(Observable arg0, Object arg1) {
-				PacketHandler.sendTemplateGeneration(Utilities.EDGE_TEMPLATE);
+				PacketBuilder.sendTemplateGeneration(Utilities.EDGE_TEMPLATE);
 			}
 		}));
     	
@@ -805,7 +806,7 @@ public class GuiScreenGenBook extends GuiScreen {
 			
 			@Override
 			public void update(Observable arg0, Object arg1) {
-				PacketHandler.sendTemplateGeneration(Utilities.FACE_TEMPLATE);
+				PacketBuilder.sendTemplateGeneration(Utilities.FACE_TEMPLATE);
 			}
 		}));
     	
@@ -816,7 +817,7 @@ public class GuiScreenGenBook extends GuiScreen {
 			
 			@Override
 			public void update(Observable arg0, Object arg1) {
-				PacketHandler.sendTemplateGeneration(Utilities.FILL_TEMPLATE);
+				PacketBuilder.sendTemplateGeneration(Utilities.FILL_TEMPLATE);
 			}
 		}));
     }
@@ -830,19 +831,19 @@ public class GuiScreenGenBook extends GuiScreen {
 	    		break;
 	    	case 1:
 	    		drawList.add(new GuiText("Gens", 36, 30));
-	    		drawList.add(new GuiLine(35, 38, fontRenderer.getStringWidth("Gens"), true));
+	    		drawList.add(new GuiLine(35, 38, fontRendererObj.getStringWidth("Gens"), true));
 	    		
 	    		drawList.add(new GuiSplitText(Constants.TUTORIAL_GEN1, 36, 40, 116));
 	    		break;
 	    	case 2:
 	    		drawList.add(new GuiText("Gens", 36, 30));
-	    		drawList.add(new GuiLine(35, 38, fontRenderer.getStringWidth("Gens"), true));
+	    		drawList.add(new GuiLine(35, 38, fontRendererObj.getStringWidth("Gens"), true));
 	    		
 	    		drawList.add(new GuiSplitText(Constants.TUTORIAL_GEN2, 36, 40, 116));
 	    		break;
 	    	case 3:
 	    		drawList.add(new GuiText("Gens", 36, 30));
-	    		drawList.add(new GuiLine(35, 38, fontRenderer.getStringWidth("Gens"), true));
+	    		drawList.add(new GuiLine(35, 38, fontRendererObj.getStringWidth("Gens"), true));
 	    		
 	    		drawList.add(new GuiSplitText(Constants.TUTORIAL_GEN3, 36, 40, 116));
 	    		break;
@@ -890,7 +891,8 @@ public class GuiScreenGenBook extends GuiScreen {
 		};
     	blockList.clear();
     	//drawList.add(new GuiBlockModel(29, 80f, 0, 102, 1, 0));
-    	for (int x = 0; x < 16; x++) {
+    	// TODO REMOVED FOR UPDATE
+    	/*for (int x = 0; x < 16; x++) {
 			for (int y = 0; y < 16; y++) {
 				for (int z = 0; z < 16; z++) {
 					int blockID = segment.getBlockID(x, y, z);
@@ -909,7 +911,7 @@ public class GuiScreenGenBook extends GuiScreen {
 					
 				}
 			}
-		}
+		}*/
     	
     	drawList.add(blockDrawer);
     	/*for (int i = 0; i < 16; i++) {
@@ -924,7 +926,7 @@ public class GuiScreenGenBook extends GuiScreen {
     @Override
     protected void actionPerformed(GuiButton pressedButton) {
     	if(pressedButton.id == GEN_LIST_STATE) {
-    		PacketHandler.sendGenListRequest();
+    		PacketBuilder.sendGenListRequest();
     	}
     	if(pressedButton.id > 0) {
     		if(state != pressedButton.id) {
@@ -936,7 +938,7 @@ public class GuiScreenGenBook extends GuiScreen {
     			int index = ((GuiButtonGenListItem) pressedButton).getIndex();
 
     			// request gen data
-    			PacketHandler.sendGenRequest(genNames[index], packNames[index]);
+    			PacketBuilder.sendGenRequest(genNames[index], packNames[index]);
     			
     			state = GEN_VIEW_STATE;
     				
@@ -959,7 +961,7 @@ public class GuiScreenGenBook extends GuiScreen {
     			state = SEGMENT_VIEW_STATE;
     			
     			// send segment request
-    			PacketHandler.sendSegmentRequest(segmentName, genName, packName);
+    			PacketBuilder.sendSegmentRequest(segmentName, genName, packName);
     			
     		} else if (pressedButton instanceof GuiButtonChangePage) {
     			GuiButtonChangePage button = (GuiButtonChangePage) pressedButton;

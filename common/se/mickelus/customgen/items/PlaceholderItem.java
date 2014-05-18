@@ -7,9 +7,13 @@ import net.minecraft.item.Item;
 
 
 public class PlaceholderItem extends Item {
+	
+	private static PlaceholderItem instance; 
 
 	public PlaceholderItem() {
-    super();
+		super();
+		
+		instance = this;
         
         maxStackSize = 64;
         setUnlocalizedName(Constants.PLACEHOLDERITEM_UNLOC_NAME);
@@ -18,5 +22,9 @@ public class PlaceholderItem extends Item {
         
         setCreativeTab(CustomgenCreativeTabs.getInstance());
     }
+	
+	public static PlaceholderItem getInstance() {
+		return instance;
+	}
 
 }

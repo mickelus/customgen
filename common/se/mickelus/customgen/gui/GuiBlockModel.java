@@ -17,7 +17,6 @@ import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.Icon;
 import net.minecraft.util.ResourceLocation;
 
 public class GuiBlockModel extends Gui implements Drawable {
@@ -72,7 +71,7 @@ public class GuiBlockModel extends Gui implements Drawable {
         float blue = 1;
         float red = 1;
 
-        switch(itemID) {
+        /*switch(itemID) {
         	case -1:
         		itemID = Constants.EMPTY_ID;
         		break;
@@ -103,7 +102,7 @@ public class GuiBlockModel extends Gui implements Drawable {
             
             itemRenderBlocks.renderBlockAsItem(block, metaData, 1f);
             GL11.glPopMatrix();
-        }
+        }*/
 
     }
 }

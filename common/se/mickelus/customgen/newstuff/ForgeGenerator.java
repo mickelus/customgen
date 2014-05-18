@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
+import net.minecraft.block.Block;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -20,6 +21,9 @@ import cpw.mods.fml.common.IWorldGenerator;
 import cpw.mods.fml.common.registry.GameRegistry;
 import se.mickelus.customgen.Constants;
 import se.mickelus.customgen.MLogger;
+import se.mickelus.customgen.blocks.EmptyBlock;
+import se.mickelus.customgen.blocks.InterfaceBlock;
+import se.mickelus.customgen.items.PlaceholderItem;
 import se.mickelus.customgen.segment.Segment;
 import se.mickelus.customgen.segment.SegmentPlaceholder;
 
@@ -30,7 +34,7 @@ public class ForgeGenerator implements IWorldGenerator  {
 	
 	public ForgeGenerator() {
 
-		GameRegistry.registerWorldGenerator(this);
+		GameRegistry.registerWorldGenerator(this, Constants.GENERATION_WEIGHT);
 		
 		instance = this;
 	}
@@ -54,28 +58,14 @@ public class ForgeGenerator implements IWorldGenerator  {
 		for(int sy = 0; sy < 16; sy++) {
 			for(int sz = 0; sz < 16; sz++) {
 				for(int sx = 0; sx < 16; sx++) {
-					int blockID = segment.getBlockID(sx, sy, sz);
-					
-					if(generatePlaceholders) {
-						switch(blockID) {
-							case -1:
-								blockID = Constants.EMPTY_ID;
-								break;
-							case -2:
-								blockID = Constants.INTERFACEBLOCK_ID;
-								break;
-									
-							case -3:
-								
-								break;
-						}
+					Block block = segment.getBlock(sx, sy, sz);
+					System.out.println(!generatePlaceholders + ", " + block.equals(EmptyBlock.getInstance()) + ", " + block.equals(InterfaceBlock.getInstance()));
+					if(!generatePlaceholders && (block.equals(EmptyBlock.getInstance()) || block.equals(InterfaceBlock.getInstance()) )) {
+						System.out.println("generated block");
+						continue;
 					}
 					
-					if(blockID >= 0) {
-						world.setBlock(x+sx, y+sy, z+sz, blockID, segment.getBlockData(sx, sy, sz), 2);
-					}
-						
-						
+					world.setBlock(x+sx, y+sy, z+sz, block, segment.getBlockData(sx, sy, sz), 2);
 				}
 			}
 		}
@@ -92,7 +82,7 @@ public class ForgeGenerator implements IWorldGenerator  {
 					
 					for (int j = 0; j < inventory.getSizeInventory(); j++) {
 						if(!generatePlaceholders && inventory.getStackInSlot(j) != null
-								&& inventory.getStackInSlot(j).itemID == Constants.PLACEHOLDERITEM_ID + 256) {
+								&& inventory.getStackInSlot(j).getItem().equals(PlaceholderItem.getInstance())) {
 							inventory.setInventorySlotContents(j, 
 									ChestGenHooks.getOneItem(ChestGenHooks.DUNGEON_CHEST, random));
 						}
@@ -254,7 +244,7 @@ public class ForgeGenerator implements IWorldGenerator  {
 				
 			case Gen.SEA_FLOOR_LEVEL:
 				for (int i = 255; i > 0; i--) {
-					if(world.getBlockMaterial(chunkX*16, chunkZ*16, startY).isSolid()) {
+					if(world.getBlock(chunkX*16, chunkZ*16, startY).getMaterial().isSolid()) {
 						startY = i+1;
 						break;
 					}

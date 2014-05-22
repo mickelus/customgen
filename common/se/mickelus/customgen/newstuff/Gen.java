@@ -136,6 +136,12 @@ public class Gen {
 	 * @return True if this gen can generate in the given type of biome, otherwise false.
 	 */
 	public boolean generatesInBiome(Type biome) {
+		
+		// no biomes equals all biomes
+		if(biomes.size() == 0) {
+			return true;
+		}
+		
 		return biomes.contains(biome);
 	}
 	

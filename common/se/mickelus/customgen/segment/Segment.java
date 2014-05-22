@@ -250,8 +250,6 @@ public class Segment {
 			for (int i = 0; i < interfaces.length; i++) {
 				segment.setInterface(i, interfaces[i]);
 			}
-		} else {
-			MLogger.logf("Failed to read interfaces for %s, %d", segment.getName(), interfaces.length);
 		}
 		
 		// set block "ID"s and data
@@ -274,7 +272,7 @@ public class Segment {
 					UniqueIdentifier identifier = new UniqueIdentifier(nameMap.get(key));
 					Block block = GameRegistry.findBlock(identifier.modId, identifier.name);
 					if(block == null) {
-						MLogger.logf("Could not find block for identifier %s, replacing with air.", identifier.toString());
+						//MLogger.logf("Could not find block for identifier %s, replacing with air.", identifier.toString());
 						block = Blocks.air;
 					}
 					

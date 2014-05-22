@@ -26,6 +26,7 @@ import se.mickelus.customgen.blocks.InterfaceBlock;
 import se.mickelus.customgen.items.PlaceholderItem;
 import se.mickelus.customgen.segment.Segment;
 import se.mickelus.customgen.segment.SegmentPlaceholder;
+import sun.rmi.log.ReliableLog.LogFile;
 
 public class ForgeGenerator implements IWorldGenerator  {
 	
@@ -59,12 +60,10 @@ public class ForgeGenerator implements IWorldGenerator  {
 			for(int sz = 0; sz < 16; sz++) {
 				for(int sx = 0; sx < 16; sx++) {
 					Block block = segment.getBlock(sx, sy, sz);
-					System.out.println(!generatePlaceholders + ", " + block.equals(EmptyBlock.getInstance()) + ", " + block.equals(InterfaceBlock.getInstance()));
 					if(!generatePlaceholders && (block.equals(EmptyBlock.getInstance()) || block.equals(InterfaceBlock.getInstance()) )) {
-						System.out.println("generated block");
+						System.out.println("dont generated block");
 						continue;
 					}
-					
 					world.setBlock(x+sx, y+sy, z+sz, block, segment.getBlockData(sx, sy, sz), 2);
 				}
 			}
@@ -243,9 +242,8 @@ public class ForgeGenerator implements IWorldGenerator  {
 				break;
 				
 			case Gen.SEA_FLOOR_LEVEL:
-				for (int i = 255; i > 0; i--) {
-					if(world.getBlock(chunkX*16, chunkZ*16, startY).getMaterial().isSolid()) {
-						startY = i+1;
+				for (startY = 255; startY > 0; startY--) {
+					if(world.getBlock(chunkX*16, startY, chunkZ*16).getMaterial().isSolid()) {
 						break;
 					}
 				}

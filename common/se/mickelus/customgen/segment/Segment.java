@@ -1,7 +1,9 @@
 package se.mickelus.customgen.segment;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,6 +19,7 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.GameRegistry.UniqueIdentifier;
 import se.mickelus.customgen.Constants;
 import se.mickelus.customgen.MLogger;
+import se.mickelus.customgen.blocks.InterfaceBlock;
 import se.mickelus.customgen.newstuff.Gen;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
@@ -82,9 +85,6 @@ public class Segment {
 		} else {
 			blockID = blockMap.inverse().get(block);
 		}
-		
-		
-		System.out.println(getName() + ":" + blockID);
 		
 		blocks[x+z*16+y*256] = blockID;
 		data[x+z*16+y*256] = (byte)blockData;
@@ -191,19 +191,14 @@ public class Segment {
 				nameMap.put(key, identifier.toString());
 			}
 			
-			for (int key : nameMap.keySet()) {
-				System.out.println(nameMap.get(key));
-			}
-			
 			// serialize to byte array
 			try {
 				ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
 				ObjectOutputStream objectStream = new ObjectOutputStream(byteStream);
 				objectStream.writeObject(nameMap);
-				objectStream.close();
-				
-				nbt.setByteArray(MAP_KEY, byteStream.toByteArray());
-				
+				byte[] byteArray = byteStream.toByteArray();
+				nbt.setByteArray(MAP_KEY, byteArray);
+				objectStream.close();	
 			} catch (IOException e) {
 				MLogger.log("Encountered an exception when writing block map to nbt");
 			}
@@ -236,6 +231,8 @@ public class Segment {
 	}
 	
 	public static Segment readFromNBT(NBTTagCompound nbt) {
+		
+		// read name and create segment
 		Segment segment = new Segment(nbt.getString("name"));
 		
 		NBTTagList tileEntityList = nbt.getTagList(TILE_ENTITY_KEY, 10);
@@ -246,9 +243,9 @@ public class Segment {
 		
 		int[] interfaces = nbt.getIntArray(INTERFACE_KEY);
 		
-		int[] blockIDs = nbt.getIntArray(BLOCKS_KEY);
-		byte[] data = nbt.getByteArray(DATA_KEY);
 		
+		
+		// setting interfaces
 		if(interfaces.length == 6) {
 			for (int i = 0; i < interfaces.length; i++) {
 				segment.setInterface(i, interfaces[i]);
@@ -257,17 +254,44 @@ public class Segment {
 			MLogger.logf("Failed to read interfaces for %s, %d", segment.getName(), interfaces.length);
 		}
 		
-		if(blockIDs.length == 4096 && data.length == 4096) {
-			//MLogger.log("reading blocks and data");
-			for (int x = 0; x < 16; x++) {
-				for (int y = 0; y < 16; y++) {
-					for (int z = 0; z < 16; z++) {
-
-						//segment.setBlock(x, y, z, blockIDs[x+z*16+y*256], data[x+z*16+y*256]);
+		// set block "ID"s and data
+		segment.blocks = nbt.getIntArray(BLOCKS_KEY);
+		segment.data = nbt.getByteArray(DATA_KEY);
+		
+		
+		if(nbt.hasKey(MAP_KEY)) {
+			try {
+				
+				// read mappings from nbt
+				byte[] byteArray = nbt.getByteArray(MAP_KEY);
+				ByteArrayInputStream byteStream = new ByteArrayInputStream(byteArray);
+				ObjectInputStream objectStream = new ObjectInputStream(byteStream);
+				Map<Integer, String> nameMap = (Map<Integer, String>)objectStream.readObject();
+				objectStream.close();
+				
+				// attempt to get block references from identifier
+				for (Integer key : nameMap.keySet()) {
+					UniqueIdentifier identifier = new UniqueIdentifier(nameMap.get(key));
+					Block block = GameRegistry.findBlock(identifier.modId, identifier.name);
+					if(block == null) {
+						MLogger.logf("Could not find block for identifier %s, replacing with air.", identifier.toString());
+						block = Blocks.air;
 					}
+					
+					segment.blockMap.put(key, block);
 				}
+				
+			} catch (IOException e) {
+				MLogger.logf("Failed to read block map for segment %s", segment.getName());
+				e.printStackTrace();
+			} catch (ClassNotFoundException e) {
+				MLogger.logf("Failed to read block map for segment %s", segment.getName());
+				e.printStackTrace();
 			}
 		}
+		
+		
+
 		
 		/*for (int i = 0; i < tileEntityList.tagCount(); i++) {
 			tileEntityArray[i] = (NBTTagCompound)tileEntityList.tagAt(i);
@@ -285,11 +309,6 @@ public class Segment {
 		
 		for (int i = 0; i < entityList.tagCount(); i++) {
 			entityArray[i] = (NBTTagCompound)entityList.tagAt(i);
-		}*/
-		
-		/* else {
-			MLogger.logf("Failed to read blocks and data from segment %s, invalid lengths %d %d",
-					segment.getName(), blocks.length, data.length);
 		}*/
 		
 
@@ -310,9 +329,9 @@ public class Segment {
 		for (int x = 0; x < 16; x++) {
 			for (int y = 0; y < 16; y++) {
 				for (int z = 0; z < 16; z++) {
-					/*setBlock(x, y, z,
-							world.getBlockId(xOffset+x, yOffset+y, zOffset+z),
-							world.getBlockMetadata(xOffset+x, yOffset+y, zOffset+z));*/
+					setBlock(x, y, z,
+							world.getBlock(xOffset+x, yOffset+y, zOffset+z),
+							world.getBlockMetadata(xOffset+x, yOffset+y, zOffset+z));
 				}
 			}
 		}
@@ -321,31 +340,31 @@ public class Segment {
 		for (int i = 0; i < 16; i++) {
 			for (int j = 0; j < 16; j++) {
 				// top
-				/*if(world.getBlockId(xOffset+i, yOffset+15, zOffset+j) == Constants.INTERFACEBLOCK_ID) {
+				if(world.getBlock(xOffset+i, yOffset+15, zOffset+j).equals(InterfaceBlock.getInstance())) {
 					interfaces[0] += 1 + world.getBlockMetadata(xOffset+i, yOffset+15, zOffset+j);
 				}
 				// bottom
-				if(world.getBlockId(xOffset+i, yOffset, zOffset+j) == Constants.INTERFACEBLOCK_ID) {
+				if(world.getBlock(xOffset+i, yOffset, zOffset+j).equals(InterfaceBlock.getInstance())) {
 					interfaces[1] += 1 + world.getBlockMetadata(xOffset+i, yOffset, zOffset+j);
 				}
 				
 				// south
-				if(world.getBlockId(xOffset+i, yOffset+j, zOffset+15) == Constants.INTERFACEBLOCK_ID) {
+				if(world.getBlock(xOffset+i, yOffset+j, zOffset+15).equals(InterfaceBlock.getInstance())) {
 					interfaces[2] += 1 + world.getBlockMetadata(xOffset+i, yOffset+j, zOffset+15);
 				}
 				// north
-				if(world.getBlockId(xOffset+i, yOffset+j, zOffset) == Constants.INTERFACEBLOCK_ID) {
+				if(world.getBlock(xOffset+i, yOffset+j, zOffset).equals(InterfaceBlock.getInstance())) {
 					interfaces[4] += 1 + world.getBlockMetadata(xOffset+i, yOffset+j, zOffset);
 				}
 				
 				// east
-				if(world.getBlockId(xOffset+15, yOffset+i, zOffset+j) == Constants.INTERFACEBLOCK_ID) {
+				if(world.getBlock(xOffset+15, yOffset+i, zOffset+j).equals(InterfaceBlock.getInstance())) {
 					interfaces[3] += 1 + world.getBlockMetadata(xOffset+15, yOffset+i, zOffset+j);
 				}
 				// west
-				if(world.getBlockId(xOffset, yOffset+i, zOffset+j) == Constants.INTERFACEBLOCK_ID) {
+				if(world.getBlock(xOffset, yOffset+i, zOffset+j).equals(InterfaceBlock.getInstance())) {
 					interfaces[5] += 1 + world.getBlockMetadata(xOffset, yOffset+i, zOffset+j);
-				}*/
+				}
 			}
 		}
 		

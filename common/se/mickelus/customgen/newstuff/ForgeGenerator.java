@@ -61,7 +61,6 @@ public class ForgeGenerator implements IWorldGenerator  {
 				for(int sx = 0; sx < 16; sx++) {
 					Block block = segment.getBlock(sx, sy, sz);
 					if(!generatePlaceholders && (block.equals(EmptyBlock.getInstance()) || block.equals(InterfaceBlock.getInstance()) )) {
-						System.out.println("dont generated block");
 						continue;
 					}
 					world.setBlock(x+sx, y+sy, z+sz, block, segment.getBlockData(sx, sy, sz), 2);
@@ -231,6 +230,8 @@ public class ForgeGenerator implements IWorldGenerator  {
 		Segment startingSegment = null;
 		List<SegmentPlaceholder> placeholderList = new ArrayList<SegmentPlaceholder>();
 		
+		MLogger.logf("Generating start at: %d %d\n", chunkX*16, chunkZ*16);
+		
 		// calculate generation height
 		switch(gen.getLevel()) {
 			case Gen.UNDERGROUND_LEVEL:
@@ -238,7 +239,7 @@ public class ForgeGenerator implements IWorldGenerator  {
 				break;
 			
 			case Gen.SURFACE_LEVEL:
-				startY = world.getHeightValue(chunkX*16, chunkZ*16);
+				startY = world.getHeightValue(chunkX*16, chunkZ*16) + 1;
 				break;
 				
 			case Gen.SEA_FLOOR_LEVEL:
@@ -252,8 +253,9 @@ public class ForgeGenerator implements IWorldGenerator  {
 			default:
 				MLogger.log("attempt to generate gen with invalid level.");
 				return;
-		
 		}
+		
+		MLogger.logf("Generating start at: %d %d %d\n", chunkX*16, chunkZ*16, startY);
 		
 		// get starting segment
 		startingSegment = gen.getStartingSegment(random);
@@ -311,7 +313,7 @@ public class ForgeGenerator implements IWorldGenerator  {
 			count++;
 		}
 		
-		MLogger.logf("DONE GENERATING %s, E: %b, C: %d", gen.getName(), hasUsablePlaceholders(placeholderList), count);
+		//MLogger.logf("DONE GENERATING %s, E: %b, C: %d", gen.getName(), hasUsablePlaceholders(placeholderList), count);
 		
 	}
 	

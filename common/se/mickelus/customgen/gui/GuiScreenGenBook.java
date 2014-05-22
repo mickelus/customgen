@@ -100,9 +100,6 @@ public class GuiScreenGenBook extends GuiScreen {
 	
 	// tutorial states
 	private int stateHelpOffset = 0;
-	
-	private List<Drawable> blockList;
-	private Drawable blockDrawer;
     
     static final int GEN_LIST_STATE = 1;
     static final int GEN_ADD_STATE = 2;
@@ -135,12 +132,7 @@ public class GuiScreenGenBook extends GuiScreen {
 		
 		stateAddViewSegment = new Segment("");
 		
-		stateviewSegment = new Segment("");
-		
-		
-		
-		blockList = new ArrayList<Drawable>();
-		
+		stateviewSegment = new Segment("");	
 		
 		biomeCheckBoxes = new ArrayList<GuiButtonCheckBox>(Type.values().length);
 		
@@ -523,13 +515,13 @@ public class GuiScreenGenBook extends GuiScreen {
     		
     		int listOffset = (offset-1) * SEGMENT_LIST_MAX_LENGTH;
     		int listLength = gen.getNumSegments() + gen.getNumStartingSegments();
-    		MLogger.logf("o:%d l1:%d", listOffset, listLength);
+    		//MLogger.logf("o:%d l1:%d", listOffset, listLength);
     		if(listOffset + SEGMENT_LIST_MAX_LENGTH > listLength) {
     			listLength = listLength - listOffset;
     		} else {
     			listLength = SEGMENT_LIST_MAX_LENGTH;
     		}
-    		MLogger.logf("l2:%d", listLength);
+    		//MLogger.logf("l2:%d", listLength);
     		
     		drawList.add(new GuiText("segments", 38, 30));
     		drawList.add(new GuiText("name", 38, 40));
@@ -869,9 +861,11 @@ public class GuiScreenGenBook extends GuiScreen {
 		drawList.add(new GuiText((offset + 1) + "/" + HELP_PAGES_COUNT, 122, 155, GuiText.CENTER_ALIGN));
     }
     
-    private void showSegment(Segment segment, int xOffset, int yOffset) {      
+    private void showSegment(Segment segment, int xOffset, int yOffset) {
     	
-    	blockDrawer = new Drawable() {
+    	final ArrayList<Drawable> blockList = new ArrayList<Drawable>();
+    	
+    	Drawable blockDrawer = new Drawable() {
 			
 			@Override
 			public void draw(int screenWidth, int screenHeight) {
@@ -891,33 +885,29 @@ public class GuiScreenGenBook extends GuiScreen {
 		};
     	blockList.clear();
     	//drawList.add(new GuiBlockModel(29, 80f, 0, 102, 1, 0));
-    	// TODO REMOVED FOR UPDATE
-    	/*for (int x = 0; x < 16; x++) {
+    	for (int x = 0; x < 16; x++) {
 			for (int y = 0; y < 16; y++) {
 				for (int z = 0; z < 16; z++) {
-					int blockID = segment.getBlockID(x, y, z);
+					Block block = segment.getBlock(x, y, z);
 					
-					if(blockID == 146 || blockID == 54) {
+					/*if(blockID == 146 || blockID == 54) {
 						blockID = 0;
 					} else if(!(z < 15-y || x > y)) {
 						//blockID = 0;
-					}
+					}*/
 					
 					blockList.add(new GuiBlockModel(
 						xOffset + 2.8f * x + 2.8f * z,
 						yOffset - 3.5f * y - 1.4f * x + 1.4f * z,
 						(- x + z + y)*5+100,
-						6.4f, blockID, segment.getBlockData(x, y, z)));
+						6.4f, block, segment.getBlockData(x, y, z)));
 					
 				}
 			}
-		}*/
+		}
     	
+    	// this drawable will draw all blocks
     	drawList.add(blockDrawer);
-    	/*for (int i = 0; i < 16; i++) {
-    		drawList.add(new GuiBlockModel(3f*i+xOffset, 1.5f*i+yOffset, i*10, 6.4f, segment.getBlockData(x, y, z), 0));
-		}*/
-    	
     }
 
     /**
@@ -1046,7 +1036,7 @@ public class GuiScreenGenBook extends GuiScreen {
     	stateviewSegment = segment;
     	stateViewSegmentIsStart = isStart;
     	
-    	MLogger.log("set segment data");
+    	//MLogger.log("set segment data");
     	
     	if(state == SEGMENT_VIEW_STATE) {
     		showView(SEGMENT_VIEW_STATE);

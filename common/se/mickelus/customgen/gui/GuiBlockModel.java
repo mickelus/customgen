@@ -29,15 +29,16 @@ public class GuiBlockModel extends Gui implements Drawable {
 	
 	private float x, y, z, scale;
 	
-	private int blockID, metaData;
-
-	public GuiBlockModel(float x, float y, float z, float size, int blockID, int metaData) {
+	private Block block;
+	private int metaData;
+	
+	public GuiBlockModel(float x, float y, float z, float size, Block block, int metaData) {
 		
 		this.x = x;
 		this.y = y;
 		this.z = z;
 		
-		this.blockID = blockID;
+		this.block = block;
 		this.metaData = metaData;
 		
 		scale = size/16f;
@@ -60,32 +61,19 @@ public class GuiBlockModel extends Gui implements Drawable {
 		//itemRenderer.renderItemIntoGUI(fontRenderer, textureManager, new ItemStack(Block.stone), 40, 40, true);
 		
 		//RenderHelper.disableStandardItemLighting();
-		renderItemIntoGUI(fontRenderer, textureManager, blockID, metaData, scale,
+		renderItemIntoGUI(fontRenderer, textureManager, block, metaData, scale,
 				(screenWidth-GuiScreenGenBook.bookImageWidth)/2 + x, (screenHeight-GuiScreenGenBook.bookImageHeight)/2 + y, z);
 		
 	}
 	
-	public void renderItemIntoGUI(FontRenderer par1FontRenderer, TextureManager par2TextureManager, int itemID, int metaData, float scale, float x, float y, float z)
-    {
+	public void renderItemIntoGUI(FontRenderer par1FontRenderer, TextureManager par2TextureManager, Block block, int metaData, float scale, float x, float y, float z) {
         float green = 0.2f;
         float blue = 1;
         float red = 1;
-
-        /*switch(itemID) {
-        	case -1:
-        		itemID = Constants.EMPTY_ID;
-        		break;
-        	
-        	case -2:
-        		itemID = Constants.INTERFACEBLOCK_ID;
-        		break;
-        }
         
-        Block block = (itemID < Block.blocksList.length ? Block.blocksList[itemID] : null);
-        if (block != null && RenderBlocks.renderItemIn3d(Block.blocksList[itemID].getRenderType()))
-        {
+        if (block != null && RenderBlocks.renderItemIn3d(block.getRenderType())) {
         	
-            //par2TextureManager.bindTexture(TextureMap.locationBlocksTexture);
+            par2TextureManager.bindTexture(TextureMap.locationBlocksTexture);
             GL11.glPushMatrix();
             
             GL11.glTranslatef((float)(x - 2.0), (float)(y + 3.0), z);
@@ -102,7 +90,7 @@ public class GuiBlockModel extends Gui implements Drawable {
             
             itemRenderBlocks.renderBlockAsItem(block, metaData, 1f);
             GL11.glPopMatrix();
-        }*/
+        }
 
     }
 }

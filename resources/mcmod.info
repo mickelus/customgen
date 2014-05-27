@@ -1,0 +1,16 @@
+[
+{
+  "modid": "customgen",
+  "name": "Customgen",
+  "description": "Allows users to build so called 'gens' to add custom made features to the world generation. Gens may be shared with others.",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["mickelus"],
+  "credits": "",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]

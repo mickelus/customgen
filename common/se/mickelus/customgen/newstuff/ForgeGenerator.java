@@ -239,7 +239,13 @@ public class ForgeGenerator implements IWorldGenerator  {
 				break;
 			
 			case Gen.SURFACE_LEVEL:
-				startY = world.getHeightValue(chunkX*16, chunkZ*16) + 1;
+				int average = 0;
+				for (int i = 0; i < 16; i++) {
+					for (int j = 0; j < 16; j++) {
+						average += world.getHeightValue(chunkX*16+i, chunkZ*16+j);
+					}
+				}
+				startY = average / 256;
 				break;
 				
 			case Gen.SEA_FLOOR_LEVEL:

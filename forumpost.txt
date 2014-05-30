@@ -1,0 +1,5 @@
+[size=7][font=verdana,geneva,sans-serif]Customgen[/font][/size]
+beta release 1 for 1.7.2
+
+[size=6]Introduction[/size]
+Customgen is a mod that allows you to add 

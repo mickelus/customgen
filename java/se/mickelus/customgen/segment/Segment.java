@@ -27,6 +27,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagIntArray;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.BiomeDictionary.Type;
@@ -137,7 +138,7 @@ public class Segment {
 	 * @param z The z coordinate, a value between 0 and 15 (inclusive)
 	 * @return 
 	 */
-	public int getBlockData(int x, int y, int z) {
+	public int getBlockMetadata(int x, int y, int z) {
 		return data[x+z*16+y*256];
 	}
 	
@@ -163,6 +164,21 @@ public class Segment {
 
 	public String getName() {
 		return name;
+	}
+	
+	/**
+	 * Replaces blocks in this segment. Make sure a block matching newID is in the blockMap.
+	 * @param oldID The ids that should be replaced
+	 * @param newID The new block id to be used
+	 * @param newData The new data value
+	 */
+	private void replaceBlocks(int oldID, int newID, byte newData) {
+		for (int i = 0; i < blocks.length; i++) {
+			if(blocks[i] == oldID) {
+				blocks[i] = newID;
+				data[i] = newData;
+			}
+		}
 	}
 	
 	public NBTTagCompound writeToNBT(boolean writeBlocks) {
@@ -207,9 +223,9 @@ public class Segment {
 		}
 		
 		// write tile entities
-		/*for (NBTTagCompound nbtTagCompound : tileEntityNBTList) {
+		for (NBTTagCompound nbtTagCompound : tileEntityNBTList) {
 			tileEntityTagList.appendTag(nbtTagCompound);
-			if(nbtTagCompound.hasKey("Items")) {
+			/*if(nbtTagCompound.hasKey("Items")) {
 				NBTTagList list = nbtTagCompound.getTagList("Items", 10);
 				for (int i = 0; i < list.tagCount(); i++) {
 					NBTTagCompound item = (NBTTagCompound)list.getCompoundTagAt(i);
@@ -217,8 +233,8 @@ public class Segment {
 						item.setShort("id", (short)-1);
 					}
 				}
-			}
-		}*/
+			}*/
+		}
 		nbt.setTag(TILE_ENTITY_KEY, tileEntityTagList);
 		
 		// write entities
@@ -272,11 +288,13 @@ public class Segment {
 					UniqueIdentifier identifier = new UniqueIdentifier(nameMap.get(key));
 					Block block = GameRegistry.findBlock(identifier.modId, identifier.name);
 					if(block == null) {
-						//MLogger.logf("Could not find block for identifier %s, replacing with air.", identifier.toString());
-						block = Blocks.air;
+						// if this block does not exist replace it with air
+						segment.replaceBlocks(key, 0, (byte)0);
+					} else {
+						segment.blockMap.put(key, block);
 					}
 					
-					segment.blockMap.put(key, block);
+					
 				}
 				
 			} catch (IOException e) {
@@ -290,10 +308,10 @@ public class Segment {
 		
 		
 
-		
-		/*for (int i = 0; i < tileEntityList.tagCount(); i++) {
-			tileEntityArray[i] = (NBTTagCompound)tileEntityList.tagAt(i);
-			if(tileEntityArray[i].hasKey("Items")) {
+		// set tile entities
+		for (int i = 0; i < tileEntityList.tagCount(); i++) {
+			tileEntityArray[i] = (NBTTagCompound)tileEntityList.getCompoundTagAt(i);
+			/*if(tileEntityArray[i].hasKey("Items")) {
 				NBTTagList list = tileEntityArray[i].getTagList("Items");
 				for (int j = 0; j < list.tagCount(); j++) {
 					NBTTagCompound item = (NBTTagCompound)list.tagAt(j);
@@ -301,10 +319,12 @@ public class Segment {
 						item.setShort("id", (short)Constants.PLACEHOLDERITEM_ID);
 					}
 				}
-			}
+			}*/
 		}
 		segment.setTileEntityNBTs(tileEntityArray);
 		
+		
+		/*
 		for (int i = 0; i < entityList.tagCount(); i++) {
 			entityArray[i] = (NBTTagCompound)entityList.tagAt(i);
 		}*/
@@ -374,14 +394,16 @@ public class Segment {
 		for (int x = 0; x < 16; x++) {
 			for (int y = 0; y < 16; y++) {
 				for (int z = 0; z < 16; z++) {
-					/*if(world.blockHasTileEntity(xOffset+x, yOffset+y, zOffset+z)) {
+					TileEntity tileEntity = world.getTileEntity(xOffset+x, yOffset+y, zOffset+z);
+					
+					if(tileEntity != null) {
 						NBTTagCompound tagCompound = new NBTTagCompound();
-				        world.getBlockTileEntity(xOffset+x, yOffset+y, zOffset+z).writeToNBT(tagCompound);
+				        tileEntity.writeToNBT(tagCompound);
 				        tagCompound.setInteger("x", x);
 				        tagCompound.setInteger("y", y);
 				        tagCompound.setInteger("z", z);
 				        tileEntityNBTList.add(tagCompound);
-					}*/
+					}
 					
 				}
 			}

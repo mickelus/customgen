@@ -63,7 +63,9 @@ public class ForgeGenerator implements IWorldGenerator  {
 					if(!generatePlaceholders && (block.equals(EmptyBlock.getInstance()) || block.equals(InterfaceBlock.getInstance()) )) {
 						continue;
 					}
-					world.setBlock(x+sx, y+sy, z+sz, block, segment.getBlockData(sx, sy, sz), 2);
+					world.setBlock(x+sx, y+sy, z+sz, block);
+					// setting metadata and block at the same time seem to overwrite the metadata if the block if a tileentity is spawned
+					world.setBlockMetadataWithNotify(x+sx, y+sy, z+sz, segment.getBlockMetadata(sx, sy, sz), 2);
 				}
 			}
 		}
@@ -71,7 +73,9 @@ public class ForgeGenerator implements IWorldGenerator  {
 		
 		// spawn tile entities
 		for (int i = 0; i < segment.getNumTileEntities(); i++) {
-			NBTTagCompound tag = updateTileEntityNBT(segment.getTileEntityNBT(i), chunkX*16, y, chunkZ*16);
+			
+			NBTTagCompound tag = segment.getTileEntityNBT(i);
+			tag = updateTileEntityNBT(tag, chunkX*16, y, chunkZ*16);
 			TileEntity tileEntity = TileEntity.createAndLoadEntity(tag);
 			
 			if (tileEntity != null) {
@@ -266,18 +270,8 @@ public class ForgeGenerator implements IWorldGenerator  {
 		// get starting segment
 		startingSegment = gen.getStartingSegment(random);
 		
-		/*	   0 - top
-		 *     1 - bottom
-		 *     2 - north
-		 *     3 - east
-		 *     4 - south
-		 *     5 - west*/
-		
-		
-		
+
 		if(startingSegment != null) {
-			
-			//MLogger.log(startingSegment);
 			
 			// add placeholder for starting segment to placeholder list
 			createPlaceholders(chunkX, chunkZ, startY, startingSegment, placeholderList);

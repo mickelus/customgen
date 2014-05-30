@@ -313,7 +313,7 @@ public class GuiScreenGenBook extends GuiScreen {
     	buttonList.add(undergroundCheckBox = new GuiButtonCheckBox(0,
     			(width - bookImageWidth) / 2 + 65,
         		(height - bookImageHeight) / 2 + 51,
-        		"underground", stateAddGen.isVillageGen(), new Observer() {
+        		"underground", stateAddGen.getLevel() == Gen.UNDERGROUND_LEVEL, new Observer() {
 			
 			@Override
 			public void update(Observable o, Object arg) {
@@ -328,7 +328,7 @@ public class GuiScreenGenBook extends GuiScreen {
     	buttonList.add(surfaceCheckBox = new GuiButtonCheckBox(0,
     			(width - bookImageWidth) / 2 + 38,
         		(height - bookImageHeight) / 2 + 61,
-        		"surface", stateAddGen.isVillageGen(), new Observer() {
+        		"surface", stateAddGen.getLevel() == Gen.SURFACE_LEVEL, new Observer() {
 			
 			@Override
 			public void update(Observable o, Object arg) {
@@ -343,7 +343,7 @@ public class GuiScreenGenBook extends GuiScreen {
     	buttonList.add(seaCheckBox = new GuiButtonCheckBox(0,
     			(width - bookImageWidth) / 2 + 92,
         		(height - bookImageHeight) / 2 + 61,
-        		"sea floor", stateAddGen.isVillageGen(), new Observer() {
+        		"sea floor", stateAddGen.getLevel() == Gen.SEA_FLOOR_LEVEL, new Observer() {
 			
 			@Override
 			public void update(Observable o, Object arg) {
@@ -373,7 +373,9 @@ public class GuiScreenGenBook extends GuiScreen {
     		}
     		
     		button = new GuiButtonCheckBox(0, left, top,
-            		types[i].toString().toLowerCase(), stateAddGen.generatesInBiome(types[i]), new Observer() {
+            		types[i].toString().toLowerCase(), 
+            		stateAddGen.getNumBiomes() > 0 && stateAddGen.generatesInBiome(types[i]),
+            		new Observer() {
 						
 						@Override
 						public void update(Observable arg0, Object arg1) {
@@ -900,7 +902,7 @@ public class GuiScreenGenBook extends GuiScreen {
 						xOffset + 2.8f * x + 2.8f * z,
 						yOffset - 3.5f * y - 1.4f * x + 1.4f * z,
 						(- x + z + y)*5+100,
-						6.4f, block, segment.getBlockData(x, y, z)));
+						6.4f, block, segment.getBlockMetadata(x, y, z)));
 					
 				}
 			}
@@ -1035,8 +1037,6 @@ public class GuiScreenGenBook extends GuiScreen {
     public void setSegmentData(Segment segment, boolean isStart) {
     	stateviewSegment = segment;
     	stateViewSegmentIsStart = isStart;
-    	
-    	//MLogger.log("set segment data");
     	
     	if(state == SEGMENT_VIEW_STATE) {
     		showView(SEGMENT_VIEW_STATE);

@@ -82,8 +82,8 @@ public class SegmentAddRequestPacket extends AbstractPacket {
 		GenManager genManager = GenManager.getInstance();
 		Segment segment;
 		Gen gen;
-		World world = ((EntityPlayer) player).worldObj;
-		Vec3 position = ((EntityPlayer) player).getPosition(0);
+		World world = player.worldObj;
+		Vec3 position = player.getPosition(0);
 		int chunkX = (int) (position.xCoord)/16;
 		int y = ((int) (position.yCoord)/16)*16;
 		int chunkZ = (int) (position.zCoord)/16;
@@ -98,8 +98,6 @@ public class SegmentAddRequestPacket extends AbstractPacket {
 		
 		segment = new Segment(segmentName);
 		gen = genManager.getGenByName(genName, packName);
-		System.out.println("Attempt to fetch gen" + genName + ", " + packName);
-		System.out.println(gen);
 		if(gen != null) {
 			segment.parseFromWorld(world, chunkX, y, chunkZ);
 			
@@ -107,6 +105,7 @@ public class SegmentAddRequestPacket extends AbstractPacket {
 			FileHandler.saveGenToFile(gen);
 			
 			// send segment add response with this segment
+			PacketBuilder.sendGenResponse(gen, player);
 			PacketBuilder.sendSegmentResponse(player, segment, isStart);
 			PacketBuilder.sendGenListResponse(player);
 		}

@@ -8,6 +8,7 @@ import java.util.Random;
 
 import net.minecraft.block.Block;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
@@ -79,16 +80,29 @@ public class ForgeGenerator implements IWorldGenerator  {
 			TileEntity tileEntity = TileEntity.createAndLoadEntity(tag);
 			
 			if (tileEntity != null) {
-				if(tileEntity instanceof IInventory) {
-					IInventory inventory = (IInventory) tileEntity;
-					
-					for (int j = 0; j < inventory.getSizeInventory(); j++) {
-						if(!generatePlaceholders && inventory.getStackInSlot(j) != null
-								&& inventory.getStackInSlot(j).getItem().equals(PlaceholderItem.getInstance())) {
-							inventory.setInventorySlotContents(j, 
-									ChestGenHooks.getOneItem(ChestGenHooks.DUNGEON_CHEST, random));
+				
+				// this is dangerous!
+				try {
+				
+					if(tileEntity instanceof IInventory) {
+						IInventory inventory = (IInventory) tileEntity;
+						
+						for (int j = 0; j < inventory.getSizeInventory(); j++) {
+							if(!generatePlaceholders && inventory.getStackInSlot(j) != null
+									&& inventory.getStackInSlot(j).getItem().equals(PlaceholderItem.getInstance())) {
+								ItemStack itemStack = ChestGenHooks.getOneItem(ChestGenHooks.DUNGEON_CHEST, random);
+								if(inventory.getInventoryStackLimit() < itemStack.stackSize) {
+									itemStack.stackSize = inventory.getInventoryStackLimit();
+								}
+								if(inventory.isItemValidForSlot(j, itemStack)) {
+									inventory.setInventorySlotContents(j, itemStack);
+								}
+							}
 						}
 					}
+				} catch(Exception e) {
+					System.out.println("Something broke when generating loot in a tile entity.");
+					e.printStackTrace();
 				}
                 world.getChunkFromChunkCoords(chunkX, chunkZ).addTileEntity(tileEntity);
             }

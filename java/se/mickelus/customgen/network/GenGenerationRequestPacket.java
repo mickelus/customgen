@@ -66,22 +66,20 @@ public class GenGenerationRequestPacket extends AbstractPacket {
 		
 		Gen gen = GenManager.getInstance().getGenByName(genName, packName);
 		
-		EntityPlayer ePlayer = (EntityPlayer) player;
-		Vec3 position = ePlayer.getPosition(0);
-		int chunkX = (int) (position.xCoord)/16;
-		int y = ((int) (position.yCoord)/16)*16;
-		int chunkZ = (int) (position.zCoord)/16;
+		int chunkX = (int) (player.posX)/16;
+		int y = ((int) (player.posY)/16)*16;
+		int chunkZ = (int) (player.posZ)/16;
 		
 		// due to the division, negative coordinates end up being offset by one, this fixes that
-		if(position.xCoord<0) {
+		if(player.posX<0) {
 			chunkX--;
 		}
-		if(position.zCoord<0) {
+		if(player.posZ<0) {
 			chunkZ--;
 		}	
 		
 		if(gen != null) {
-			ForgeGenerator.getInstance().generateGen(chunkX, chunkZ, ePlayer.worldObj, gen, new Random());
+			ForgeGenerator.getInstance().generateGen(chunkX, chunkZ, player.worldObj, gen, new Random());
 		} else {
 			MLogger.logf("Found no matching gen for gen: %s, pack: %s.", genName, packName);
 		}

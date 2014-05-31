@@ -35,18 +35,17 @@ public class TemplateGenerationRequestPacket extends AbstractPacket {
 
 	@Override
 	public void handleServerSide(EntityPlayer player) {
-		Vec3 position = player.getPosition(0);
-		int chunkX = (int) (position.xCoord)/16;
-		int y = ((int) (position.yCoord)/16)*16;
-		int chunkZ = (int) (position.zCoord)/16;
+		int chunkX = (int) (player.posX)/16;
+		int y = ((int) (player.posY)/16)*16;
+		int chunkZ = (int) (player.posZ)/16;
 		
 		// due to the division, negative coordinates end up being offset by one, this fixes that
-		if(position.xCoord<0) {
+		if(player.posX<0) {
 			chunkX--;
 		}
-		if(position.zCoord<0) {
+		if(player.posZ<0) {
 			chunkZ--;
-		}	
+		}		
 		
 		Utilities.generateTemplate(chunkX, chunkZ, y, player.getEntityWorld(), templateID);
 	}

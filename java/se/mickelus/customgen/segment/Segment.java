@@ -353,7 +353,7 @@ public class Segment {
 				}
 			}
 		}
-		
+
 		// set interfaces
 		for (int i = 0; i < 16; i++) {
 			for (int j = 0; j < 16; j++) {
@@ -368,11 +368,11 @@ public class Segment {
 				
 				// south
 				if(world.getBlock(xOffset+i, yOffset+j, zOffset+15).equals(InterfaceBlock.getInstance())) {
-					interfaces[2] += 1 + world.getBlockMetadata(xOffset+i, yOffset+j, zOffset+15);
+					interfaces[4] += 1 + world.getBlockMetadata(xOffset+i, yOffset+j, zOffset+15);
 				}
 				// north
 				if(world.getBlock(xOffset+i, yOffset+j, zOffset).equals(InterfaceBlock.getInstance())) {
-					interfaces[4] += 1 + world.getBlockMetadata(xOffset+i, yOffset+j, zOffset);
+					interfaces[2] += 1 + world.getBlockMetadata(xOffset+i, yOffset+j, zOffset);
 				}
 				
 				// east

@@ -169,11 +169,11 @@ public class GuiScreenGenBook extends GuiScreen {
          		"utilities",
          		0.7f, 0.7f, 1));
          
-         buttonList.add(new GuiButtonTab(HELP_STATE,
-          		width / 2 + 61,
-          		(height - bookImageHeight) / 2 + 78,
-          		"tutorial",
-          		1f, 0.7f, 1));
+//         buttonList.add(new GuiButtonTab(HELP_STATE,
+//          		width / 2 + 61,
+//          		(height - bookImageHeight) / 2 + 78,
+//          		"tutorial",
+//          		1f, 0.7f, 1));
     	
     	// show the view that matches the current state
     	switch(state) {

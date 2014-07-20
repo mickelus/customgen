@@ -92,7 +92,7 @@ public class Gen {
 	public void setBiomes(Type [] biomes) {
 		this.biomes.clear();
 		for (int i = 0; i < biomes.length; i++) {
-			this.biomes.add(biomes[i]);	
+			addBiome(biomes[i]);	
 		}
 	}
 	
@@ -104,7 +104,7 @@ public class Gen {
 		this.biomes.clear();
 		Type[] values = Type.values();
 		for (int i = 0; i < biomes.length; i++) {
-			this.biomes.add(values[biomes[i]]);		
+			addBiome(values[biomes[i]]);		
 		}
 		
 	}
@@ -116,7 +116,7 @@ public class Gen {
 	public void setBiomes(String[] biomeNames) {
 		biomes.clear();
 		for (int i = 0; i < biomeNames.length; i++) {
-			biomes.add(Type.valueOf(biomeNames[i]));
+			addBiome(Type.valueOf(biomeNames[i]));
 		}
 	}
 	
@@ -128,6 +128,32 @@ public class Gen {
 		if(!biomes.contains(type)) {
 			biomes.add(type);
 		}
+	}
+	
+	/**
+	 * Adds a biome Type from a string to this gen
+	 * @param type
+	 */
+	public void addBiome(String type) {
+		addBiome(Type.valueOf(type));
+	}
+	
+	/**
+	 * Removes a biome Type from this gen
+	 * @param type
+	 */
+	public void removeBiome(Type type) {
+		if(biomes.contains(type)) {
+			biomes.remove(type);
+		}
+	}
+	
+	/**
+	 * Removes a biome Type from a string from this gen
+	 * @param type
+	 */
+	public void removeBiome(String type) {
+		removeBiome(Type.valueOf(type));
 	}
 	
 	/**

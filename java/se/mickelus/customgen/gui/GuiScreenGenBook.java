@@ -79,6 +79,7 @@ public class GuiScreenGenBook extends GuiScreen {
     
     // gen add state
     private Gen stateAddGen;
+    private int stateGenAddViewPage = 0;
     
     // gen add elements
     private GuiButtonCheckBox undergroundCheckBox;
@@ -96,7 +97,7 @@ public class GuiScreenGenBook extends GuiScreen {
 	private String stateAddViewPack = "";
 	private Segment stateAddViewSegment;
 	private boolean stateAddViewIsStart = false;
-	private int stateAddViewPage = 0;
+	private int stateSegmentAddViewPage = 0;
 	
 	// tutorial states
 	private int stateHelpOffset = 0;
@@ -110,6 +111,7 @@ public class GuiScreenGenBook extends GuiScreen {
     static final int HELP_STATE = 7;
     
     private static final int GEN_LIST_MAX_LENGTH = 7;
+    private static final int GEN_BIOME_MAX_LENGTH = 12;
     private static final int SEGMENT_LIST_MAX_LENGTH = 6;
     
     private static final int SEGMENT_PAGES_COUNT = 2;
@@ -181,7 +183,7 @@ public class GuiScreenGenBook extends GuiScreen {
 	    		showGenListView(stateGenListOffset);
 	    		break;
 	    	case GEN_ADD_STATE:
-	    		showGenCreateView();
+	    		showGenCreateView(stateGenAddViewPage);
 	    		break;
 	    		
 	    	case GEN_VIEW_STATE:
@@ -274,7 +276,7 @@ public class GuiScreenGenBook extends GuiScreen {
 		}
     }
     
-    private void showGenCreateView() {
+    private void showGenCreateView(int offset) {
     	// title
     	drawList.add(new GuiText("Create gen", 93, 17, GuiText.CENTER_ALIGN));
     	
@@ -355,26 +357,73 @@ public class GuiScreenGenBook extends GuiScreen {
 			}
 		}));
     	
+    	// village checkbox
+//    	drawList.add(new GuiText("village", 38, 155));
+//    	buttonList.add(new GuiButtonCheckBox(0,
+//    			(width - bookImageWidth) / 2 + 72,
+//        		(height - bookImageHeight) / 2 + 155,
+//        		"", stateAddGen.isVillageGen(), new Observer() {
+//			
+//			@Override
+//			public void update(Observable o, Object arg) {
+//				stateAddGen.setVillageGen((Boolean)arg);
+//			}
+//		}));
+    	
+    	// if there is more than one page of biomes
+    	Type[] types = Type.values();
+    	int listLength = types.length;
+    	int listOffset = 0;
+    	if(types.length > GEN_BIOME_MAX_LENGTH) {
+    		
+    		// show next button
+    		if((offset + 1) * GEN_BIOME_MAX_LENGTH < listLength) {
+    			buttonList.add(new GuiButtonChangePage(4, offset + 1,
+					(width - bookImageWidth) / 2 + 134,
+					(height - bookImageHeight) / 2 + 153,
+					true));
+    		}
+    		
+    		// back button
+    		if(offset>0) {
+    			buttonList.add(new GuiButtonChangePage(4, offset - 1,
+					(width - bookImageWidth) / 2 + 95,
+					(height - bookImageHeight) / 2 + 153,
+					false));
+    		}
+    		
+    		// current page number
+    		drawList.add(new GuiText((offset + 1) + "/" + ((listLength-1)/GEN_BIOME_MAX_LENGTH + 1), 122, 155, GuiText.CENTER_ALIGN));
+    		
+    		// set item offset and list length
+    		listOffset = offset * GEN_BIOME_MAX_LENGTH;
+    		if(listOffset + GEN_BIOME_MAX_LENGTH > listLength) {
+    			listLength = listLength - listOffset;
+    		} else {
+    			listLength = GEN_BIOME_MAX_LENGTH;
+    		}
+    	}
+    	
     	// biome checkboxes
     	drawList.add(new GuiText("biomes:", 38, 71));
     	
     	biomeCheckBoxes.clear();
-    	Type[] types = Type.values();
     	GuiButtonCheckBox button;
-    	for (int i = 0; i < types.length; i++) {
+    	for (int i = 0; i < listLength; i++) {
     		int left = (width - bookImageWidth) / 2;
     		int top = (height - bookImageHeight) / 2;
-    		if(i>types.length/2-1) {
+    		Type biomeType = types[i + listOffset];
+    		if(i>listLength/2-1) {
     			left += 92;
-    			top += (i-types.length/2)*10 + 71;
+    			top += (i-listLength/2)*10 + 81;
     		} else {
     			left += 38;
     			top += i*10 + 81;
     		}
     		
     		button = new GuiButtonCheckBox(0, left, top,
-            		types[i].toString().toLowerCase(), 
-            		stateAddGen.getNumBiomes() > 0 && stateAddGen.generatesInBiome(types[i]),
+    				biomeType.toString().toLowerCase(), 
+            		stateAddGen.getNumBiomes() > 0 && stateAddGen.generatesInBiome(biomeType),
             		new Observer() {
 						
 						@Override
@@ -384,37 +433,20 @@ public class GuiScreenGenBook extends GuiScreen {
 					        
 					        for (GuiButtonCheckBox button : biomeCheckBoxes) {
 								if(button.isChecked()) {
-									valueList.add(button.displayString.toUpperCase());
+									stateAddGen.addBiome(button.displayString.toUpperCase());
+								} else {
+									stateAddGen.removeBiome(button.displayString.toUpperCase());
 								}
-							}
-					        
-					        typeValues = new String[valueList.size()];
-					        typeValues = valueList.toArray(typeValues);
-					        
-					        stateAddGen.setBiomes(typeValues);
-							
+							}							
 						}
 					});
     		biomeCheckBoxes.add(button);    		
     		buttonList.add(button);
 		}
     	
-    	// village checkbox
-    	drawList.add(new GuiText("village", 38, 155));
-    	buttonList.add(new GuiButtonCheckBox(0,
-    			(width - bookImageWidth) / 2 + 72,
-        		(height - bookImageHeight) / 2 + 155,
-        		"", stateAddGen.isVillageGen(), new Observer() {
-			
-			@Override
-			public void update(Observable o, Object arg) {
-				stateAddGen.setVillageGen((Boolean)arg);
-			}
-		}));
-    	
-    	// new button
+    	// add button
     	buttonList.add(new GuiButtonOutlined(0,
-			(width - bookImageWidth) / 2 + 115,
+			(width - bookImageWidth) / 2 + 38,
 			(height - bookImageHeight) / 2 + 151,
 			"add", new Observer() {
 				
@@ -649,7 +681,7 @@ public class GuiScreenGenBook extends GuiScreen {
     	
     	stateAddViewSegment.parseFromWorld(player.worldObj, chunkX, y, chunkZ);
     	
-    	if(stateAddViewPage == 0) {
+    	if(stateSegmentAddViewPage == 0) {
     		drawList.add(new GuiText("Add Segment: data", 93, 17, GuiText.CENTER_ALIGN));
     		// name input
         	drawList.add(new GuiText("name:", 38, 27));
@@ -705,7 +737,7 @@ public class GuiScreenGenBook extends GuiScreen {
     				stateAddViewIsStart = (Boolean)arg;
     			}
     		}));
-    	} else if(stateAddViewPage == 1) {
+    	} else if(stateSegmentAddViewPage == 1) {
     		
     		drawList.add(new GuiText("Add Segment: interfaces", 93, 17, GuiText.CENTER_ALIGN));
     		
@@ -748,23 +780,23 @@ public class GuiScreenGenBook extends GuiScreen {
 			}));
     	
     	// show next button
-		if(stateAddViewPage < SEGMENT_PAGES_COUNT - 1) {
-			buttonList.add(new GuiButtonChangePage(1, stateAddViewPage + 1,
+		if(stateSegmentAddViewPage < SEGMENT_PAGES_COUNT - 1) {
+			buttonList.add(new GuiButtonChangePage(1, stateSegmentAddViewPage + 1,
 				(width - bookImageWidth) / 2 + 134,
 				(height - bookImageHeight) / 2 + 153,
 				true));
 		}
 		
 		// back button
-		if(stateAddViewPage>0) {
-			buttonList.add(new GuiButtonChangePage(1, stateAddViewPage - 1,
+		if(stateSegmentAddViewPage>0) {
+			buttonList.add(new GuiButtonChangePage(1, stateSegmentAddViewPage - 1,
 				(width - bookImageWidth) / 2 + 95,
 				(height - bookImageHeight) / 2 + 153,
 				false));
 		}
 		
 		// current page number
-		drawList.add(new GuiText((stateAddViewPage + 1) + "/" + SEGMENT_PAGES_COUNT, 122, 155, GuiText.CENTER_ALIGN));
+		drawList.add(new GuiText((stateSegmentAddViewPage + 1) + "/" + SEGMENT_PAGES_COUNT, 122, 155, GuiText.CENTER_ALIGN));
     	
     }
     
@@ -961,13 +993,16 @@ public class GuiScreenGenBook extends GuiScreen {
     				stateGenListOffset = button.getOffset();
         			showView(state);
     			} else if(button.getPageID() == 1) {
-    				stateAddViewPage = button.getOffset();
+    				stateSegmentAddViewPage = button.getOffset();
     				showView(state);
     			} else if(button.getPageID() == 2) {
     				stateViewGenIndex = button.getOffset();
     				showView(state);
     			} else if(button.getPageID() == 3) {
     				stateHelpOffset = button.getOffset();
+    				showView(state);
+    			} else if(button.getPageID() == 4) {
+    				stateGenAddViewPage = button.getOffset();
     				showView(state);
     			}
     			

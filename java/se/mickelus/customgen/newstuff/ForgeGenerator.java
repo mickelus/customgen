@@ -263,7 +263,9 @@ public class ForgeGenerator implements IWorldGenerator  {
 						average += world.getHeightValue(chunkX*16+i, chunkZ*16+j);
 					}
 				}
-				startY = average / 256;
+				
+				// we generate surface gens 3 levels below, it's already one below based on world.getHeightValue
+				startY = average / 256 - 2;
 				break;
 				
 			case Gen.SEA_FLOOR_LEVEL:

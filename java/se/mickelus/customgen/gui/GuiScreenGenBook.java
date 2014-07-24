@@ -895,6 +895,17 @@ public class GuiScreenGenBook extends GuiScreen {
 				PacketBuilder.sendTemplateGeneration(Utilities.FILL_TEMPLATE);
 			}
 		}));
+    	
+    	buttonList.add(new GuiButtonOutlined(0,
+    			(width - bookImageWidth) / 2 + 38,
+    			(height - bookImageHeight) / 2 + 90,
+    			"surface", 50, new Observer() {
+			
+			@Override
+			public void update(Observable arg0, Object arg1) {
+				PacketBuilder.sendTemplateGeneration(Utilities.SURFACE_TEMPLATE);
+			}
+		}));
     }
     
     private void showHelpView(int offset) {

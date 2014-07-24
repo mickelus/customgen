@@ -14,6 +14,7 @@ public class Utilities {
 	public static final int EDGE_TEMPLATE = 1;
 	public static final int FACE_TEMPLATE = 2;
 	public static final int FILL_TEMPLATE = 3;
+	public static final int SURFACE_TEMPLATE = 4;
 
 	private static ArrayList<Segment> templates;
 	
@@ -115,6 +116,16 @@ public class Utilities {
 			}
 		}
 		templates.add(FILL_TEMPLATE, fill);
+		
+		Segment surface = new Segment("surface");
+		for (int x = 0; x < 16; x++) {
+			for (int y = 0; y < 3; y++) {
+				for (int z = 0; z < 16; z++) {
+					surface.setBlock(x, y, z, block, 0);
+				}
+			}
+		}
+		templates.add(SURFACE_TEMPLATE, surface);
 		
 	}
 	

@@ -111,8 +111,10 @@ public class GuiScreenGenBook extends GuiScreen {
     static final int HELP_STATE = 7;
     
     private static final int GEN_LIST_MAX_LENGTH = 7;
-    private static final int GEN_BIOME_MAX_LENGTH = 12;
-    private static final int SEGMENT_LIST_MAX_LENGTH = 6;
+    private static final int GEN_CREATE_BIOME_LIST_MAX_LENGTH = 12;
+    private static final int GEN_BIOME_STRING_MAX_LENGTH = 7;
+    private static final int GEN_BIOME_LIST_MAX_LENGTH = 22;
+    private static final int GEN_SEGMENT_LIST_MAX_LENGTH = 6;
     
     private static final int SEGMENT_PAGES_COUNT = 2;
     private static final int HELP_PAGES_COUNT = 7;
@@ -374,10 +376,10 @@ public class GuiScreenGenBook extends GuiScreen {
     	Type[] types = Type.values();
     	int listLength = types.length;
     	int listOffset = 0;
-    	if(types.length > GEN_BIOME_MAX_LENGTH) {
+    	if(types.length > GEN_CREATE_BIOME_LIST_MAX_LENGTH) {
     		
     		// show next button
-    		if((offset + 1) * GEN_BIOME_MAX_LENGTH < listLength) {
+    		if((offset + 1) * GEN_CREATE_BIOME_LIST_MAX_LENGTH < listLength) {
     			buttonList.add(new GuiButtonChangePage(4, offset + 1,
 					(width - bookImageWidth) / 2 + 134,
 					(height - bookImageHeight) / 2 + 153,
@@ -393,14 +395,14 @@ public class GuiScreenGenBook extends GuiScreen {
     		}
     		
     		// current page number
-    		drawList.add(new GuiText((offset + 1) + "/" + ((listLength-1)/GEN_BIOME_MAX_LENGTH + 1), 122, 155, GuiText.CENTER_ALIGN));
+    		drawList.add(new GuiText((offset + 1) + "/" + ((listLength-1)/GEN_CREATE_BIOME_LIST_MAX_LENGTH + 1), 122, 155, GuiText.CENTER_ALIGN));
     		
     		// set item offset and list length
-    		listOffset = offset * GEN_BIOME_MAX_LENGTH;
-    		if(listOffset + GEN_BIOME_MAX_LENGTH > listLength) {
+    		listOffset = offset * GEN_CREATE_BIOME_LIST_MAX_LENGTH;
+    		if(listOffset + GEN_CREATE_BIOME_LIST_MAX_LENGTH > listLength) {
     			listLength = listLength - listOffset;
     		} else {
-    			listLength = GEN_BIOME_MAX_LENGTH;
+    			listLength = GEN_CREATE_BIOME_LIST_MAX_LENGTH;
     		}
     	}
     	
@@ -482,7 +484,16 @@ public class GuiScreenGenBook extends GuiScreen {
     	
     	String levelText;
     	String villageText;
-    	int leftMax;
+
+    	int numBiomePages = (Type.values().length-1 + GEN_BIOME_LIST_MAX_LENGTH)/GEN_BIOME_LIST_MAX_LENGTH;
+    	int numSegmentPages = ((gen.getNumSegments()+gen.getNumStartingSegments()-1 + GEN_SEGMENT_LIST_MAX_LENGTH)/GEN_SEGMENT_LIST_MAX_LENGTH);
+    	
+    	// make place for empty state message, empty state for biomes should not happen
+    	if(numSegmentPages == 0) {
+    		numSegmentPages = 1;
+    	}
+    	
+    	MLogger.logf("types: %d biome: %d segm: %d", Type.values().length, numBiomePages, numSegmentPages);
     	
     	// title
     	drawList.add(new GuiText("Gen: " + gen.getName(), 38, 17));
@@ -515,45 +526,34 @@ public class GuiScreenGenBook extends GuiScreen {
         	drawList.add(new GuiText(levelText, 38, 40));
         	
         	// village gen
-        	villageText = "village gen: ";
-        	if(gen.isVillageGen()) {
-        		villageText += "yes";
-        	} else {
-        		villageText += "no";
-        	}
-        	drawList.add(new GuiText(villageText, 38, 50));
+//        	villageText = "village gen: ";
+//        	if(gen.isVillageGen()) {
+//        		villageText += "yes";
+//        	} else {
+//        		villageText += "no";
+//        	}
+//        	drawList.add(new GuiText(villageText, 38, 50));
         	
-        	// biomes
-        	drawList.add(new GuiText("biomes:", 38, 60));
-        	
-        	// left biome column
-        	leftMax = gen.getNumBiomes() > 8 ? 8 : gen.getNumBiomes();
-        	for(int i = 0; i < leftMax; i++) {
-        		
-        		// convert type to string, convert to lower case
-        		drawList.add(new GuiText(gen.getBiome(i).toString().toLowerCase(), 38, 70 + i*10));
-        	}
-        	
-        	// right biome column
-        	for(int i = 8; i < gen.getNumBiomes(); i++) {
-        		
-        		// convert type to string, convert to lower case
-        		drawList.add(new GuiText(gen.getBiome(i).toString().toLowerCase(), 95, 70 + (i-8)*10));
-        	}
-        	
-        	// show all text if no biomes have been specified
         	if(gen.getNumBiomes() == 0) {
-        		drawList.add(new GuiText("all", 76, 60));
+        		drawList.add(new GuiText("biomes: all", 38, 50));
+        	} else {
+        		drawList.add(new GuiText("biomes: " + gen.getNumBiomes(), 38, 50));
         	}
-    	} else { // on the other pages we draw the segments
+        	
+        	drawList.add(new GuiText("normal segments: " + gen.getNumSegments(), 38, 60));
+        	drawList.add(new GuiText("starting segments: " + gen.getNumStartingSegments(), 38, 70));
+        	
+        	
+        	
+    	} else if(offset > 0 && offset < numSegmentPages + 1) {
     		
-    		int listOffset = (offset-1) * SEGMENT_LIST_MAX_LENGTH;
+    		int listOffset = (offset-1) * GEN_SEGMENT_LIST_MAX_LENGTH;
     		int listLength = gen.getNumSegments() + gen.getNumStartingSegments();
-    		//MLogger.logf("o:%d l1:%d", listOffset, listLength);
-    		if(listOffset + SEGMENT_LIST_MAX_LENGTH > listLength) {
+    		MLogger.logf("o:%d l1:%d", listOffset, listLength);
+    		if(listOffset + GEN_SEGMENT_LIST_MAX_LENGTH > listLength) {
     			listLength = listLength - listOffset;
     		} else {
-    			listLength = SEGMENT_LIST_MAX_LENGTH;
+    			listLength = GEN_SEGMENT_LIST_MAX_LENGTH;
     		}
     		//MLogger.logf("l2:%d", listLength);
     		
@@ -563,28 +563,79 @@ public class GuiScreenGenBook extends GuiScreen {
     		drawList.add(new GuiText("#TE", 138, 40, GuiText.RIGHT_ALIGN));
     		drawList.add(new GuiText("S", 148, 40, GuiText.RIGHT_ALIGN));
     		
-    		// list buttons based on offset
-        	for (int i = 0; i < listLength; i++) {
-        		Segment segment;
-        		boolean isStart;
-        		if(i + listOffset<gen.getNumStartingSegments()) {
-        			segment = gen.getStartingSegment(i + listOffset);
-        			isStart = true;
-        		} else {
-        			segment = gen.getSegment(i + listOffset - gen.getNumStartingSegments());
-        			isStart = false;
+    		if(listLength > 0) {
+    			// list buttons based on offset
+            	for (int i = 0; i < listLength; i++) {
+            		Segment segment;
+            		boolean isStart;
+            		if(i + listOffset<gen.getNumStartingSegments()) {
+            			segment = gen.getStartingSegment(i + listOffset);
+            			isStart = true;
+            		} else {
+            			segment = gen.getSegment(i + listOffset - gen.getNumStartingSegments());
+            			isStart = false;
+            		}
+            		
+            		// separator
+                	drawList.add(GuiTexture.createDashedLineTexture(37, 49 + i*16));
+            		
+                	// button
+        			buttonList.add(new GuiButtonSegmentListItem(listOffset + i, 
+        				(width - bookImageWidth) / 2 + 37,
+                 		(height - bookImageHeight) / 2 + 50 + i*16,
+        				segment.getName(), segment.getNumTileEntities(), segment.getNumTileEntities(), isStart));
         		}
-        		
-        		// separator
-            	drawList.add(GuiTexture.createDashedLineTexture(37, 49 + i*16));
+    		} else {
+    			// separator
+            	drawList.add(GuiTexture.createDashedLineTexture(37, 49));
         		
             	// button
-    			buttonList.add(new GuiButtonSegmentListItem(listOffset + i, 
-    				(width - bookImageWidth) / 2 + 37,
-             		(height - bookImageHeight) / 2 + 50 + i*16,
-    				segment.getName(), segment.getNumTileEntities(), segment.getNumTileEntities(), isStart));
+            	drawList.add(new GuiText("No segments yet", 38, 52));
     		}
     		
+        	
+    	} else { // on the other pages we draw the biomes
+    		int listOffset = (offset-1-numSegmentPages) * GEN_BIOME_LIST_MAX_LENGTH;
+    		
+    		Type[] types = Type.values();
+    		int listLength = types.length;
+    		
+    		// set item offset and list length
+    		if(listOffset + GEN_BIOME_LIST_MAX_LENGTH > listLength) {
+    			listLength = listLength - listOffset;
+    		} else {
+    			listLength = GEN_BIOME_LIST_MAX_LENGTH;
+    		}
+    		
+    		drawList.add(new GuiText("biomes:", 38, 30));
+    		
+    		for (int i = 0; i < listLength; i++) {
+        		int left = 0;
+        		int top = 0;
+        		Type biomeType = types[i + listOffset];
+        		String biomeName = biomeType.toString().toLowerCase();
+        		int color =  0x55000000;
+        		
+        		if(biomeName.length() > GEN_BIOME_STRING_MAX_LENGTH) {
+        			biomeName = biomeName.substring(0, GEN_BIOME_STRING_MAX_LENGTH) + "...";
+        		}
+        		
+        		if(i>listLength/2-1) {
+        			left = 102;
+        			top = (i-listLength/2)*10 + 40;
+        		} else {
+        			left = 48;
+        			top = i*10 + 40;
+        		}
+        		
+        		if(gen.generatesInBiome(biomeType) || gen.getNumBiomes() == 0) {
+        			color = 0xff000000;
+        			drawList.add(new GuiTexture(texture, left - 9, top + 1, 8, 8, 16, 60, 0, 0, 0));
+        		}
+        		
+        		drawList.add(new GuiText(biomeName, left, top, color, GuiText.LEFT_ALIGN));
+    		}
+
     	}
     	
     	// gen button
@@ -601,7 +652,7 @@ public class GuiScreenGenBook extends GuiScreen {
 			}));
 
     	// show next button
-		if(offset * SEGMENT_LIST_MAX_LENGTH < gen.getNumSegments()+gen.getNumStartingSegments()) {
+		if(offset < numBiomePages + numSegmentPages) {
 			buttonList.add(new GuiButtonChangePage(2, offset + 1,
 				(width - bookImageWidth) / 2 + 134,
 				(height - bookImageHeight) / 2 + 153,
@@ -617,9 +668,7 @@ public class GuiScreenGenBook extends GuiScreen {
 		}
 		
 		// current page number
-		drawList.add(new GuiText((offset + 1) + "/" + ((gen.getNumSegments()+gen.getNumStartingSegments()-1 + SEGMENT_LIST_MAX_LENGTH)/SEGMENT_LIST_MAX_LENGTH + 1), 122, 155, GuiText.CENTER_ALIGN));
-    	
-		MLogger.logf("len %d", gen.getNumSegments()+gen.getNumStartingSegments());
+		drawList.add(new GuiText((offset + 1) + "/" + (numBiomePages + numSegmentPages + 1), 122, 155, GuiText.CENTER_ALIGN));
     }
     
     private void showSegmentView(final Segment segment, boolean isStart) {
@@ -1065,6 +1114,7 @@ public class GuiScreenGenBook extends GuiScreen {
     	stateViewGen = gen;
     	
     	if(state == GEN_VIEW_STATE) {
+    		stateViewGenIndex = 0;
     		showView(GEN_VIEW_STATE);
     	}
     }

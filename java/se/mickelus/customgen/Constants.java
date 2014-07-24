@@ -4,7 +4,7 @@ public class Constants {
 	
 	public static final String MOD_ID = "customgen";
 	public static final String MOD_NAME = "Customgen";
-	public static final String VERSION = "0.1";
+	public static final String VERSION = "R1";
 	
 	public static final String PACKS_PATH = "resourcepacks";
 	public static final String GENS_PATH = PACKS_PATH + "/%s/assets/" + MOD_ID;
@@ -13,7 +13,7 @@ public class Constants {
 	public static final String FILE_EXT = ".nbt";
 	
 	public static final int SEGMENT_SIZE = 16;
-	public static final int DUNGEON_CHANCE = 100;
+	public static final int DUNGEON_CHANCE = 300;
 	public static final int SEGMENT_LIMIT = 50;
 	
 	public static final int GENERATION_WEIGHT = 10;

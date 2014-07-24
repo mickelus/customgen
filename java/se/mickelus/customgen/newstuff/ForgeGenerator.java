@@ -248,8 +248,6 @@ public class ForgeGenerator implements IWorldGenerator  {
 		Segment startingSegment = null;
 		List<SegmentPlaceholder> placeholderList = new ArrayList<SegmentPlaceholder>();
 		
-		MLogger.logf("Generating start at: %d %d\n", chunkX*16, chunkZ*16);
-		
 		// calculate generation height
 		switch(gen.getLevel()) {
 			case Gen.UNDERGROUND_LEVEL:
@@ -308,7 +306,6 @@ public class ForgeGenerator implements IWorldGenerator  {
 		// while there are placeholders
 		while(hasUsablePlaceholders(placeholderList) && count < Constants.SEGMENT_LIMIT) {
 			
-			
 			// get first placeholder
 			SegmentPlaceholder ph = getFirstUsablePlaceholder(placeholderList);
 			
@@ -328,9 +325,6 @@ public class ForgeGenerator implements IWorldGenerator  {
 			
 			count++;
 		}
-		
-		//MLogger.logf("DONE GENERATING %s, E: %b, C: %d", gen.getName(), hasUsablePlaceholders(placeholderList), count);
-		
 	}
 	
 	private boolean hasUsablePlaceholders(List<SegmentPlaceholder> placeholderList) {

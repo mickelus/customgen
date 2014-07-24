@@ -13,6 +13,8 @@ import se.mickelus.customgen.segment.Segment;
 
 public class Gen {
 	
+	public static final int PROTOCOL_VERSION = 1;
+	
 	public static final int UNDERGROUND_LEVEL = 0;
 	public static final int SURFACE_LEVEL = 1;
 	public static final int SEA_FLOOR_LEVEL = 2;
@@ -24,9 +26,8 @@ public class Gen {
 	public static final String BIOME_KEY = "biome";
 	public static final String SEGMENT_KEY = "segment";
 	public static final String SEGMENT_START_KEY = "segmentstart";
-	
-	
-	//private EnumSet<Type> biomes;	
+	public static final String PROTOCOL_KEY = "protocol";
+		
 	
 	private ArrayList<Type> biomes;
 	private int genLevel = -1;
@@ -403,6 +404,8 @@ public class Gen {
 		NBTTagList biomeTagList = new NBTTagList();
 		NBTTagList segmentTagList = new NBTTagList();
 		NBTTagList segmentStartTagList = new NBTTagList();
+		
+		nbt.setInteger(PROTOCOL_KEY, PROTOCOL_VERSION);
 		
 		nbt.setString(NAME_KEY, name);
 		nbt.setString(RESOURCEPACK_KEY, resourcePack);

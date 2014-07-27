@@ -39,10 +39,8 @@ Available versions:
 [/list]
 Customgen needs minecraft forge to run, download the installer from [url=http://files.minecraftforge.net/]here[/url] and run it. There should now be a folder called "mods" in your minecraft directory, place the customgen .jar file in that folder.
 
-
 [b][size=5]Installing content[/size][/b]
 Gens that you've created yourself should be ready to generate, just run around and explore and they should pop up. If you've downloaded gens created by someone else, place them in the resourcepacks folder and restart your world. If you're running a server you may have to create the resourcepacks folder first. You can use the Book of Custom Generation to check if the gens were properly added.
-
 
 [b][size=6]Creating content[/size][/b]
 [b][size=5]Step 1: Paste a template[/size][/b]
@@ -65,7 +63,6 @@ Now you're set! If you want to share it with others you'll probably have to pack
 
 [b][size=6]Mod compatability[/size][/b]
 It should work mostly fine with other mods, I've noticed some problems when generating tile entities from other mods.
-
 
 [b][size=6]Bug reports & feature requests[/size][/b]
 I would prefer if you could post bug reports and feature requests over on the [url=https://github.com/mickelus/customgen/issues]github page[/url], it's easier to manage that way.

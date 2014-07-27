@@ -30,7 +30,7 @@ When the blocks in a segment is generated empty blocks will not be placed but in
 Placing these on the side of a segment will add to its interface number on that side. Right click to increase its value. Multiple interface blocks may be placed on the same side.
 
 [b]Loot placeholder[/b]
-Loot placeholders inside inventories will be replaced with dungeon loot when it is generated, this should add more randomness and "replayability" to a gen.
+A Loot placeholder inside an inventoriy will be replaced with dungeon loot when it is generated, this should add more randomness and "replayability" to a gen.
 
 [b][size=6]Download & Installation[/size][/b]
 Available versions:
@@ -41,17 +41,30 @@ Customgen needs minecraft forge to run, download the installer from [url=http://
 
 
 [b][size=5]Installing content[/size][/b]
-Gens that you've created yourself should be ready to generate.
-If you've downloaded gens created by someone else, place them in the resourcepacks folder and restart your world. If you're running a server you may have to create the resourcepacks folder first. You can use the Book of Custom Generation to check if the gens were properly added.
+Gens that you've created yourself should be ready to generate, just run around and explore and they should pop up. If you've downloaded gens created by someone else, place them in the resourcepacks folder and restart your world. If you're running a server you may have to create the resourcepacks folder first. You can use the Book of Custom Generation to check if the gens were properly added.
 
 
 [b][size=6]Creating content[/size][/b]
-
-
 [b][size=5]Step 1: Paste a template[/size][/b]
+Templates can be found under the third tab in the Book of Custom Generation, the book can be found under the customgen creative tab. When saving a segment the blocks saved are based on a grid, to be sure you're building segments in the right place in this grid I like to start of with pasting a template. Try pasting a surface template if you're creating the starting segment for a surface gen, otherwise I would go for a corner template. If what you're planning to build is not going to fit inside one segment go ahead and paste more templates next to the first one.
 
+[b][size=5]Step 2: Build![/size][/b]
+Build all of the things, remember to use Empty Blocks for things that you do not want to replace. Try to keep track of the bounds of each segment.
+
+[b][size=5]Step 3: Placing Interface Blocks[/size][/b]
+If you've built multiple segments you're going to have to place interface blocks where the segments meet. With some clever use of interfaces we could create a gen with segments that repeat or are interchangeable with other segments. You can use the segment tab of the Book of Custom generation to see what interface values a segment is going to have once saved.
+
+[b][size=5]Step 4: Create a gen[/size][/b]
+Open up the book, open the gen list tab and click the "add gen" button. Fill in the name of the gen and the name of the resource pack that you want it to be placed in. If the resource pack does not exist it will be created. Select the level type and and a couple of biome types that this gen would be fit to generate in.
+
+[b][size=5]Step 5: Adding the segments[/size][/b]
+For each segment that you've created, go stand in that segment, open up the book and open the segment tab. Give it a name (segments in the same gen cannot have the same name, you'll overwrite the previous one by giving it the same name) and input the name of the gen and the name of the gens resource pack. Check the start checkbox for the segments that should be starting segments, don't let all of them be starting segments as only one starting segment can generate when a gen is generated.
+
+[b][size=5]Step 6: Almost done[/size][/b]
+Now you're set! If you want to share it with others you'll probably have to pack it up in a .zip archive, when doing this make sure that the assets folder is the first folder inside the archive, not a folder with the same name as the resource pack.
 
 [b][size=6]Mod compatability[/size][/b]
+It should work mostly fine with other mods, I've noticed some problems when generating tile entities from other mods.
 
 
 [b][size=6]Bug reports & feature requests[/size][/b]

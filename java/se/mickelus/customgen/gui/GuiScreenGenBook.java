@@ -493,8 +493,6 @@ public class GuiScreenGenBook extends GuiScreen {
     		numSegmentPages = 1;
     	}
     	
-    	MLogger.logf("types: %d biome: %d segm: %d", Type.values().length, numBiomePages, numSegmentPages);
-    	
     	// title
     	drawList.add(new GuiText("Gen: " + gen.getName(), 38, 17));
     	
@@ -549,13 +547,11 @@ public class GuiScreenGenBook extends GuiScreen {
     		
     		int listOffset = (offset-1) * GEN_SEGMENT_LIST_MAX_LENGTH;
     		int listLength = gen.getNumSegments() + gen.getNumStartingSegments();
-    		MLogger.logf("o:%d l1:%d", listOffset, listLength);
     		if(listOffset + GEN_SEGMENT_LIST_MAX_LENGTH > listLength) {
     			listLength = listLength - listOffset;
     		} else {
     			listLength = GEN_SEGMENT_LIST_MAX_LENGTH;
     		}
-    		//MLogger.logf("l2:%d", listLength);
     		
     		drawList.add(new GuiText("segments", 38, 30));
     		drawList.add(new GuiText("name", 38, 40));
@@ -646,7 +642,6 @@ public class GuiScreenGenBook extends GuiScreen {
 				
 				@Override
 				public void update(Observable o, Object arg) {
-					MLogger.logf("generate: %s", gen.getName());
 					PacketBuilder.getInstance().sendGenGenerationRequest(gen.getName(), gen.getResourcePack());
 				}
 			}));
@@ -692,7 +687,6 @@ public class GuiScreenGenBook extends GuiScreen {
     				
     				@Override
     				public void update(Observable o, Object arg) {
-    					MLogger.logf("generate segment: %s", segment.getName());
     					PacketBuilder.sendSegmentGenerationRequest(segment.getName(), 
     							stateViewGen.getName(), stateViewGen.getResourcePack(), false);
     				}
@@ -705,7 +699,6 @@ public class GuiScreenGenBook extends GuiScreen {
     				
     				@Override
     				public void update(Observable o, Object arg) {
-    					MLogger.logf("load segment: %s", segment.getName());
     					PacketBuilder.sendSegmentGenerationRequest(segment.getName(), 
     							stateViewGen.getName(), stateViewGen.getResourcePack(), true);
     				}

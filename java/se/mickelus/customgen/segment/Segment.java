@@ -221,19 +221,9 @@ public class Segment {
 			
 			
 		}
-		
 		// write tile entities
 		for (NBTTagCompound nbtTagCompound : tileEntityNBTList) {
 			tileEntityTagList.appendTag(nbtTagCompound);
-			/*if(nbtTagCompound.hasKey("Items")) {
-				NBTTagList list = nbtTagCompound.getTagList("Items", 10);
-				for (int i = 0; i < list.tagCount(); i++) {
-					NBTTagCompound item = (NBTTagCompound)list.getCompoundTagAt(i);
-					if(item.getShort("id") == Constants.PLACEHOLDERITEM_ID) {
-						item.setShort("id", (short)-1);
-					}
-				}
-			}*/
 		}
 		nbt.setTag(TILE_ENTITY_KEY, tileEntityTagList);
 		

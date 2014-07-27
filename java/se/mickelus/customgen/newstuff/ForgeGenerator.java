@@ -64,20 +64,23 @@ public class ForgeGenerator implements IWorldGenerator  {
 					if(!generatePlaceholders && (block.equals(EmptyBlock.getInstance()) || block.equals(InterfaceBlock.getInstance()) )) {
 						continue;
 					}
-					world.setBlock(x+sx, y+sy, z+sz, block);
-					// setting metadata and block at the same time seem to overwrite the metadata if the block if a tileentity is spawned
-					world.setBlockMetadataWithNotify(x+sx, y+sy, z+sz, segment.getBlockMetadata(sx, sy, sz), 2);
+					world.setBlock(x+sx, y+sy, z+sz, block, segment.getBlockMetadata(sx, sy, sz), 2);
+					// setting metadata and block at the same time seem to overwrite the metadata of the block if a tileentity is spawned
+					//world.setBlockMetadataWithNotify(x+sx, y+sy, z+sz, segment.getBlockMetadata(sx, sy, sz), 0);
 				}
 			}
 		}
 		
 		
 		// spawn tile entities
+		TileEntity[] tileEntities = new TileEntity[segment.getNumTileEntities()];
 		for (int i = 0; i < segment.getNumTileEntities(); i++) {
 			
 			NBTTagCompound tag = segment.getTileEntityNBT(i);
 			tag = updateTileEntityNBT(tag, chunkX*16, y, chunkZ*16);
 			TileEntity tileEntity = TileEntity.createAndLoadEntity(tag);
+			tileEntities[i] = tileEntity;
+			
 			
 			if (tileEntity != null) {
 				
@@ -106,6 +109,10 @@ public class ForgeGenerator implements IWorldGenerator  {
 				}
                 world.getChunkFromChunkCoords(chunkX, chunkZ).addTileEntity(tileEntity);
             }
+		}
+		
+		for (int i = 0; i < tileEntities.length; i++) {
+			world.markBlockForUpdate(tileEntities[i].xCoord, tileEntities[i].yCoord, tileEntities[i].zCoord);
 		}
 	}
 	
@@ -269,6 +276,7 @@ public class ForgeGenerator implements IWorldGenerator  {
 			case Gen.SEA_FLOOR_LEVEL:
 				for (startY = 255; startY > 0; startY--) {
 					if(world.getBlock(chunkX*16, startY, chunkZ*16).getMaterial().isSolid()) {
+						startY-= 3;
 						break;
 					}
 				}
@@ -278,8 +286,6 @@ public class ForgeGenerator implements IWorldGenerator  {
 				MLogger.log("attempt to generate gen with invalid level.");
 				return;
 		}
-		
-		MLogger.logf("Generating start at: %d %d %d\n", chunkX*16, chunkZ*16, startY);
 		
 		// get starting segment
 		startingSegment = gen.getStartingSegment(random);

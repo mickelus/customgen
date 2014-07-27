@@ -35,7 +35,7 @@ A Loot placeholder inside an inventoriy will be replaced with dungeon loot when 
 [b][size=6]Download & Installation[/size][/b]
 Available versions:
 [list]
-[*][url=http://www.mickelus.se/upl/customgen-R1-1.7.10.jar]Customgen release 1 for 1.7.10[/url]
+[*][url=http://www.mickelus.se/upl/customgen-R1.jar]Customgen release 1 for 1.7.10[/url]
 [/list]
 Customgen needs minecraft forge to run, download the installer from [url=http://files.minecraftforge.net/]here[/url] and run it. There should now be a folder called "mods" in your minecraft directory, place the customgen .jar file in that folder.
 

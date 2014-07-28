@@ -1,10 +1,10 @@
 [b][size=xx-large]Customgen[/size][/b]
 [i]beta release 1 for 1.7.10[/i]
 
-[b][size=6]Description[/size][/b]
+[size=x-large][b]Description[/b][/size]
 Customgen is a mod that lets you to add player-created features to terrain generation. Generation features are saved as resource packs and may easily be shared with others. Customgen is based on the following things:
-
-[b][size=5]Gens[/size][/b]
+[spoiler]
+[b][size=large]Gens[/size][/b]
 Short for generation feature, this is the base for a feature. A gen has a set of data, describing where and how it may generate. Currently it has a name, a resourcepack name, a level, a set of allowed biome types and a set of segments. A gens level will decide on what y level it will generate, the following values are available:
 [list]
 [*][b]underground[/b]: starts generating underground at y=4, y=20 or y=36
@@ -13,11 +13,11 @@ Short for generation feature, this is the base for a feature. A gen has a set of
 [/list]
 For a gen to generate in a biome, one of the biomes types has to match one of the biome types in the set of allowed biome types. An empty set means that all biome types are allowed. Last but not least we have the segments, this is where the actual content is stored.
 
-[b][size=5]Segments[/size][/b]
+[b][size=large]Segments[/size][/b]
 Segments consists of a 16x16x16 cube of blocks with metadata and tile entities, this is what gets placed in the world when a gen generates. Segments have an interface number on each side, this describes what other segments that it may be fit to generate next to. A segment can be marked as a starting segment, when a gen generates into the world it will start with one its starting segments. Once the
 starting segment has been generated segments that have interfaces matching the interfaces of the starting segment will also generate and then segments with interfaces matching the interfaces of those segments, and so on until there are no interfaces left to fit new segments onto (there's currently a limit on 100 segments to avoid generating infinite loops).
 
-[b][size=5]Blocks & Items[/size][/b]
+[b][size=large]Blocks & Items[/size][/b]
 Customgen adds a couple of blocks and items that are used in creating gens.
 
 [b]Book of Custom Generation[/b]
@@ -31,38 +31,42 @@ Placing these on the side of a segment will add to its interface number on that 
 
 [b]Loot placeholder[/b]
 A Loot placeholder inside an inventoriy will be replaced with dungeon loot when it is generated, this should add more randomness and "replayability" to a gen.
+[/spoiler]
 
-[b][size=6]Download & Installation[/size][/b]
+[b][size=x-large]Download & Installation[/size][/b]
 Available versions:
 [list]
-[*][url=http://www.mickelus.se/upl/customgen-R1.jar]Customgen release 1 for 1.7.10[/url]
+[*][b][url=http://www.mickelus.se/upl/customgen-R1.jar]Customgen release 1 for 1.7.10[/url][/b]
 [/list]
 Customgen needs minecraft forge to run, download the installer from [url=http://files.minecraftforge.net/]here[/url] and run it. There should now be a folder called "mods" in your minecraft directory, place the customgen .jar file in that folder.
 
-[b][size=5]Installing content[/size][/b]
+[b][size=large]Installing content[/size][/b]
 Gens that you've created yourself should be ready to generate, just run around and explore and they should pop up. If you've downloaded gens created by someone else, place them in the resourcepacks folder and restart your world. If you're running a server you may have to create the resourcepacks folder first. You can use the Book of Custom Generation to check if the gens were properly added.
 
-[b][size=6]Creating content[/size][/b]
-[b][size=5]Step 1: Paste a template[/size][/b]
+[b][size=x-large]Creating content[/size][/b]
+A short tutorial on how to create a gen.
+[spoiler]
+[b][size=large]Step 1: Paste a template[/size][/b]
 Templates can be found under the third tab in the Book of Custom Generation, the book can be found under the customgen creative tab. When saving a segment the blocks saved are based on a grid, to be sure you're building segments in the right place in this grid I like to start of with pasting a template. Try pasting a surface template if you're creating the starting segment for a surface gen, otherwise I would go for a corner template. If what you're planning to build is not going to fit inside one segment go ahead and paste more templates next to the first one.
 
-[b][size=5]Step 2: Build![/size][/b]
+[b][size=large]Step 2: Build![/size][/b]
 Build all of the things, remember to use Empty Blocks for things that you do not want to replace. Try to keep track of the bounds of each segment.
 
-[b][size=5]Step 3: Placing Interface Blocks[/size][/b]
+[b][size=large]Step 3: Placing Interface Blocks[/size][/b]
 If you've built multiple segments you're going to have to place interface blocks where the segments meet. With some clever use of interfaces we could create a gen with segments that repeat or are interchangeable with other segments. You can use the segment tab of the Book of Custom generation to see what interface values a segment is going to have once saved.
 
-[b][size=5]Step 4: Create a gen[/size][/b]
+[b][size=large]Step 4: Create a gen[/size][/b]
 Open up the book, open the gen list tab and click the "add gen" button. Fill in the name of the gen and the name of the resource pack that you want it to be placed in. If the resource pack does not exist it will be created. Select the level type and and a couple of biome types that this gen would be fit to generate in.
 
-[b][size=5]Step 5: Adding the segments[/size][/b]
+[b][size=large]Step 5: Adding the segments[/size][/b]
 For each segment that you've created, go stand in that segment, open up the book and open the segment tab. Give it a name (segments in the same gen cannot have the same name, you'll overwrite the previous one by giving it the same name) and input the name of the gen and the name of the gens resource pack. Check the start checkbox for the segments that should be starting segments, don't let all of them be starting segments as only one starting segment can generate when a gen is generated.
 
-[b][size=5]Step 6: Almost done[/size][/b]
+[b][size=large]Step 6: Almost done[/size][/b]
 Now you're set! If you want to share it with others you'll probably have to pack it up in a .zip archive, when doing this make sure that the assets folder is the first folder inside the archive, not a folder with the same name as the resource pack.
+[/spoiler]
 
-[b][size=6]Mod compatability[/size][/b]
+[b][size=x-large]Mod compatability[/size][/b]
 It should work mostly fine with other mods, I've noticed some problems when generating tile entities from other mods.
 
-[b][size=6]Bug reports & feature requests[/size][/b]
+[b][size=x-large]Bug reports & feature requests[/size][/b]
 I would prefer if you could post bug reports and feature requests over on the [url=https://github.com/mickelus/customgen/issues]github page[/url], it's easier to manage that way.

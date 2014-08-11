@@ -73,13 +73,11 @@ public class ForgeGenerator implements IWorldGenerator  {
 		
 		
 		// spawn tile entities
-		TileEntity[] tileEntities = new TileEntity[segment.getNumTileEntities()];
 		for (int i = 0; i < segment.getNumTileEntities(); i++) {
 			
 			NBTTagCompound tag = segment.getTileEntityNBT(i);
 			tag = updateTileEntityNBT(tag, chunkX*16, y, chunkZ*16);
 			TileEntity tileEntity = TileEntity.createAndLoadEntity(tag);
-			tileEntities[i] = tileEntity;
 			
 			
 			if (tileEntity != null) {
@@ -109,10 +107,6 @@ public class ForgeGenerator implements IWorldGenerator  {
 				}
                 world.getChunkFromChunkCoords(chunkX, chunkZ).addTileEntity(tileEntity);
             }
-		}
-		
-		for (int i = 0; i < tileEntities.length; i++) {
-			world.markBlockForUpdate(tileEntities[i].xCoord, tileEntities[i].yCoord, tileEntities[i].zCoord);
 		}
 	}
 	

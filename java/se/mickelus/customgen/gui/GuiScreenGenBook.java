@@ -579,7 +579,7 @@ public class GuiScreenGenBook extends GuiScreen {
         			buttonList.add(new GuiButtonSegmentListItem(listOffset + i, 
         				(width - bookImageWidth) / 2 + 37,
                  		(height - bookImageHeight) / 2 + 50 + i*16,
-        				segment.getName(), segment.getNumTileEntities(), segment.getNumTileEntities(), isStart));
+        				segment.getName(), segment.getNumEntities(), segment.getNumTileEntities(), isStart));
         		}
     		} else {
     			// separator

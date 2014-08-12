@@ -93,7 +93,6 @@ public class Customgen {
 	
 	@EventHandler
 	public void serverStart(FMLServerStartingEvent event){
-		System.out.println("SERVER START");
 		
 		if(ForgeGenerator.getInstance() == null) {
 			new ForgeGenerator();

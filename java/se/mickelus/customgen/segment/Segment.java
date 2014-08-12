@@ -327,10 +327,9 @@ public class Segment {
 		}
 		
 		segment.setTileEntityNBTs(tileEntityArray);
-		
 		segment.cleanTileEntityNBTs();
 		
-		if(nbt.hasKey(BLOCK_MAP_KEY)) {
+		if(nbt.hasKey(ITEM_MAP_KEY)) {
 			try {
 				
 				// read item mappings from nbt
@@ -470,32 +469,13 @@ public class Segment {
 	 */
 	private void cleanTileEntityNBTs() {
 		if(blocks.length > 0) {
-			for (int x = 0; x < 16; x++) {
-				for (int y = 0; y < 16; y++) {
-					for (int z = 0; z < 16; z++) {
-						if(getBlock(x, y, z) == Blocks.air) {
-							removeTileEntity(x, y, z);
-						}
-					}
+			for (int i = 0; i < tileEntityNBTList.size(); i++) {
+				NBTTagCompound nbt = tileEntityNBTList.get(i);
+				Block block = getBlock(nbt.getInteger("x"), nbt.getInteger("y"), nbt.getInteger("z"));
+				if(block == Blocks.air) {
+					tileEntityNBTList.remove(i);
+					i--;
 				}
-			}
-		}
-	}
-	
-	/**
-	 * Attempts to remove a tile entity at the given coordinates within this segment.
-	 * @param x The x coord between 0 and 15 (inclusive)
-	 * @param y The y coord between 0 and 15 (inclusive)
-	 * @param z The z coord between 0 and 15 (inclusive)
-	 */
-	private void removeTileEntity(int x, int y, int z) {
-		for (int i = 0; i < entityNBTList.size(); i++) {
-			NBTTagCompound nbt = entityNBTList.get(i);
-			if(		nbt.getInteger("x") == x &&
-					nbt.getInteger("y") == y &&
-					nbt.getInteger("z") == z) {
-				entityNBTList.remove(i);
-				i--;
 			}
 		}
 	}
@@ -522,7 +502,6 @@ public class Segment {
 	 * @param nbt
 	 */
 	private static void internalizeItemIDs(Map<String, Integer> itemMap, NBTTagCompound nbt) {
-		MLogger.log("Called internalize for nbt:" + nbt.toString());
 		if(nbt.hasKey(TE_ITEM_KEY)) {
 			NBTTagList itemTags = nbt.getTagList(TE_ITEM_KEY, 10);
 			
@@ -554,7 +533,6 @@ public class Segment {
 	 * @param itemMap
 	 */
 	private void updateItems(Map<Integer, Integer> itemMap) {
-		MLogger.log("Called update with map: " + itemMap.toString());
 		for (NBTTagCompound nbt : tileEntityNBTList) {
 			updateItems(itemMap, nbt);
 		}

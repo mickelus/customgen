@@ -1,10 +1,9 @@
 [b][size=xx-large]Customgen[/size][/b]
-[i]beta release 1 for 1.7.10[/i]
+[i]beta release 3 for 1.7.10[/i]
 
 [size=x-large][b]Description[/b][/size]
 Customgen is a mod that lets you to add player-created features to terrain generation. Generation features are saved as resource packs and may easily be shared with others. Customgen is based on the following things:
-[spoiler]
-[b][size=large]Gens[/size][/b]
+[spoiler][b][size=large]Gens[/size][/b]
 Short for generation feature, this is the base for a feature. A gen has a set of data, describing where and how it may generate. Currently it has a name, a resourcepack name, a level, a set of allowed biome types and a set of segments. A gens level will decide on what y level it will generate, the following values are available:
 [list]
 [*][b]underground[/b]: starts generating underground at y=4, y=20 or y=36
@@ -30,13 +29,14 @@ When the blocks in a segment is generated empty blocks will not be placed but in
 Placing these on the side of a segment will add to its interface number on that side. Right click to increase its value. Multiple interface blocks may be placed on the same side.
 
 [b]Loot placeholder[/b]
-A Loot placeholder inside an inventoriy will be replaced with dungeon loot when it is generated, this should add more randomness and "replayability" to a gen.
-[/spoiler]
+A Loot placeholder inside an inventoriy will be replaced with dungeon loot when it is generated, this should add more randomness and "replayability" to a gen.[/spoiler]
 
 [b][size=x-large]Download & Installation[/size][/b]
 Available versions:
 [list]
-[*][b][url=http://www.mickelus.se/upl/customgen-R1.jar]Customgen release 1 for 1.7.10[/url][/b]
+[*][b][url=http://www.mickelus.se/upl/customgen/customgen-R3-1.7.10.jar]Customgen release 3 for 1.7.2/1.7.10[/url][/b]
+[*][url=http://www.mickelus.se/upl/customgen/customgen-R2.jar]Customgen release 2 for 1.7.2/1.7.10[/url]
+[*][url=http://www.mickelus.se/upl/customgen/customgen-R1.jar]Customgen release 1 for 1.7.2/1.7.10[/url]
 [/list]
 Customgen needs minecraft forge to run, download the installer from [url=http://files.minecraftforge.net/]here[/url] and run it. There should now be a folder called "mods" in your minecraft directory, place the customgen .jar file in that folder.
 
@@ -45,8 +45,7 @@ Gens that you've created yourself should be ready to generate, just run around a
 
 [b][size=x-large]Creating content[/size][/b]
 A short tutorial on how to create a gen.
-[spoiler]
-[b][size=large]Step 1: Paste a template[/size][/b]
+[spoiler][b][size=large]Step 1: Paste a template[/size][/b]
 Templates can be found under the third tab in the Book of Custom Generation, the book can be found under the customgen creative tab. When saving a segment the blocks saved are based on a grid, to be sure you're building segments in the right place in this grid I like to start of with pasting a template. Try pasting a surface template if you're creating the starting segment for a surface gen, otherwise I would go for a corner template. If what you're planning to build is not going to fit inside one segment go ahead and paste more templates next to the first one.
 
 [b][size=large]Step 2: Build![/size][/b]
@@ -62,11 +61,30 @@ Open up the book, open the gen list tab and click the "add gen" button. Fill in 
 For each segment that you've created, go stand in that segment, open up the book and open the segment tab. Give it a name (segments in the same gen cannot have the same name, you'll overwrite the previous one by giving it the same name) and input the name of the gen and the name of the gens resource pack. Check the start checkbox for the segments that should be starting segments, don't let all of them be starting segments as only one starting segment can generate when a gen is generated.
 
 [b][size=large]Step 6: Almost done[/size][/b]
-Now you're set! If you want to share it with others you'll probably have to pack it up in a .zip archive, when doing this make sure that the assets folder is the first folder inside the archive, not a folder with the same name as the resource pack.
-[/spoiler]
+Now you're set! If you want to share it with others you'll probably have to pack it up in a .zip archive, when doing this make sure that the assets folder is the first folder inside the archive, not a folder with the same name as the resource pack.[/spoiler]
 
 [b][size=x-large]Mod compatability[/size][/b]
-It should work mostly fine with other mods, I've noticed some problems when generating tile entities from other mods.
+It should work mostly fine with other mods. Using blocks, items and tile entities from other mods will work and if some of the mods are missing it will simply skip those blocks, items or tile entities. I've noticed some problems when generating tile entities from other mods, multiblocks seem to be sketchy sometimes.
 
-[b][size=x-large]Bug reports & feature requests[/size][/b]
-I would prefer if you could post bug reports and feature requests over on the [url=https://github.com/mickelus/customgen/issues]github page[/url], it's easier to manage that way.
+[b][size=x-large]Contribute[/size][/b]
+I would prefer if you could post bug reports and feature requests over on the [url=https://github.com/mickelus/customgen/issues]github page[/url], it's easier to manage that way. The source is on github, feel free to submit pull requests aswell.
+
+[b][size=x-large]Screenshots[/size][/b]
+[spoiler]
+The list of biome types a gen is allowed to generate in:
+[img]http://mickelus.se/upl/customgen/allowed_biomes.png[/img]
+
+The gen creation screen:
+[img]http://mickelus.se/upl/customgen/creation.png[/img]
+
+
+The list of gens currently available:
+[img]http://mickelus.se/upl/customgen/genlist.png[/img]
+
+
+The creative tab:
+[img]http://mickelus.se/upl/customgen/creative_tab.png[/img]
+
+
+A comparison of how the template looks compared to how looks when it has generated:
+[img]http://mickelus.se/upl/customgen/diff.png[/img][/spoiler]

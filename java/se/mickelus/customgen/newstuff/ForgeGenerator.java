@@ -7,9 +7,13 @@ import java.util.List;
 import java.util.Random;
 
 import net.minecraft.block.Block;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityList;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagDouble;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
@@ -27,7 +31,6 @@ import se.mickelus.customgen.blocks.InterfaceBlock;
 import se.mickelus.customgen.items.PlaceholderItem;
 import se.mickelus.customgen.segment.Segment;
 import se.mickelus.customgen.segment.SegmentPlaceholder;
-import sun.rmi.log.ReliableLog.LogFile;
 
 public class ForgeGenerator implements IWorldGenerator  {
 	
@@ -49,6 +52,7 @@ public class ForgeGenerator implements IWorldGenerator  {
 			Segment segment, World world, boolean generatePlaceholders, Random random) {
 		int x = chunkX * 16;
 		int z = chunkZ * 16;
+		Chunk chunk = world.getChunkFromChunkCoords(chunkX, chunkZ);
 		
 		// TODO : we should not have to handle this
 		if(segment == null) {
@@ -71,13 +75,13 @@ public class ForgeGenerator implements IWorldGenerator  {
 			}
 		}
 		
-		
 		// spawn tile entities
 		for (int i = 0; i < segment.getNumTileEntities(); i++) {
 			
 			NBTTagCompound tag = segment.getTileEntityNBT(i);
 			tag = updateTileEntityNBT(tag, chunkX*16, y, chunkZ*16);
 			TileEntity tileEntity = TileEntity.createAndLoadEntity(tag);
+			
 			
 			
 			if (tileEntity != null) {
@@ -105,9 +109,37 @@ public class ForgeGenerator implements IWorldGenerator  {
 					System.out.println("Something broke when generating loot in a tile entity.");
 					e.printStackTrace();
 				}
-                world.getChunkFromChunkCoords(chunkX, chunkZ).addTileEntity(tileEntity);
+				chunk.addTileEntity(tileEntity);
             }
 		}
+		
+		// spawn entities 
+		for (int i = 0; i < segment.getNumEntities(); i++) {
+			
+			NBTTagCompound tag = segment.getEntityNBT(i);
+			tag = updateEntityNBT(tag, world, chunkX*16, y, chunkZ*16);
+			Entity entity = EntityList.createEntityFromNBT(tag, world);
+			System.out.println("ENTITY NBT: " + tag);
+			if(entity != null) {
+				world.spawnEntityInWorld(entity);
+				System.out.println("LOADED ENTITY: " + entity);
+				
+				// spawn (potentially recursively) ridden entities
+                for (NBTTagCompound tempTag = tag; entity != null && tempTag.hasKey("Riding", 10); tempTag = tempTag.getCompoundTag("Riding")) {
+                    Entity riddenEntity = EntityList.createEntityFromNBT(tempTag.getCompoundTag("Riding"), world);
+
+                    if (riddenEntity != null) {
+                    	riddenEntity.setLocationAndAngles(entity.posX, entity.posY, entity.posZ, entity.rotationYaw, entity.rotationPitch);
+                        world.spawnEntityInWorld(riddenEntity);
+                        entity.mountEntity(riddenEntity);
+                    }
+                    
+                    entity = riddenEntity;
+                }
+			}
+		}
+		
+		chunk.setChunkModified();
 	}
 	
 	private NBTTagCompound updateTileEntityNBT(NBTTagCompound tileEntityNBT, int x, int y, int z) {
@@ -116,7 +148,21 @@ public class ForgeGenerator implements IWorldGenerator  {
         tileEntityNBT.setInteger("z", tileEntityNBT.getInteger("z") + z);
         
         return tileEntityNBT;
-}
+	}
+	
+	private NBTTagCompound updateEntityNBT(NBTTagCompound entityNBT, World world, int x, int y, int z) {
+		
+		NBTTagList oldPosition = entityNBT.getTagList(Segment.NBT_POSITION_KEY, 6);
+		NBTTagList newPosition = new NBTTagList();
+		newPosition.appendTag(new NBTTagDouble(oldPosition.func_150309_d(0) + x));
+		newPosition.appendTag(new NBTTagDouble(oldPosition.func_150309_d(1) + y));
+		newPosition.appendTag(new NBTTagDouble(oldPosition.func_150309_d(2) + z));
+		entityNBT.setTag(Segment.NBT_POSITION_KEY, newPosition);
+		
+		entityNBT.setInteger(Segment.NBT_DIMENSION_KEY, world.provider.dimensionId);
+        
+        return entityNBT;
+	}
 	
 	private void createPlaceholders(int chunkX, int chunkZ, int y, Segment segment, 
 			List<SegmentPlaceholder> placeholderList) {

@@ -32,12 +32,7 @@ Placing these on the side of a segment will add to its interface number on that 
 A Loot placeholder inside an inventoriy will be replaced with dungeon loot when it is generated, this should add more randomness and "replayability" to a gen.[/spoiler]
 
 [b][size=x-large]Download & Installation[/size][/b]
-Available versions:
-[list]
-[*][b][url=http://www.mickelus.se/upl/customgen/customgen-R3-1.7.10.jar]Customgen release 3 for 1.7.2/1.7.10[/url][/b]
-[*][url=http://www.mickelus.se/upl/customgen/customgen-R2.jar]Customgen release 2 for 1.7.2/1.7.10[/url]
-[*][url=http://www.mickelus.se/upl/customgen/customgen-R1.jar]Customgen release 1 for 1.7.2/1.7.10[/url]
-[/list]
+[mod]223528-customgen[/mod]
 Customgen needs minecraft forge to run, download the installer from [url=http://files.minecraftforge.net/]here[/url] and run it. There should now be a folder called "mods" in your minecraft directory, place the customgen .jar file in that folder.
 
 [b][size=large]Changelog[/size][/b]
@@ -100,11 +95,16 @@ A comparison of how the template looks compared to how looks when it has generat
 [spoiler]
 [url=http://mickelus.se/upl/customgen/understructs.zip][b][size=large]Underground structures[/size][/b][/url]
 A set of underground structures. Makes use of, but does not require, buildcraft and tinkers constructs.
-[img]http://mickelus.se/upl/customgen/understructs.png[/img][/spoiler]
+
+[img]http://mickelus.se/upl/customgen/understructs.png[/img]
+
+
 
 [url=http://mickelus.se/upl/customgen/caves.zip][b][size=large]Caves[/size][/b][/url]
 Caves in different variations. Makes clever use of interfaces to generate in different lengths.
-[img]http://mickelus.se/upl/customgen/caves.png[/img][/spoiler]
+
+[img]http://mickelus.se/upl/customgen/caves.png[/img]
+
 
 
 [url=http://mickelus.se/upl/customgen/example.zip][b][size=large]Example[/size][/b][/url]

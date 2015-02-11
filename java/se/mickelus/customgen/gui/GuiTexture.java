@@ -1,11 +1,9 @@
 package se.mickelus.customgen.gui;
 
-import org.lwjgl.opengl.GL11;
-
 import se.mickelus.customgen.Constants;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 
 public class GuiTexture extends Gui implements Drawable {
@@ -47,7 +45,7 @@ public class GuiTexture extends Gui implements Drawable {
 
 	public void draw(int screenWidth, int screenHeight) {
 		Minecraft.getMinecraft().getTextureManager().bindTexture(texture);
-		GL11.glColor4f(red, green, blue, alpha);
+		GlStateManager.color(red, green, blue, alpha);
         drawTexturedModalRect(
         		(screenWidth - GuiScreenGenBook.bookImageWidth) / 2 + left,
         		(screenHeight - GuiScreenGenBook.bookImageHeight) / 2 + top,

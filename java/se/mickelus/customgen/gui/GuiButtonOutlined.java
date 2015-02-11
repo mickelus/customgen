@@ -2,13 +2,11 @@ package se.mickelus.customgen.gui;
 
 import java.util.Observer;
 
-import org.lwjgl.opengl.GL11;
-
 import se.mickelus.customgen.Constants;
 import se.mickelus.customgen.MLogger;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.util.ResourceLocation;
 
@@ -52,7 +50,7 @@ public class GuiButtonOutlined extends GuiButton {
 			}
 			
 			minecraft.getTextureManager().bindTexture(textures);
-			GL11.glColor3f(1f,1f,1f);
+			GlStateManager.color(1f,1f,1f);
 			
 			// draw left side of outline
 			drawTexturedModalRect(xPosition, yPosition, 0, 44, width / 2, height);

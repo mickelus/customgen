@@ -67,7 +67,7 @@ public class GuiBlockModel extends Gui implements Drawable {
         float red = 1;
         ItemStack itemStack = new ItemStack(block);
         
-        if (block != null && itemRenderer.shouldRenderItemIn3D(itemStack)) {
+        if (itemStack != null && itemRenderer.shouldRenderItemIn3D(itemStack)) {
         	
             par2TextureManager.bindTexture(TextureMap.locationBlocksTexture);
             GL11.glPushMatrix();

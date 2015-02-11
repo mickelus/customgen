@@ -19,16 +19,16 @@ public class GuiText implements Drawable {
 		this.text = text;
 		this.left = left;
 		this.top = top;
-		this.color = color;
+		this.color = 0xff110000;
 		this.alignment = alignment;
 	}
 	
 	public GuiText(String text, int left, int top, int alignment) {
-		this(text, left, top, 0, alignment);
+		this(text, left, top, 0xff000000, alignment);
 	}
 	
 	public GuiText(String text, int left, int top) {
-		this(text, left, top, 0, LEFT_ALIGN);
+		this(text, left, top, 0xff000000, LEFT_ALIGN);
 	}
 	
 	public void draw(int screenWidth, int screenHeight) {

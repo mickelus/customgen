@@ -2,11 +2,10 @@ package se.mickelus.customgen.gui;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-
-import org.lwjgl.opengl.GL11;
 
 import se.mickelus.customgen.Constants;
 import se.mickelus.customgen.MLogger;
@@ -51,7 +50,7 @@ public class GuiButtonChangePage extends GuiButton {
             	rectLeft += 14;
             }
             
-            GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+            GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
             minecraft.getTextureManager().bindTexture(textures);
             this.drawTexturedModalRect(xPosition, yPosition,rectLeft, 33, width, height);
         }

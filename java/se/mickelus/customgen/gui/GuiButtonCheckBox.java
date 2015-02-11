@@ -2,13 +2,11 @@ package se.mickelus.customgen.gui;
 
 import java.util.Observer;
 
-import org.lwjgl.opengl.GL11;
-
 import se.mickelus.customgen.Constants;
 import se.mickelus.customgen.MLogger;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 
 public class GuiButtonCheckBox extends GuiButton {
@@ -46,7 +44,7 @@ public class GuiButtonCheckBox extends GuiButton {
 		
 		// draw checkbox
 		minecraft.getTextureManager().bindTexture(textures);
-		GL11.glColor3f(1f,1f,1f);
+		GlStateManager.color(1f,1f,1f);
 		if(checked) {
 			drawTexturedModalRect(xPosition, yPosition, 8, 60, 8, 8);
 		} else {

@@ -10,7 +10,6 @@ import java.util.Observer;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL12;
 
 import com.google.common.base.Throwables;
 
@@ -25,6 +24,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiScreenBook;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -39,6 +39,7 @@ import net.minecraft.util.ChatAllowedCharacters;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Vec3;
+import net.minecraft.world.gen.layer.GenLayerHills;
 import net.minecraftforge.common.BiomeDictionary.Type;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -109,7 +110,6 @@ public class GuiScreenGenBook extends GuiScreen {
     static final int SEGMENT_VIEW_STATE = 4;
     static final int SEGMENT_ADD_STATE = 5;
     static final int UTILITY_STATE = 6;
-    static final int HELP_STATE = 7;
     
     private static final int GEN_LIST_MAX_LENGTH = 7;
     private static final int GEN_CREATE_BIOME_LIST_MAX_LENGTH = 12;
@@ -118,7 +118,6 @@ public class GuiScreenGenBook extends GuiScreen {
     private static final int GEN_SEGMENT_LIST_MAX_LENGTH = 6;
     
     private static final int SEGMENT_PAGES_COUNT = 2;
-    private static final int HELP_PAGES_COUNT = 7;
     
     private EntityPlayer player;
 
@@ -129,7 +128,7 @@ public class GuiScreenGenBook extends GuiScreen {
 		
 		drawList = new ArrayList<Drawable>();
 		
-		state = 7;
+		state = 1;
 		
 		instance = this;
 		
@@ -1037,7 +1036,7 @@ public class GuiScreenGenBook extends GuiScreen {
      */
     @Override
     public void drawScreen(int par1, int par2, float par3) {
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+    	GlStateManager.resetColor();
         mc.getTextureManager().bindTexture(vanillaBookTexture);
 
         // draw background

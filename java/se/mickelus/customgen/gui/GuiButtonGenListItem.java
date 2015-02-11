@@ -1,7 +1,5 @@
 package se.mickelus.customgen.gui;
 
-import org.lwjgl.opengl.GL11;
-
 import se.mickelus.customgen.Constants;
 import se.mickelus.customgen.MLogger;
 import net.minecraft.client.Minecraft;

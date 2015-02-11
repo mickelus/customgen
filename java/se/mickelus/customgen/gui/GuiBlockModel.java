@@ -9,6 +9,7 @@ import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderItem;
@@ -39,7 +40,7 @@ public class GuiBlockModel extends Gui implements Drawable {
 		this.block = block;
 		this.metaData = metaData;
 		
-		scale = size/16f;
+		scale = size;
 		
 		this.itemRenderer = Minecraft.getMinecraft().getRenderItem();
 		textureManager = Minecraft.getMinecraft().getTextureManager();
@@ -65,17 +66,19 @@ public class GuiBlockModel extends Gui implements Drawable {
         float green = 0.2f;
         float blue = 1;
         float red = 1;
+        scale = scale * 1.25f;
         ItemStack itemStack = new ItemStack(block);
         
-        if (itemStack != null && itemRenderer.shouldRenderItemIn3D(itemStack)) {
+        if (itemStack.getItem() != null && itemRenderer.shouldRenderItemIn3D(itemStack)) {
         	
             par2TextureManager.bindTexture(TextureMap.locationBlocksTexture);
+            
             GL11.glPushMatrix();
             
             GL11.glTranslatef((float)(x - 2.0), (float)(y + 3.0), z);
             
-            GL11.glScalef(10.0F*scale, 10.0F*scale, 10.0F*scale);
-            GL11.glTranslatef(1.0F, 0.5F, 1.0F);
+            GL11.glScalef(scale, scale, scale);
+            GL11.glTranslatef(1.0F, 0, 1.0F);
             
             GL11.glRotatef(210.0F, 1.0F, 0.0F, 0.0F);
             GL11.glRotatef(45.0F, 0.0F, 1.0F, 0.0F);

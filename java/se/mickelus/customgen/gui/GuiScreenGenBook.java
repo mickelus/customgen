@@ -403,24 +403,33 @@ public class GuiScreenGenBook extends GuiScreen {
     	}
     	
     	// biome checkboxes
-    	drawList.add(new GuiText("biomes:", 38, 71));
+    	drawList.add(new GuiText("biomes", 38, 71));
+    	drawList.add(GuiTexture.createDashedLineTexture(73, 75, 76));
     	
     	biomeCheckBoxes.clear();
     	GuiButtonCheckBox button;
     	for (int i = 0; i < listLength; i++) {
     		int left = (width - bookImageWidth) / 2;
     		int top = (height - bookImageHeight) / 2;
+    		int maxlength;
     		Type biomeType = types[i + listOffset];
+    		String biomeName = biomeType.toString().toLowerCase();
     		if(i>listLength/2-1) {
+    			maxlength = 50;
     			left += 92;
     			top += (i-listLength/2)*10 + 81;
     		} else {
+    			maxlength = 43;
     			left += 38;
     			top += i*10 + 81;
     		}
     		
+    		while(this.fontRendererObj.getStringWidth(biomeName) > maxlength && biomeName.length() > 0) {
+    			biomeName = biomeName.substring(0, biomeName.length() - 1);
+    		}
+    		
     		button = new GuiButtonCheckBox(0, left, top,
-    				biomeType.toString().toLowerCase(), 
+    				biomeName, 
             		stateAddGen.getNumBiomes() > 0 && stateAddGen.generatesInBiome(biomeType),
             		new Observer() {
 						
@@ -783,11 +792,11 @@ public class GuiScreenGenBook extends GuiScreen {
     		
     		drawList.add(new GuiText("bottom: " + stateAddViewSegment.getInterface(1), 90, 140, GuiText.CENTER_ALIGN));
     		
-    		drawList.add(new GuiText("S: " + stateAddViewSegment.getInterface(4), 70, 41, GuiText.RIGHT_ALIGN));
+    		drawList.add(new GuiText("S: " + stateAddViewSegment.getInterface(4), 65, 40, GuiText.RIGHT_ALIGN));
     		
-    		drawList.add(new GuiText("E: " + stateAddViewSegment.getInterface(3), 112, 41));
+    		drawList.add(new GuiText("E: " + stateAddViewSegment.getInterface(3), 123, 40));
     		
-    		drawList.add(new GuiText("N: " + stateAddViewSegment.getInterface(2), 112, 128));
+    		drawList.add(new GuiText("N: " + stateAddViewSegment.getInterface(2), 123, 128));
     		
     		drawList.add(new GuiText("W: " + stateAddViewSegment.getInterface(5), 65, 128, GuiText.RIGHT_ALIGN));
     		

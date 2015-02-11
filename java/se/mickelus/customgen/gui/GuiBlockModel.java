@@ -9,7 +9,6 @@ import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
-import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderItem;
@@ -25,7 +24,6 @@ public class GuiBlockModel extends Gui implements Drawable {
 	private RenderItem itemRenderer;
 	private FontRenderer fontRenderer;
 	private TextureManager textureManager;
-	private RenderBlocks itemRenderBlocks;
 	
 	private float x, y, z, scale;
 	
@@ -43,12 +41,9 @@ public class GuiBlockModel extends Gui implements Drawable {
 		
 		scale = size/16f;
 		
-		this.itemRenderer = new RenderItem();
-		fontRenderer = Minecraft.getMinecraft().fontRenderer;
+		this.itemRenderer = Minecraft.getMinecraft().getRenderItem();
 		textureManager = Minecraft.getMinecraft().getTextureManager();
-		itemRenderBlocks = new RenderBlocks();
 		
-		itemRenderBlocks.useInventoryTint = true;
 	}
 
 	@Override
@@ -70,8 +65,9 @@ public class GuiBlockModel extends Gui implements Drawable {
         float green = 0.2f;
         float blue = 1;
         float red = 1;
+        ItemStack itemStack = new ItemStack(block);
         
-        if (block != null && RenderBlocks.renderItemIn3d(block.getRenderType())) {
+        if (block != null && itemRenderer.shouldRenderItemIn3D(itemStack)) {
         	
             par2TextureManager.bindTexture(TextureMap.locationBlocksTexture);
             GL11.glPushMatrix();
@@ -87,8 +83,7 @@ public class GuiBlockModel extends Gui implements Drawable {
             GL11.glRotatef(90.0F, 0.0F, 1.0F, 0.0F);
             
             
-            
-            itemRenderBlocks.renderBlockAsItem(block, metaData, 1f);
+            itemRenderer.renderItemModel(itemStack);
             GL11.glPopMatrix();
         }
 

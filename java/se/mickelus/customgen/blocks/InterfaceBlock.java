@@ -1,67 +1,51 @@
 package se.mickelus.customgen.blocks;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import java.util.List;
+
 import se.mickelus.customgen.Constants;
 import se.mickelus.customgen.CustomgenCreativeTabs;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockStone;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.properties.PropertyEnum;
+import net.minecraft.block.state.BlockState;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.IIcon;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.IStringSerializable;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class InterfaceBlock extends Block {
 	
-	@SideOnly(Side.CLIENT)
-	protected IIcon[] icons;
+	public static final PropertyEnum VARIANT = PropertyEnum.create("variant", InterfaceBlock.EnumType.class);
 
 	private static InterfaceBlock instance;
 
 	public InterfaceBlock() {
 		super(Material.ground);
 		
-		setBlockName(Constants.INTERFACEBLOCK_UNLOC_NAME);
+		setUnlocalizedName(Constants.INTERFACEBLOCK_UNLOC_NAME);
 		setCreativeTab(CustomgenCreativeTabs.getInstance());
 		
 		instance = this;
 	}
 	
 	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerBlockIcons(IIconRegister iconRegister) {
-		icons = new IIcon[9];
-		for (int i = 0; i < 9; i++) {
-			icons[i] = iconRegister.registerIcon(Constants.TEXTURE_LOCATION + ":" + Constants.INTERFACEBLOCK_TEXTURE + (i+1));
-		}
-		
-	}
-	
-	
-	@Override
-	@SideOnly(Side.CLIENT)
-	public IIcon getIcon(int side, int meta) {
-		if(meta < icons.length) {
-			return icons[meta];
-		}
-		return icons[0];
-	}
-	
-	@Override
-	public boolean onBlockActivated(World world, int x, int y,
-			int z, EntityPlayer player, int side, float par7,
-			float par8, float par9) {	
+	public boolean onBlockActivated(World world, BlockPos pos,
+			IBlockState state, EntityPlayer player, EnumFacing side,
+			float hitX, float hitY, float hitZ) {
 		
 		if(!player.isSneaking()) {
 			if(!world.isRemote) {
-				int newMeta = world.getBlockMetadata(x, y, z) + 1;
-				
-				if(newMeta >= 9) {
-					newMeta = 0;
-				}
-				
-				world.setBlockMetadataWithNotify(x, y, z, newMeta, 3);
+				world.setBlockState(pos, getStateFromMeta(getMetaFromState(state) + 1), 3);
 			}
 			return true;
 		}
@@ -72,47 +56,152 @@ public class InterfaceBlock extends Block {
 	}
 	
 	@Override
-	public int onBlockPlaced(World world, int x, int y, int z,
-			int side, float par6, float par7, float par8, int meta) {
+	public IBlockState onBlockPlaced(World world, BlockPos pos,
+			EnumFacing facing, float hitX, float hitY, float hitZ, int meta,
+			EntityLivingBase placer) {
 		
-		Block clickedBlock = null;
-		int clickedBlockMeta = -1;
-		switch(side) {
-			case 0:
-				clickedBlock = world.getBlock(x, y+1, z);
-				clickedBlockMeta = world.getBlockMetadata(x, y+1, z);
+		IBlockState blockstate = null;
+		switch(facing) {
+			case UP:
+				pos.add(0, 1, 0);
+				blockstate = world.getBlockState(pos);
 				break;
-			case 1:
-				clickedBlock = world.getBlock(x, y-1, z);
-				clickedBlockMeta = world.getBlockMetadata(x, y-1, z);
+			case DOWN:
+				pos.add(0, -1, 0);
+				blockstate = world.getBlockState(pos);
 				break;
-			case 2:
-				clickedBlock = world.getBlock(x, y, z+1);
-				clickedBlockMeta = world.getBlockMetadata(x, y, z+1);
+			case SOUTH:
+				pos.add(0, 0, 1);
+				blockstate = world.getBlockState(pos);
 				break;
-			case 3:
-				clickedBlock = world.getBlock(x, y, z-1);
-				clickedBlockMeta = world.getBlockMetadata(x, y, z-1);
+			case NORTH:
+				pos.add(0, 0, -1);
+				blockstate = world.getBlockState(pos);
 				break;
-			case 4:
-				clickedBlock = world.getBlock(x+1, y, z);
-				clickedBlockMeta = world.getBlockMetadata(x+1, y, z);
+			case EAST:
+				pos.add(1, 0, 0);
+				blockstate = world.getBlockState(pos);
 				break;
-			case 5:
-				clickedBlock = world.getBlock(x-1, y, z);
-				clickedBlockMeta = world.getBlockMetadata(x-1, y, z);
+			case WEST:
+				pos.add(-1, 0, 0);
+				blockstate = world.getBlockState(pos);
 				break;
 		}
-		if(getInstance().equals(clickedBlock)) {
-			return clickedBlockMeta;
+		if(getInstance().equals(blockstate.getBlock())) {
+			return blockstate;
 		}
 		
-		return super.onBlockPlaced(world, x, y, z, side, par6, par7, par8,
-				meta);
+		return super.onBlockPlaced(world, pos, facing, hitX, hitY, hitZ, meta, placer);
 	}
 	
 	public static InterfaceBlock getInstance() {
 		return instance;
 	}
+	
+	@Override
+	@SideOnly(Side.CLIENT)
+    public void getSubBlocks(Item itemIn, CreativeTabs tab, List list)
+    {
+        BlockStone.EnumType[] aenumtype = BlockStone.EnumType.values();
+        int i = aenumtype.length;
+
+        for (int j = 0; j < i; ++j)
+        {
+            BlockStone.EnumType enumtype = aenumtype[j];
+            list.add(new ItemStack(itemIn, 1, enumtype.getMetadata()));
+        }
+    }
+
+	@Override
+    public IBlockState getStateFromMeta(int meta) {
+		if(meta >= 9) {
+			meta = 0;
+		} else if (meta < 0) {
+			meta = 8;
+		}
+        return this.getDefaultState().withProperty(VARIANT, InterfaceBlock.EnumType.byMetadata(meta));
+    }
+
+	@Override
+    public int getMetaFromState(IBlockState state) {
+        return ((InterfaceBlock.EnumType)state.getValue(VARIANT)).getMetadata();
+    }
+
+	@Override
+    protected BlockState createBlockState() {
+        return new BlockState(this, new IProperty[] {VARIANT});
+    }
+
+    public static enum EnumType implements IStringSerializable {
+        ONE(0, "one"),
+        TWO(1, "two"),
+        THREE(2, "three"),
+        FOUR(3, "four"),
+        FIVE(4, "five"),
+        SIX(5, "six"),
+        SEVEN(6, "seven"),
+        EIGHT(7, "eight"),
+        NINE(8, "nine");
+        private static final InterfaceBlock.EnumType[] META_LOOKUP = new InterfaceBlock.EnumType[values().length];
+        private final int meta;
+        private final String name;
+        private final String unlocalizedName;
+
+        private static final String __OBFID = "CL_00002058";
+
+        private EnumType(int meta, String name)
+        {
+            this(meta, name, name);
+        }
+
+        private EnumType(int meta, String name, String unlocalizedName)
+        {
+            this.meta = meta;
+            this.name = name;
+            this.unlocalizedName = unlocalizedName;
+        }
+
+        public int getMetadata()
+        {
+            return this.meta;
+        }
+
+        public String toString()
+        {
+            return this.name;
+        }
+
+        public static InterfaceBlock.EnumType byMetadata(int meta)
+        {
+            if (meta < 0 || meta >= META_LOOKUP.length)
+            {
+                meta = 0;
+            }
+
+            return META_LOOKUP[meta];
+        }
+
+        public String getName()
+        {
+            return this.name;
+        }
+
+        public String getUnlocalizedName()
+        {
+            return this.unlocalizedName;
+        }
+
+        static
+        {
+        	InterfaceBlock.EnumType[] var0 = values();
+            int var1 = var0.length;
+
+            for (int var2 = 0; var2 < var1; ++var2)
+            {
+            	InterfaceBlock.EnumType var3 = var0[var2];
+                META_LOOKUP[var3.getMetadata()] = var3;
+            }
+        }
+    }
 
 }

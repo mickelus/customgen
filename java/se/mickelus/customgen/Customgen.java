@@ -7,6 +7,15 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.Mod.EventHandler;
+import net.minecraftforge.fml.common.Mod.Instance;
+import net.minecraftforge.fml.common.SidedProxy;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import se.mickelus.customgen.blocks.EmptyBlock;
 import se.mickelus.customgen.blocks.InterfaceBlock;
 import se.mickelus.customgen.items.GenBookItem;
@@ -29,19 +38,6 @@ import se.mickelus.customgen.newstuff.ForgeGenerator;
 import se.mickelus.customgen.newstuff.Gen;
 import se.mickelus.customgen.newstuff.GenManager;
 import se.mickelus.customgen.proxy.Proxy;
-import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.Mod.EventHandler;
-import cpw.mods.fml.common.Mod.Instance;
-import cpw.mods.fml.common.SidedProxy;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.event.FMLServerStartingEvent;
-//import cpw.mods.fml.common.network.NetworkMod;
-import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.common.registry.LanguageRegistry;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 @Mod (modid = Constants.MOD_ID, name = Constants.MOD_NAME, version = Constants.VERSION)
 //@NetworkMod (channels = {Constants.CHANNEL}, serverSideRequired = true, packetHandler = PacketHandler.class)
@@ -60,9 +56,12 @@ public class Customgen {
         ConfigHandler.init(event.getSuggestedConfigurationFile());
         
         new CustomgenCreativeTabs();
-        setupBlocks();
-        setupItems();
-                  
+        
+        new EmptyBlock();
+		new InterfaceBlock();
+		
+		new PlaceholderItem();
+		new GenBookItem();      
     }
 	
 	@EventHandler
@@ -114,26 +113,4 @@ public class Customgen {
         }
         
 	}
-	
-	private void setupBlocks() {
-
-		
-		EmptyBlock empty = new EmptyBlock();
-		GameRegistry.registerBlock(empty, empty.getUnlocalizedName().substring(5));
-		System.out.println("registered block: " + GameRegistry.findUniqueIdentifierFor(empty).toString());
-
-		InterfaceBlock interfaceBlock = new InterfaceBlock();
-		GameRegistry.registerBlock(interfaceBlock, interfaceBlock.getUnlocalizedName());
-
-	}
-	
-	private void setupItems() {
-		PlaceholderItem placeholder = new PlaceholderItem();
-		GameRegistry.registerItem(placeholder, placeholder.getUnlocalizedName());
-		
-		GenBookItem bookItem = new GenBookItem();
-		GameRegistry.registerItem(bookItem, bookItem.getUnlocalizedName());
-
-	}
-
 }

@@ -36,14 +36,14 @@ public class GuiButtonTextInput extends GuiButton {
 			}
 			
 			// draw text
-			minecraft.fontRenderer.drawString(string, xPosition+1, yPosition, 0);
+			minecraft.fontRendererObj.drawString(string, xPosition+1, yPosition, 0);
             
 			// draw underline
 			drawHorizontalLine(xPosition, xPosition+width, yPosition+9, 0xff000000);
 			
 			// draw cursor if input has focus
 			if(focus && showCursor) {
-				drawVerticalLine(xPosition + minecraft.fontRenderer.getStringWidth(string) + 1, yPosition-2, yPosition+8, 0xff000000);
+				drawVerticalLine(xPosition + minecraft.fontRendererObj.getStringWidth(string) + 1, yPosition-2, yPosition+8, 0xff000000);
 			}
         }
 	}
@@ -62,7 +62,7 @@ public class GuiButtonTextInput extends GuiButton {
 	}
 	
 	public void setString(String string) {
-		if(Minecraft.getMinecraft().fontRenderer.getStringWidth(string)<=width-2) {
+		if(Minecraft.getMinecraft().fontRendererObj.getStringWidth(string)<=width-2) {
 			this.string = string;
 			onCharObserver.update(null, this.string);
 		}

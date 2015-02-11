@@ -12,15 +12,14 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
+import com.google.common.base.Throwables;
+
 import se.mickelus.customgen.Constants;
 import se.mickelus.customgen.MLogger;
 import se.mickelus.customgen.network.PacketBuilder;
 import se.mickelus.customgen.newstuff.Gen;
 import se.mickelus.customgen.newstuff.Utilities;
 import se.mickelus.customgen.segment.Segment;
-
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
@@ -41,6 +40,8 @@ import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Vec3;
 import net.minecraftforge.common.BiomeDictionary.Type;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public class GuiScreenGenBook extends GuiScreen {
@@ -204,10 +205,6 @@ public class GuiScreenGenBook extends GuiScreen {
 	    		
 	    	case UTILITY_STATE:
 	    		showUtilityView();
-	    		break;
-	    		
-	    	case HELP_STATE:
-	    		showHelpView(stateHelpOffset);
 	    		break;
 	    	
     	}
@@ -708,7 +705,7 @@ public class GuiScreenGenBook extends GuiScreen {
     private void showSegmentAddView(String genName, String packName) {
 
     	
-		Vec3 position = player.getPosition(0);
+		Vec3 position = player.getPositionVector();
 		int chunkX = (int) (position.xCoord)/16;
 		int y = ((int) (position.yCoord)/16)*16;
 		int chunkZ = (int) (position.zCoord)/16;
@@ -901,53 +898,6 @@ public class GuiScreenGenBook extends GuiScreen {
 		}));
     }
     
-    private void showHelpView(int offset) {
-    	drawList.add(new GuiText("Tutorial", 93, 17, GuiText.CENTER_ALIGN));
-    	
-    	switch(offset) {
-	    	case 0:
-	    		drawList.add(new GuiSplitText(Constants.TUTORIAL_INTRO, 36, 30, 116));
-	    		break;
-	    	case 1:
-	    		drawList.add(new GuiText("Gens", 36, 30));
-	    		drawList.add(new GuiLine(35, 38, fontRendererObj.getStringWidth("Gens"), true));
-	    		
-	    		drawList.add(new GuiSplitText(Constants.TUTORIAL_GEN1, 36, 40, 116));
-	    		break;
-	    	case 2:
-	    		drawList.add(new GuiText("Gens", 36, 30));
-	    		drawList.add(new GuiLine(35, 38, fontRendererObj.getStringWidth("Gens"), true));
-	    		
-	    		drawList.add(new GuiSplitText(Constants.TUTORIAL_GEN2, 36, 40, 116));
-	    		break;
-	    	case 3:
-	    		drawList.add(new GuiText("Gens", 36, 30));
-	    		drawList.add(new GuiLine(35, 38, fontRendererObj.getStringWidth("Gens"), true));
-	    		
-	    		drawList.add(new GuiSplitText(Constants.TUTORIAL_GEN3, 36, 40, 116));
-	    		break;
-    	}
-    	
-    	// show next button
-		if(offset < HELP_PAGES_COUNT - 1) {
-			buttonList.add(new GuiButtonChangePage(3, offset + 1,
-				(width - bookImageWidth) / 2 + 134,
-				(height - bookImageHeight) / 2 + 153,
-				true));
-		}
-		
-		// back button
-		if(offset>0) {
-			buttonList.add(new GuiButtonChangePage(3, offset - 1,
-				(width - bookImageWidth) / 2 + 95,
-				(height - bookImageHeight) / 2 + 153,
-				false));
-		}
-		
-		// current page number
-		drawList.add(new GuiText((offset + 1) + "/" + HELP_PAGES_COUNT, 122, 155, GuiText.CENTER_ALIGN));
-    }
-    
     private void showSegment(Segment segment, int xOffset, int yOffset) {
     	
     	final ArrayList<Drawable> blockList = new ArrayList<Drawable>();
@@ -1073,7 +1023,12 @@ public class GuiScreenGenBook extends GuiScreen {
 			activeInput.setFocus(false);
 			activeInput = null;
 		}
-    	super.mouseClicked(par1, par2, par3);
+    	
+    	try {
+    		super.mouseClicked(par1, par2, par3);
+    	} catch (java.io.IOException e) {
+            Throwables.propagate(e);
+        }
     }
 
 
@@ -1141,7 +1096,12 @@ public class GuiScreenGenBook extends GuiScreen {
      */
     @Override
     protected void keyTyped(char character, int value) {
-        super.keyTyped(character, value);
+    	try {
+    		super.keyTyped(character, value);
+    	} catch (java.io.IOException e) {
+            Throwables.propagate(e);
+        }
+        
         if(activeInput != null) {
         	
         	

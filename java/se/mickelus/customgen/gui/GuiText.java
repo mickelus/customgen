@@ -32,7 +32,7 @@ public class GuiText implements Drawable {
 	}
 	
 	public void draw(int screenWidth, int screenHeight) {
-		FontRenderer renderer = Minecraft.getMinecraft().fontRenderer;
+		FontRenderer renderer = Minecraft.getMinecraft().fontRendererObj;
 		switch(alignment) {
 			case LEFT_ALIGN:
 				renderer.drawString(text, 

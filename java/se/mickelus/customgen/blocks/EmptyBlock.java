@@ -15,15 +15,18 @@ public class EmptyBlock extends Block {
 	public EmptyBlock() {
 		super(Material.ground);		
 		
-		setBlockName(Constants.EMPTY_UNLOC_NAME);
+		setUnlocalizedName(Constants.EMPTY_UNLOC_NAME);
 		setCreativeTab(CustomgenCreativeTabs.getInstance());
-		setBlockTextureName(Constants.MOD_ID + ":" + Constants.EMPTY_TEXTURE);
 		
 		instance = this;
 	}
 	
 	public static EmptyBlock getInstance() {
 		return instance;
+	}
+	
+	public String getName() {
+		return Constants.EMPTY_UNLOC_NAME;
 	}
 
 }

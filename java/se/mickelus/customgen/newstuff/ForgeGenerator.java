@@ -15,6 +15,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagDouble;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.chunk.Chunk;
@@ -22,8 +23,8 @@ import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.BiomeDictionary.Type;
 import net.minecraftforge.common.ChestGenHooks;
-import cpw.mods.fml.common.IWorldGenerator;
-import cpw.mods.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.common.IWorldGenerator;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import se.mickelus.customgen.Constants;
 import se.mickelus.customgen.MLogger;
 import se.mickelus.customgen.blocks.EmptyBlock;
@@ -68,7 +69,10 @@ public class ForgeGenerator implements IWorldGenerator  {
 					if(!generatePlaceholders && (block.equals(EmptyBlock.getInstance()) || block.equals(InterfaceBlock.getInstance()) )) {
 						continue;
 					}
-					world.setBlock(x+sx, y+sy, z+sz, block, segment.getBlockMetadata(sx, sy, sz), 2);
+					world.setBlockState(
+							new BlockPos(x+sx, y+sy, z+sz), 
+							block.getStateFromMeta(segment.getBlockMetadata(sx, sy, sz)), 
+							2);
 					// setting metadata and block at the same time seem to overwrite the metadata of the block if a tileentity is spawned
 					//world.setBlockMetadataWithNotify(x+sx, y+sy, z+sz, segment.getBlockMetadata(sx, sy, sz), 0);
 				}
@@ -154,12 +158,12 @@ public class ForgeGenerator implements IWorldGenerator  {
 		
 		NBTTagList oldPosition = entityNBT.getTagList(Segment.NBT_POSITION_KEY, 6);
 		NBTTagList newPosition = new NBTTagList();
-		newPosition.appendTag(new NBTTagDouble(oldPosition.func_150309_d(0) + x));
-		newPosition.appendTag(new NBTTagDouble(oldPosition.func_150309_d(1) + y));
-		newPosition.appendTag(new NBTTagDouble(oldPosition.func_150309_d(2) + z));
+		newPosition.appendTag(new NBTTagDouble(oldPosition.getDouble(0) + x));
+		newPosition.appendTag(new NBTTagDouble(oldPosition.getDouble(1) + y));
+		newPosition.appendTag(new NBTTagDouble(oldPosition.getDouble(2) + z));
 		entityNBT.setTag(Segment.NBT_POSITION_KEY, newPosition);
 		
-		entityNBT.setInteger(Segment.NBT_DIMENSION_KEY, world.provider.dimensionId);
+		entityNBT.setInteger(Segment.NBT_DIMENSION_KEY, world.provider.getDimensionId());
         
         return entityNBT;
 	}
@@ -302,10 +306,11 @@ public class ForgeGenerator implements IWorldGenerator  {
 				break;
 			
 			case Gen.SURFACE_LEVEL:
+				Chunk chunk = world.getChunkFromChunkCoords(chunkX, chunkZ);
 				int average = 0;
 				for (int i = 0; i < 16; i++) {
 					for (int j = 0; j < 16; j++) {
-						average += world.getHeightValue(chunkX*16+i, chunkZ*16+j);
+						average += chunk.getHeight(i, j);
 					}
 				}
 				
@@ -315,7 +320,7 @@ public class ForgeGenerator implements IWorldGenerator  {
 				
 			case Gen.SEA_FLOOR_LEVEL:
 				for (startY = 255; startY > 0; startY--) {
-					if(world.getBlock(chunkX*16, startY, chunkZ*16).getMaterial().isSolid()) {
+					if(world.getBlockState(new BlockPos(chunkX*16, startY, chunkZ*16)).getBlock().getMaterial().isSolid()) {
 						startY-= 3;
 						break;
 					}
@@ -396,10 +401,9 @@ public class ForgeGenerator implements IWorldGenerator  {
 			IChunkProvider chunkGenerator, IChunkProvider chunkProvider) {
 		
 		if(random.nextInt(Constants.DUNGEON_CHANCE) == 0) {
-			//MLogger.logf("GENERATE %d %d", chunkX, chunkZ);
 			List<Gen> matchingGens = new ArrayList<Gen>();
 			GenManager genManager = GenManager.getInstance();
-			BiomeGenBase biome = world.getBiomeGenForCoords(chunkX, chunkZ);
+			BiomeGenBase biome = world.getBiomeGenForCoords(new BlockPos(chunkX, 0, chunkZ));
 			Type[] types = BiomeDictionary.getTypesForBiome(biome);
 			
 			for (int i = 0; i < genManager.getNumGens(); i++) {

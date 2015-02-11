@@ -4,6 +4,7 @@ import se.mickelus.customgen.Constants;
 import se.mickelus.customgen.CustomgenCreativeTabs;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 
 
 public class PlaceholderItem extends Item {
@@ -16,10 +17,8 @@ public class PlaceholderItem extends Item {
 		instance = this;
         
         maxStackSize = 64;
+        GameRegistry.registerItem(this, Constants.PLACEHOLDERITEM_UNLOC_NAME);
         setUnlocalizedName(Constants.PLACEHOLDERITEM_UNLOC_NAME);
-        
-        setTextureName(Constants.TEXTURE_LOCATION + ":" + Constants.PLACEHOLDERITEM_TEXTURE);
-        
         setCreativeTab(CustomgenCreativeTabs.getInstance());
     }
 	

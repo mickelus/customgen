@@ -36,6 +36,9 @@ public class FileHandler {
 		File dir = new File(Constants.PACKS_PATH);
 		String[] packNames = dir.list();
 		
+		if(packNames == null) {
+			return new Gen[0];
+		}
 		for (int i = 0; i < packNames.length; i++) {
 			
 			File file = new File(String.format("%s/%s", Constants.PACKS_PATH, packNames[i]));
@@ -107,7 +110,7 @@ public class FileHandler {
 		
 		if(!packsFolder.isDirectory()) {
 			System.out.println("Unable to parse gens: resourcepacks/assets directory missing.\n");
-			return null;
+			return new Gen[0];
 		}
 		
 		String[] packNames = new File(Constants.PACKS_PATH).list();

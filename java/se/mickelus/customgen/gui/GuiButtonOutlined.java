@@ -21,7 +21,7 @@ public class GuiButtonOutlined extends GuiButton {
 	private Observer onClickObserver;
 	
 	public GuiButtonOutlined(int id, int left, int top, String text) {
-		this(id, left, top, text, Minecraft.getMinecraft().fontRenderer.getStringWidth(text) + 10, null);	
+		this(id, left, top, text, Minecraft.getMinecraft().fontRendererObj.getStringWidth(text) + 10, null);	
 	}
 	
 	public GuiButtonOutlined(int id, int left, int top, String text, int width) {
@@ -29,7 +29,7 @@ public class GuiButtonOutlined extends GuiButton {
 	}
 	
 	public GuiButtonOutlined(int id, int left, int top, String text, Observer onClickObserver) {
-		this(id, left, top, text, Minecraft.getMinecraft().fontRenderer.getStringWidth(text) + 10, onClickObserver);	
+		this(id, left, top, text, Minecraft.getMinecraft().fontRendererObj.getStringWidth(text) + 10, onClickObserver);	
 	}
 	
 	public GuiButtonOutlined(int id, int left, int top, String text, int width, Observer onClickObserver) {

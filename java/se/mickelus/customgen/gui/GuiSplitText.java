@@ -25,7 +25,7 @@ public class GuiSplitText implements Drawable {
 	
 	
 	public void draw(int screenWidth, int screenHeight) {
-		FontRenderer renderer = Minecraft.getMinecraft().fontRenderer;
+		FontRenderer renderer = Minecraft.getMinecraft().fontRendererObj;
 
 		renderer.drawSplitString(text, 
 			(screenWidth - GuiScreenGenBook.bookImageWidth) / 2 + left,

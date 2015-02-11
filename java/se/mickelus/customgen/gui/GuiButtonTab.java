@@ -2,17 +2,15 @@ package se.mickelus.customgen.gui;
 
 import org.lwjgl.opengl.GL11;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
 import se.mickelus.customgen.Constants;
 import se.mickelus.customgen.MLogger;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreenBook;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public class GuiButtonTab extends GuiButton {
@@ -52,7 +50,7 @@ public class GuiButtonTab extends GuiButton {
             */
             
             // draw text
-            minecraft.fontRenderer.drawString(displayString, xPosition + 8, yPosition + (height - 8) / 2, 0);
+            minecraft.fontRendererObj.drawString(displayString, xPosition + 8, yPosition + (height - 8) / 2, 0);
         }
 	}
 

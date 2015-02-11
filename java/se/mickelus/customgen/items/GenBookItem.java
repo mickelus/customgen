@@ -14,6 +14,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 
 public class GenBookItem extends Item {
 	
@@ -23,10 +24,9 @@ public class GenBookItem extends Item {
     super();
         
         maxStackSize = 1;
+        
+        GameRegistry.registerItem(this, Constants.BOOKITEM_UNLOC_NAME);
         setUnlocalizedName(Constants.BOOKITEM_UNLOC_NAME);
-        
-        setTextureName(Constants.TEXTURE_LOCATION + ":" + Constants.BOOKITEM_TEXTURE);
-        
         setCreativeTab(CustomgenCreativeTabs.getInstance());
         
         instance = this;
@@ -37,15 +37,6 @@ public class GenBookItem extends Item {
     		EntityPlayer player) {
     	openBook(player, world);
     	return super.onItemRightClick(stack, world, player);
-    }
-    
-    @Override
-    public boolean onItemUse(ItemStack itemStack,
-    		EntityPlayer player, World world, int par4, int par5,
-    		int par6, int par7, float par8, float par9, float par10) {
-    	//openBook(player, world);
-    	return super.onItemUse(itemStack, player, world, par4, par5,
-    			par6, par7, par8, par9, par10);
     }
     
     private void openBook(EntityPlayer player, World world) {

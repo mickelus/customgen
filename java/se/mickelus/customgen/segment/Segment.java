@@ -14,13 +14,13 @@ import java.util.Map;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 
-import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.common.registry.GameRegistry.UniqueIdentifier;
 import se.mickelus.customgen.Constants;
 import se.mickelus.customgen.MLogger;
 import se.mickelus.customgen.blocks.InterfaceBlock;
 import se.mickelus.customgen.newstuff.Gen;
 import net.minecraft.block.Block;
+import net.minecraft.block.state.BlockState;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.init.Blocks;
@@ -31,9 +31,13 @@ import net.minecraft.nbt.NBTTagIntArray;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.ClassInheritanceMultiMap;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.BiomeDictionary.Type;
+import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.common.registry.GameRegistry.UniqueIdentifier;
 
 public class Segment {
 	
@@ -56,7 +60,7 @@ public class Segment {
 	private BiMap<Integer, Block> blockMap;
 	
 	private int[] blocks;
-	private byte[] data;
+	private int[] data;
 	
 	private ArrayList<NBTTagCompound> tileEntityNBTList;
 	private ArrayList<NBTTagCompound> entityNBTList;
@@ -69,7 +73,7 @@ public class Segment {
 		blockMap.put(0, Blocks.air);
 		
 		blocks = new int[4096];
-		data = new byte[4096];
+		data = new int[4096];
 		
 		tileEntityNBTList = new ArrayList<NBTTagCompound>();
 		entityNBTList = new ArrayList<NBTTagCompound>();
@@ -80,9 +84,10 @@ public class Segment {
 				
 	}
 	
-	public void setBlock(int x, int y, int z, Block block, int blockData) {
+	public void setBlock(int x, int y, int z, IBlockState state) {
 		
 		int blockID;
+		Block block = state.getBlock();
 		
 		// check if block exists in segment
 		if(!blockMap.containsValue(block)) {
@@ -96,7 +101,7 @@ public class Segment {
 		}
 		
 		blocks[x+z*16+y*256] = blockID;
-		data[x+z*16+y*256] = (byte)blockData;
+		data[x+z*16+y*256] = block.getMetaFromState(state);
 	}
 	
 	/**
@@ -214,7 +219,7 @@ public class Segment {
 			
 			// store block "ID"s
 			nbt.setIntArray(BLOCKS_KEY, blocks);
-			nbt.setByteArray(DATA_KEY, data);
+			nbt.setIntArray(DATA_KEY, data);
 			
 			// convert id to block mapping to a storable format
 			Map<Integer, String> nameMap = new HashMap<Integer, String>(blockMap.size());
@@ -302,7 +307,7 @@ public class Segment {
 		
 		// set block "ID"s and data
 		segment.blocks = nbt.getIntArray(BLOCKS_KEY);
-		segment.data = nbt.getByteArray(DATA_KEY);
+		segment.data = nbt.getIntArray(DATA_KEY);
 		
 		
 		if(nbt.hasKey(BLOCK_MAP_KEY)) {
@@ -397,15 +402,13 @@ public class Segment {
 		int zOffset = chunkZ*16;
 		
 		ArrayList<NBTTagCompound> tileEntityNBTList = new ArrayList<NBTTagCompound>();
-		List<Entity> entityList = world.getChunkFromChunkCoords(chunkX, chunkZ).entityLists[chunkY/16];
+		ClassInheritanceMultiMap entityMap = world.getChunkFromChunkCoords(chunkX, chunkZ).getEntityLists()[chunkY/16];
 		
 		// set blocks
 		for (int x = 0; x < 16; x++) {
 			for (int y = 0; y < 16; y++) {
 				for (int z = 0; z < 16; z++) {
-					setBlock(x, y, z,
-							world.getBlock(xOffset+x, yOffset+y, zOffset+z),
-							world.getBlockMetadata(xOffset+x, yOffset+y, zOffset+z));
+					setBlock(x, y, z,world.getBlockState(new BlockPos(xOffset+x, yOffset+y, zOffset+z)));
 				}
 			}
 		}
@@ -413,31 +416,41 @@ public class Segment {
 		// set interfaces
 		for (int i = 0; i < 16; i++) {
 			for (int j = 0; j < 16; j++) {
+				IBlockState stateTop = world.getBlockState(new BlockPos(xOffset+i, yOffset+15, zOffset+j));
+				IBlockState stateBot = world.getBlockState(new BlockPos(xOffset+i, yOffset, zOffset+j));
+				
+				IBlockState stateSouth = world.getBlockState(new BlockPos(xOffset+i, yOffset+j, zOffset+15));
+				IBlockState stateNorth = world.getBlockState(new BlockPos(xOffset+i, yOffset+j, zOffset));
+				
+				IBlockState stateEast = world.getBlockState(new BlockPos(xOffset+15, yOffset+i, zOffset+j));
+				IBlockState stateWest = world.getBlockState(new BlockPos(xOffset, yOffset+i, zOffset+j));
+				
+				
 				// top
-				if(world.getBlock(xOffset+i, yOffset+15, zOffset+j).equals(InterfaceBlock.getInstance())) {
-					interfaces[0] += 1 + world.getBlockMetadata(xOffset+i, yOffset+15, zOffset+j);
+				if(stateTop.getBlock().equals(InterfaceBlock.getInstance())) {
+					interfaces[0] += 1 + InterfaceBlock.getInstance().getMetaFromState(stateTop);
 				}
 				// bottom
-				if(world.getBlock(xOffset+i, yOffset, zOffset+j).equals(InterfaceBlock.getInstance())) {
-					interfaces[1] += 1 + world.getBlockMetadata(xOffset+i, yOffset, zOffset+j);
+				if(stateBot.equals(InterfaceBlock.getInstance())) {
+					interfaces[1] += 1 + InterfaceBlock.getInstance().getMetaFromState(stateBot);
 				}
 				
 				// south
-				if(world.getBlock(xOffset+i, yOffset+j, zOffset+15).equals(InterfaceBlock.getInstance())) {
-					interfaces[4] += 1 + world.getBlockMetadata(xOffset+i, yOffset+j, zOffset+15);
+				if(stateSouth.equals(InterfaceBlock.getInstance())) {
+					interfaces[4] += 1 + InterfaceBlock.getInstance().getMetaFromState(stateSouth);
 				}
 				// north
-				if(world.getBlock(xOffset+i, yOffset+j, zOffset).equals(InterfaceBlock.getInstance())) {
-					interfaces[2] += 1 + world.getBlockMetadata(xOffset+i, yOffset+j, zOffset);
+				if(stateNorth.equals(InterfaceBlock.getInstance())) {
+					interfaces[2] += 1 + InterfaceBlock.getInstance().getMetaFromState(stateNorth);
 				}
 				
 				// east
-				if(world.getBlock(xOffset+15, yOffset+i, zOffset+j).equals(InterfaceBlock.getInstance())) {
-					interfaces[3] += 1 + world.getBlockMetadata(xOffset+15, yOffset+i, zOffset+j);
+				if(stateEast.equals(InterfaceBlock.getInstance())) {
+					interfaces[3] += 1 + InterfaceBlock.getInstance().getMetaFromState(stateEast);
 				}
 				// west
-				if(world.getBlock(xOffset, yOffset+i, zOffset+j).equals(InterfaceBlock.getInstance())) {
-					interfaces[5] += 1 + world.getBlockMetadata(xOffset, yOffset+i, zOffset+j);
+				if(stateWest.equals(InterfaceBlock.getInstance())) {
+					interfaces[5] += 1 + InterfaceBlock.getInstance().getMetaFromState(stateWest);
 				}
 			}
 		}
@@ -450,7 +463,7 @@ public class Segment {
 		for (int x = 0; x < 16; x++) {
 			for (int y = 0; y < 16; y++) {
 				for (int z = 0; z < 16; z++) {
-					TileEntity tileEntity = world.getTileEntity(xOffset+x, yOffset+y, zOffset+z);
+					TileEntity tileEntity = world.getTileEntity(new BlockPos(xOffset+x, yOffset+y, zOffset+z));
 					
 					if(tileEntity != null) {
 						NBTTagCompound tagCompound = new NBTTagCompound();
@@ -469,11 +482,11 @@ public class Segment {
 		
 		
 		// set entities
-		System.out.println("=== BEGIN ENTITY NBTs: " + entityList.size() + ", " + chunkY/16);
-		if(entityList.size() > 0) {
+		if(!entityMap.isEmpty()) {
 			ArrayList<NBTTagCompound> entityNBTList = new ArrayList<NBTTagCompound>();
 
-			for (Entity entity : entityList) {
+			for (Object object : entityMap) {
+				Entity entity = (Entity)object;
 				NBTTagCompound nbt = new NBTTagCompound();
 				if(entity.writeToNBTOptional(nbt)) {
 					NBTTagList positionList = new NBTTagList();

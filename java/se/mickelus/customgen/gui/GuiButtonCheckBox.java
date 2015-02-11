@@ -21,7 +21,7 @@ public class GuiButtonCheckBox extends GuiButton {
 
 	public GuiButtonCheckBox(int id, int left, int top,
 			String text, boolean checked, Observer onClickObserver) {
-		super(id, left, top, 10 + Minecraft.getMinecraft().fontRenderer.getStringWidth(text), 10, text);
+		super(id, left, top, 10 + Minecraft.getMinecraft().fontRendererObj.getStringWidth(text), 10, text);
 
 		this.checked = checked;
 		
@@ -55,7 +55,7 @@ public class GuiButtonCheckBox extends GuiButton {
 		
 		// draw string
 		if(displayString.length() != 0) {
-			minecraft.fontRenderer.drawString(displayString, xPosition + 11, yPosition, 0x000000);
+			minecraft.fontRendererObj.drawString(displayString, xPosition + 11, yPosition, 0x000000);
 		}
 		
 	}

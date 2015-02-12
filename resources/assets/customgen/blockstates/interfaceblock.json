@@ -1,0 +1,13 @@
+{
+    "variants": {
+        "value=1": { "model": "customgen:interfaceblock1" },
+        "value=2": { "model": "customgen:interfaceblock2" },
+        "value=3": { "model": "customgen:interfaceblock3" },
+        "value=4": { "model": "customgen:interfaceblock4" },
+        "value=5": { "model": "customgen:interfaceblock5" },
+        "value=6": { "model": "customgen:interfaceblock6" },
+        "value=7": { "model": "customgen:interfaceblock7" },
+        "value=8": { "model": "customgen:interfaceblock8" },
+        "value=9": { "model": "customgen:interfaceblock9" }
+    }
+}

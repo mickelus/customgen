@@ -20,18 +20,20 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class InterfaceBlock extends Block {
 	
-	public static final PropertyEnum VARIANT = PropertyEnum.create("variant", InterfaceBlock.EnumType.class);
+	public static final PropertyEnum VALUE = PropertyEnum.create("value", InterfaceBlock.EnumType.class);
 
 	private static InterfaceBlock instance;
 
 	public InterfaceBlock() {
 		super(Material.ground);
 		
+		GameRegistry.registerBlock(this, Constants.INTERFACEBLOCK_UNLOC_NAME);
 		setUnlocalizedName(Constants.INTERFACEBLOCK_UNLOC_NAME);
 		setCreativeTab(CustomgenCreativeTabs.getInstance());
 		
@@ -49,9 +51,7 @@ public class InterfaceBlock extends Block {
 			}
 			return true;
 		}
-			
-		
-			
+
 		return false;
 	}
 	
@@ -97,20 +97,6 @@ public class InterfaceBlock extends Block {
 	public static InterfaceBlock getInstance() {
 		return instance;
 	}
-	
-	@Override
-	@SideOnly(Side.CLIENT)
-    public void getSubBlocks(Item itemIn, CreativeTabs tab, List list)
-    {
-        BlockStone.EnumType[] aenumtype = BlockStone.EnumType.values();
-        int i = aenumtype.length;
-
-        for (int j = 0; j < i; ++j)
-        {
-            BlockStone.EnumType enumtype = aenumtype[j];
-            list.add(new ItemStack(itemIn, 1, enumtype.getMetadata()));
-        }
-    }
 
 	@Override
     public IBlockState getStateFromMeta(int meta) {
@@ -119,35 +105,33 @@ public class InterfaceBlock extends Block {
 		} else if (meta < 0) {
 			meta = 8;
 		}
-        return this.getDefaultState().withProperty(VARIANT, InterfaceBlock.EnumType.byMetadata(meta));
+		return this.getDefaultState().withProperty(VALUE, InterfaceBlock.EnumType.byMetadata(meta));
     }
 
 	@Override
     public int getMetaFromState(IBlockState state) {
-        return ((InterfaceBlock.EnumType)state.getValue(VARIANT)).getMetadata();
+		return ((InterfaceBlock.EnumType)state.getValue(VALUE)).getMetadata();
     }
 
 	@Override
     protected BlockState createBlockState() {
-        return new BlockState(this, new IProperty[] {VARIANT});
+        return new BlockState(this, new IProperty[] {VALUE});
     }
-
-    public static enum EnumType implements IStringSerializable {
-        ONE(0, "one"),
-        TWO(1, "two"),
-        THREE(2, "three"),
-        FOUR(3, "four"),
-        FIVE(4, "five"),
-        SIX(5, "six"),
-        SEVEN(6, "seven"),
-        EIGHT(7, "eight"),
-        NINE(8, "nine");
+	
+	public static enum EnumType implements IStringSerializable {
+        ONE(0, "1"),
+        TWO(1, "2"),
+        THREE(2, "3"),
+        FOUR(3, "4"),
+        FIVE(4, "5"),
+        SIX(5, "6"),
+        SEVEN(6, "7"),
+        EIGHT(7, "8"),
+        NINE(8, "9");
         private static final InterfaceBlock.EnumType[] META_LOOKUP = new InterfaceBlock.EnumType[values().length];
         private final int meta;
         private final String name;
         private final String unlocalizedName;
-
-        private static final String __OBFID = "CL_00002058";
 
         private EnumType(int meta, String name)
         {
@@ -193,15 +177,14 @@ public class InterfaceBlock extends Block {
 
         static
         {
-        	InterfaceBlock.EnumType[] var0 = values();
-            int var1 = var0.length;
+        	InterfaceBlock.EnumType[] enumTypes = values();
+            int length = enumTypes.length;
 
-            for (int var2 = 0; var2 < var1; ++var2)
+            for (int i = 0; i < length; ++i)
             {
-            	InterfaceBlock.EnumType var3 = var0[var2];
-                META_LOOKUP[var3.getMetadata()] = var3;
+            	InterfaceBlock.EnumType enumType = enumTypes[i];
+                META_LOOKUP[enumType.getMetadata()] = enumType;
             }
         }
     }
-
 }

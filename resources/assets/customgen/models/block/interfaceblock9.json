@@ -1,0 +1,6 @@
+{
+    "parent": "customgen:block/interfaceblock",
+    "textures": {
+        "all": "customgen:blocks/interface9"
+    }
+}

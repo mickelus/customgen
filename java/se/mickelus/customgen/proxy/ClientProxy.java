@@ -7,6 +7,7 @@ import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.item.Item;
 import se.mickelus.customgen.Constants;
 import se.mickelus.customgen.blocks.EmptyBlock;
+import se.mickelus.customgen.blocks.InterfaceBlock;
 import se.mickelus.customgen.gui.GuiScreenGenBook;
 import se.mickelus.customgen.items.GenBookItem;
 import se.mickelus.customgen.items.PlaceholderItem;
@@ -31,6 +32,10 @@ public class ClientProxy extends Proxy {
 				Item.getItemFromBlock(EmptyBlock.getInstance()),
 				0, 
 				new ModelResourceLocation(Constants.MOD_ID + ":" + Constants.EMPTY_UNLOC_NAME, "inventory"));
+		modelMesher.register(
+				Item.getItemFromBlock(InterfaceBlock.getInstance()),
+				0, 
+				new ModelResourceLocation(Constants.MOD_ID + ":" + Constants.INTERFACEBLOCK_UNLOC_NAME, "inventory"));
 		
 		
 		//items

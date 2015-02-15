@@ -6,10 +6,8 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import se.mickelus.customgen.Constants;
 import se.mickelus.customgen.MLogger;
 import se.mickelus.customgen.gui.GuiScreenGenBook;
-import se.mickelus.customgen.newstuff.Gen;
 import se.mickelus.customgen.segment.Segment;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;

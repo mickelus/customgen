@@ -1,6 +1,5 @@
 package se.mickelus.customgen.gui;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 
 public class GuiLine extends Gui implements Drawable {

@@ -8,7 +8,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import se.mickelus.customgen.Constants;
-import se.mickelus.customgen.MLogger;
 
 @SideOnly(Side.CLIENT)
 public class GuiButtonChangePage extends GuiButton {
@@ -35,7 +34,8 @@ public class GuiButtonChangePage extends GuiButton {
     /**
      * Draws this button to the screen.
      */
-    public void drawButton(Minecraft minecraft, int mouseX, int mouseY) {
+    @Override
+	public void drawButton(Minecraft minecraft, int mouseX, int mouseY) {
         if (this.visible) {
             int rectLeft = 0;	
             

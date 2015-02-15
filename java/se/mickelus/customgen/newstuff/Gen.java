@@ -470,12 +470,12 @@ public class Gen {
 		
 		// regular segments
 		for (int i = 0; i < segmentTagList.tagCount(); i++) {
-			gen.addSegment(Segment.readFromNBT((NBTTagCompound) segmentTagList.getCompoundTagAt(i)), false);
+			gen.addSegment(Segment.readFromNBT(segmentTagList.getCompoundTagAt(i)), false);
 		}
 		
 		// starting segments
 		for (int i = 0; i < segmentStartTagList.tagCount(); i++) {
-			gen.addSegment(Segment.readFromNBT((NBTTagCompound) segmentStartTagList.getCompoundTagAt(i)), true);
+			gen.addSegment(Segment.readFromNBT(segmentStartTagList.getCompoundTagAt(i)), true);
 		}
 		
 		

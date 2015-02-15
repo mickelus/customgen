@@ -1,6 +1,5 @@
 package se.mickelus.customgen.network;
 
-import java.io.DataInput;
 import java.io.IOException;
 
 import io.netty.buffer.ByteBuf;

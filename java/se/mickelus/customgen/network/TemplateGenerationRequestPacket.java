@@ -4,7 +4,6 @@ import se.mickelus.customgen.newstuff.Utilities;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.Vec3;
 
 public class TemplateGenerationRequestPacket extends AbstractPacket {
 	

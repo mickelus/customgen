@@ -10,7 +10,6 @@ import se.mickelus.customgen.segment.Segment;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
 public class SegmentAddRequestPacket extends AbstractPacket {

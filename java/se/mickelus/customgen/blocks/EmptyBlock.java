@@ -5,7 +5,6 @@ import se.mickelus.customgen.Constants;
 import se.mickelus.customgen.CustomgenCreativeTabs;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
 

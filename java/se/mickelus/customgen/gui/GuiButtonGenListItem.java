@@ -1,12 +1,7 @@
 package se.mickelus.customgen.gui;
 
-import se.mickelus.customgen.Constants;
-import se.mickelus.customgen.MLogger;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiScreenBook;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 

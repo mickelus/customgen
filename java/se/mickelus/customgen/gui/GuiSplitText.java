@@ -2,7 +2,6 @@ package se.mickelus.customgen.gui;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.Gui;
 
 public class GuiSplitText implements Drawable {
 	
@@ -24,6 +23,7 @@ public class GuiSplitText implements Drawable {
 	}
 	
 	
+	@Override
 	public void draw(int screenWidth, int screenHeight) {
 		FontRenderer renderer = Minecraft.getMinecraft().fontRendererObj;
 

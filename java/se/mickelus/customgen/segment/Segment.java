@@ -7,36 +7,26 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 
-import se.mickelus.customgen.Constants;
 import se.mickelus.customgen.MLogger;
 import se.mickelus.customgen.blocks.InterfaceBlock;
-import se.mickelus.customgen.newstuff.Gen;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityList;
 import net.minecraft.init.Blocks;
-import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagDouble;
-import net.minecraft.nbt.NBTTagIntArray;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.nbt.NBTTagString;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ClassInheritanceMultiMap;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import net.minecraft.world.chunk.Chunk;
-import net.minecraftforge.common.BiomeDictionary.Type;
 import net.minecraftforge.fml.common.registry.GameData;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry.UniqueIdentifier;
@@ -314,14 +304,14 @@ public class Segment {
 
 		// set tile entities
 		for (int i = 0; i < tileEntityList.tagCount(); i++) {
-			tileEntityArray[i] = (NBTTagCompound)tileEntityList.getCompoundTagAt(i);
+			tileEntityArray[i] = tileEntityList.getCompoundTagAt(i);
 		}
 		segment.setTileEntityNBTs(tileEntityArray);
 		segment.cleanTileEntityNBTs();
 
 		// set entities
 		for (int i = 0; i < entityList.tagCount(); i++) {
-			entityArray[i] = (NBTTagCompound)entityList.getCompoundTagAt(i);
+			entityArray[i] = entityList.getCompoundTagAt(i);
 		}
 		segment.setEntityNBTs(entityArray);
 

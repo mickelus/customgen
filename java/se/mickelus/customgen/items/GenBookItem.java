@@ -1,16 +1,10 @@
 package se.mickelus.customgen.items;
 
 import se.mickelus.customgen.Constants;
-import se.mickelus.customgen.Customgen;
 import se.mickelus.customgen.CustomgenCreativeTabs;
 import se.mickelus.customgen.gui.GuiScreenGenBook;
-import se.mickelus.customgen.network.GenListReponsePacket;
 import se.mickelus.customgen.network.PacketBuilder;
-import se.mickelus.customgen.newstuff.Gen;
-import se.mickelus.customgen.newstuff.GenManager;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;

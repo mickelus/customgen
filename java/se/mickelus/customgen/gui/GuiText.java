@@ -2,7 +2,6 @@ package se.mickelus.customgen.gui;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.Gui;
 
 public class GuiText implements Drawable {
 	
@@ -31,6 +30,7 @@ public class GuiText implements Drawable {
 		this(text, left, top, 0, LEFT_ALIGN);
 	}
 	
+	@Override
 	public void draw(int screenWidth, int screenHeight) {
 		FontRenderer renderer = Minecraft.getMinecraft().fontRendererObj;
 		switch(alignment) {

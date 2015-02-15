@@ -58,7 +58,8 @@ public class GenRequestPacket extends AbstractPacket {
 	public void handleServerSide(EntityPlayer player) {
 		Gen gen = GenManager.getInstance().getGenByName(genName, packName);
 		if(gen != null) {
-			PacketBuilder.getInstance().sendGenResponse(gen, player);
+			PacketBuilder.getInstance();
+			PacketBuilder.sendGenResponse(gen, player);
 		} else {
 			MLogger.log("Invalid gen request received.");
 		}

@@ -2,7 +2,6 @@ package se.mickelus.customgen.items;
 
 import se.mickelus.customgen.Constants;
 import se.mickelus.customgen.CustomgenCreativeTabs;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 

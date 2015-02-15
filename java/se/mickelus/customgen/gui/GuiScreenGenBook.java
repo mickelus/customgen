@@ -1,7 +1,5 @@
 package se.mickelus.customgen.gui;
 
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -14,7 +12,6 @@ import org.lwjgl.opengl.GL11;
 import com.google.common.base.Throwables;
 
 import se.mickelus.customgen.Constants;
-import se.mickelus.customgen.MLogger;
 import se.mickelus.customgen.network.PacketBuilder;
 import se.mickelus.customgen.newstuff.Gen;
 import se.mickelus.customgen.newstuff.Utilities;
@@ -23,23 +20,12 @@ import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.GuiScreenBook;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.nbt.NBTTagString;
-import net.minecraft.util.ChatAllowedCharacters;
-import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Vec3;
-import net.minecraft.world.gen.layer.GenLayerHills;
 import net.minecraftforge.common.BiomeDictionary.Type;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -634,7 +620,8 @@ public class GuiScreenGenBook extends GuiScreen {
 				
 				@Override
 				public void update(Observable o, Object arg) {
-					PacketBuilder.getInstance().sendGenGenerationRequest(gen.getName(), gen.getResourcePack());
+					PacketBuilder.getInstance();
+					PacketBuilder.sendGenGenerationRequest(gen.getName(), gen.getResourcePack());
 				}
 			}));
 
@@ -1039,7 +1026,7 @@ public class GuiScreenGenBook extends GuiScreen {
         drawTexturedModalRect(
         		(width - bookImageWidth) / 2, // left
         		(height - bookImageHeight) / 2, // top
-        		0, 0, this.bookImageWidth, this.bookImageHeight);
+        		0, 0, GuiScreenGenBook.bookImageWidth, GuiScreenGenBook.bookImageHeight);
         
         // draw textures
         for (Drawable drawable : drawList) {

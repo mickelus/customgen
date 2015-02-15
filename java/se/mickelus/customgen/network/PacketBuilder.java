@@ -1,37 +1,11 @@
 package se.mickelus.customgen.network;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.DataInput;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.util.Random;
-import java.util.logging.Logger;
-
-import se.mickelus.customgen.Constants;
 import se.mickelus.customgen.Customgen;
-import se.mickelus.customgen.MLogger;
-import se.mickelus.customgen.gui.GuiScreenGenBook;
-import se.mickelus.customgen.newstuff.FileHandler;
-import se.mickelus.customgen.newstuff.ForgeGenerator;
 import se.mickelus.customgen.newstuff.Gen;
 import se.mickelus.customgen.newstuff.GenManager;
-import se.mickelus.customgen.newstuff.Utilities;
-import se.mickelus.customgen.proxy.ClientProxy;
-import se.mickelus.customgen.proxy.Proxy;
 import se.mickelus.customgen.segment.Segment;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.nbt.CompressedStreamTools;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.Vec3;
-import net.minecraft.world.World;
 
 
 public class PacketBuilder{

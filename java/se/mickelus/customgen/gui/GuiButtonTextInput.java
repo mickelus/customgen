@@ -2,10 +2,8 @@ package se.mickelus.customgen.gui;
 
 import java.util.Observer;
 
-import se.mickelus.customgen.MLogger;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.util.ChatAllowedCharacters;
 
 public class GuiButtonTextInput extends GuiButton {
 	
@@ -26,6 +24,7 @@ public class GuiButtonTextInput extends GuiButton {
 		this.onCharObserver = onCharObserver;
 	}
 	
+	@Override
 	public void drawButton(Minecraft minecraft, int mouseX, int mouseY) {
 		if (this.visible) {
 			

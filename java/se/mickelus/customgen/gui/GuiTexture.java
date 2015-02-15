@@ -43,6 +43,7 @@ public class GuiTexture extends Gui implements Drawable {
 	}
 
 
+	@Override
 	public void draw(int screenWidth, int screenHeight) {
 		Minecraft.getMinecraft().getTextureManager().bindTexture(texture);
 		GlStateManager.color(red, green, blue, alpha);

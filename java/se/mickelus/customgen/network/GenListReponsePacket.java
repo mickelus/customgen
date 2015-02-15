@@ -4,7 +4,6 @@ import java.io.IOException;
 
 import se.mickelus.customgen.MLogger;
 import se.mickelus.customgen.gui.GuiScreenGenBook;
-import se.mickelus.customgen.newstuff.Gen;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.entity.player.EntityPlayer;

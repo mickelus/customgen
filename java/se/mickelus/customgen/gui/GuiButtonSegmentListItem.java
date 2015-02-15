@@ -1,6 +1,5 @@
 package se.mickelus.customgen.gui;
 
-import se.mickelus.customgen.MLogger;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraftforge.fml.relauncher.Side;

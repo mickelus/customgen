@@ -3,11 +3,9 @@ package se.mickelus.customgen.gui;
 import java.util.Observer;
 
 import se.mickelus.customgen.Constants;
-import se.mickelus.customgen.MLogger;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.util.ResourceLocation;
 
 public class GuiButtonOutlined extends GuiButton {

@@ -1,28 +1,20 @@
 package se.mickelus.customgen.blocks;
 
-import java.util.List;
-
 import se.mickelus.customgen.Constants;
 import se.mickelus.customgen.CustomgenCreativeTabs;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockStone;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class InterfaceBlock extends Block {
 	
@@ -125,7 +117,8 @@ public class InterfaceBlock extends Block {
             return this.meta;
         }
 
-        public String toString()
+        @Override
+		public String toString()
         {
             return this.name;
         }
@@ -140,7 +133,8 @@ public class InterfaceBlock extends Block {
             return META_LOOKUP[meta];
         }
 
-        public String getName()
+        @Override
+		public String getName()
         {
             return this.name;
         }

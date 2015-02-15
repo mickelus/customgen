@@ -73,21 +73,22 @@ public class ForgeGenerator implements IWorldGenerator  {
 							new BlockPos(x+sx, y+sy, z+sz), 
 							block.getStateFromMeta(segment.getBlockMetadata(sx, sy, sz)), 
 							2);
-					// setting metadata and block at the same time seem to overwrite the metadata of the block if a tileentity is spawned
-					//world.setBlockMetadataWithNotify(x+sx, y+sy, z+sz, segment.getBlockMetadata(sx, sy, sz), 0);
 				}
 			}
 		}
-		
+
 		// spawn tile entities
 		for (int i = 0; i < segment.getNumTileEntities(); i++) {
 			
 			NBTTagCompound tag = segment.getTileEntityNBT(i);
 			tag = updateTileEntityNBT(tag, chunkX*16, y, chunkZ*16);
-			TileEntity tileEntity = TileEntity.createAndLoadEntity(tag);
+			BlockPos pos = new BlockPos(
+					tag.getInteger("x"),
+					tag.getInteger("y"),
+					tag.getInteger("z"));
 			
-			
-			
+			TileEntity tileEntity = chunk.getTileEntity(pos, Chunk.EnumCreateEntityType.IMMEDIATE);
+			tileEntity.readFromNBT(tag);
 			if (tileEntity != null) {
 				
 				// this is dangerous!
@@ -113,7 +114,6 @@ public class ForgeGenerator implements IWorldGenerator  {
 					MLogger.log("Failed when generating loot in a tile entity .");
 					e.printStackTrace();
 				}
-				chunk.addTileEntity(tileEntity);
             }
 		}
 		
@@ -140,8 +140,6 @@ public class ForgeGenerator implements IWorldGenerator  {
                 }
 			}
 		}
-		
-		chunk.setChunkModified();
 	}
 	
 	private NBTTagCompound updateTileEntityNBT(NBTTagCompound tileEntityNBT, int x, int y, int z) {

@@ -60,33 +60,8 @@ public class InterfaceBlock extends Block {
 			EnumFacing facing, float hitX, float hitY, float hitZ, int meta,
 			EntityLivingBase placer) {
 		
-		IBlockState blockstate = null;
-		switch(facing) {
-			case UP:
-				pos.add(0, 1, 0);
-				blockstate = world.getBlockState(pos);
-				break;
-			case DOWN:
-				pos.add(0, -1, 0);
-				blockstate = world.getBlockState(pos);
-				break;
-			case SOUTH:
-				pos.add(0, 0, 1);
-				blockstate = world.getBlockState(pos);
-				break;
-			case NORTH:
-				pos.add(0, 0, -1);
-				blockstate = world.getBlockState(pos);
-				break;
-			case EAST:
-				pos.add(1, 0, 0);
-				blockstate = world.getBlockState(pos);
-				break;
-			case WEST:
-				pos.add(-1, 0, 0);
-				blockstate = world.getBlockState(pos);
-				break;
-		}
+		IBlockState blockstate = world.getBlockState(pos.offset(facing.getOpposite()));
+
 		if(getInstance().equals(blockstate.getBlock())) {
 			return blockstate;
 		}

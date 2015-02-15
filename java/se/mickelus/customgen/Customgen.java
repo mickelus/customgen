@@ -1,12 +1,6 @@
 package se.mickelus.customgen;
 
 
-import net.minecraft.command.ICommandManager;
-import net.minecraft.command.ServerCommandManager;
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
@@ -15,7 +9,6 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import se.mickelus.customgen.blocks.EmptyBlock;
 import se.mickelus.customgen.blocks.InterfaceBlock;
 import se.mickelus.customgen.items.GenBookItem;
@@ -26,7 +19,6 @@ import se.mickelus.customgen.network.GenListReponsePacket;
 import se.mickelus.customgen.network.GenListRequestPacket;
 import se.mickelus.customgen.network.GenRequestPacket;
 import se.mickelus.customgen.network.GenResponsePacket;
-import se.mickelus.customgen.network.PacketBuilder;
 import se.mickelus.customgen.network.PacketPipeline;
 import se.mickelus.customgen.network.SegmentAddRequestPacket;
 import se.mickelus.customgen.network.SegmentGenerationRequestPacket;
@@ -61,7 +53,7 @@ public class Customgen {
 		new InterfaceBlock();
 		
 		new PlaceholderItem();
-		new GenBookItem();      
+		new GenBookItem();
     }
 	
 	@EventHandler
@@ -86,7 +78,6 @@ public class Customgen {
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent event) {
 		packetPipeline.postInitialize();
-		
 	}
 	
 	

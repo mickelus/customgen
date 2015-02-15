@@ -35,12 +35,12 @@ public class SegmentResponsePacket extends AbstractPacket {
 	@Override
 	public void encodeInto(ChannelHandlerContext ctx, ByteBuf buffer) {
 
-		NBTTagCompound nbt = segment.writeToNBT(false);
+		NBTTagCompound nbt;
 		ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
 		DataOutputStream dataStream = new DataOutputStream(byteStream);
 			
 		try {
-			
+			nbt = segment.writeToNBT(false);
 			buffer.writeBoolean(isStart);
 			
 			// write nbt to stream
@@ -50,6 +50,7 @@ public class SegmentResponsePacket extends AbstractPacket {
 			dataStream.close();
 			
 		} catch (IOException e) {
+			MLogger.logf("Failed to encode response for segment %s", segment.getName());
 			e.printStackTrace();
 		}
 	}

@@ -1,5 +1,6 @@
 package se.mickelus.customgen.newstuff;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -419,14 +420,24 @@ public class Gen {
 		nbt.setTag(BIOME_KEY, biomeTagList);
 		
 		// regular segments
-		for (Segment segment : segmentList) {			
-			segmentTagList.appendTag(segment.writeToNBT(writeBlocks));
+		for (Segment segment : segmentList) {
+			try {
+				segmentTagList.appendTag(segment.writeToNBT(writeBlocks));
+			} catch(IOException e) {
+				MLogger.logf("Failed when writing segment \"%s\" to nbt", segment.getName());
+				e.printStackTrace();
+			}
 		}
 		nbt.setTag(SEGMENT_KEY, segmentTagList);
 		
 		// starting segments
-		for (Segment segment : startingSegments) {			
-			segmentStartTagList.appendTag(segment.writeToNBT(writeBlocks));
+		for (Segment segment : startingSegments) {
+			try {
+				segmentStartTagList.appendTag(segment.writeToNBT(writeBlocks));
+			} catch(IOException e) {
+				MLogger.logf("Failed when writing segment \"%s\" to nbt", segment.getName());
+				e.printStackTrace();
+			}
 		}
 		nbt.setTag(SEGMENT_START_KEY, segmentStartTagList);
 		

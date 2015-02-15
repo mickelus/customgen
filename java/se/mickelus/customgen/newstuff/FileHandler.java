@@ -27,7 +27,6 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.BiomeDictionary.Type;
 import se.mickelus.customgen.Constants;
 import se.mickelus.customgen.MLogger;
-
 public class FileHandler {
 	
 	private static Gen[] parseAllZippedGens() {
@@ -54,8 +53,6 @@ public class FileHandler {
 					
 					Enumeration<? extends ZipEntry> entries = zip.entries();
 					
-					System.out.println(packNames[i] + " is a zip.");
-					
 					while(entries.hasMoreElements()) {
 						ZipEntry current = entries.nextElement();
 						String name = current.getName();
@@ -66,8 +63,8 @@ public class FileHandler {
 							if(gen!= null) {
 								genList.add(gen);
 							} else {
-								System.out.println(String.format("Failed to read gen \"%s\" from \"%s\"",
-									name.substring(name.lastIndexOf('/')+1), packNames[i]));
+								MLogger.logf("Failed to read gen \"%s\" from \"%s\"",
+									name.substring(name.lastIndexOf('/')+1), packNames[i]);
 							}
 						}
 						
@@ -75,7 +72,7 @@ public class FileHandler {
 					
 					zip.close();
 				} catch (Exception e) {
-					System.out.println(String.format("An error occured when reading gens from %s", packNames[i]));
+					MLogger.logf("An error occured when reading gens from %s", packNames[i]);
 				}
 			}
 			
@@ -109,7 +106,7 @@ public class FileHandler {
 		File packsFolder = new File(Constants.PACKS_PATH);
 		
 		if(!packsFolder.isDirectory()) {
-			System.out.println("Unable to parse gens: resourcepacks/assets directory missing.\n");
+			MLogger.log("Unable to parse gens: resourcepacks/assets directory missing.");
 			return new Gen[0];
 		}
 		
@@ -145,14 +142,14 @@ public class FileHandler {
 		try {
 			stream = new FileInputStream(file);
 		} catch (FileNotFoundException e) {
-			System.out.printf("Unable to load file \"%s\" in pack \"%s\".\n", name, resourcePack);
+			MLogger.logf("Unable to load file \"%s\" in pack \"%s\".", name, resourcePack);
 			return null;
 		}
 		
 		try {
 			nbt = CompressedStreamTools.readCompressed(stream);
 		} catch (IOException e) {
-			System.out.printf("Unable to parse nbt from file \"%s\" in pack \"%s\".\n", name, resourcePack);
+			MLogger.logf("Unable to parse nbt from file \"%s\" in pack \"%s\".", name, resourcePack);
 			return null;
 		}
 		
@@ -184,7 +181,6 @@ public class FileHandler {
 			for (Gen gen : allGens) {
 				if(gen.getName().equals(zippedGens[i].getName())
 						&& gen.getResourcePack().equals(zippedGens[i].getResourcePack())) {
-					System.out.println("skipping: " + zippedGens[i]);
 					exists = true;
 					break;
 					
@@ -192,7 +188,6 @@ public class FileHandler {
 				}
 			}
 			if(!exists) {
-				System.out.println("adding: " + zippedGens[i]);
 				allGens.add(zippedGens[i]);
 			}
 		}
@@ -214,7 +209,7 @@ public class FileHandler {
 			try {
 				file.createNewFile();
 			} catch (IOException e) {
-				System.out.printf("Unable to create file for gen \"%s\" in pack \"%s\".\n", gen.getName(), gen.getResourcePack());
+				MLogger.logf("Unable to create file for gen \"%s\" in pack \"%s\".", gen.getName(), gen.getResourcePack());
 				return false;
 			}
 		}
@@ -223,7 +218,7 @@ public class FileHandler {
 			stream = new FileOutputStream(file);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
-			System.out.printf("Unable to open file for gen \"%s\" in pack \"%s\".\n", gen.getName(), gen.getResourcePack());
+			MLogger.logf("Unable to open file for gen \"%s\" in pack \"%s\".", gen.getName(), gen.getResourcePack());
 			return false;
 		}
 		
@@ -232,14 +227,14 @@ public class FileHandler {
 		try {
 			CompressedStreamTools.writeCompressed(nbt, stream);
 		} catch (IOException e) {
-			System.out.printf("Unable to write to file for gen \"%s\" in pack \"%s\".\n", gen.getName(), gen.getResourcePack());
+			MLogger.logf("Unable to write to file for gen \"%s\" in pack \"%s\".", gen.getName(), gen.getResourcePack());
 			return false;
 		}
 		
 		try {
 			stream.close();
 		} catch (IOException e) {
-			System.out.printf("Unable to close stream after writing gen \"%s\" in pack \"%s\".\n", gen.getName(), gen.getResourcePack());
+			MLogger.logf("Unable to close stream after writing gen \"%s\" in pack \"%s\".", gen.getName(), gen.getResourcePack());
 		}
 		
 		return true;

@@ -348,12 +348,10 @@ public class Segment {
 		}
 		segment.setTileEntityNBTs(tileEntityArray);
 		segment.cleanTileEntityNBTs();
-		
-		System.out.println("== BEGIN READ ENTITIES: " + entityArray.length);
+
 		// set entities
 		for (int i = 0; i < entityList.tagCount(); i++) {
 			entityArray[i] = (NBTTagCompound)entityList.getCompoundTagAt(i);
-			System.out.println(entityArray[i]);
 		}
 		segment.setEntityNBTs(entityArray);
 		System.out.println("=== END READ ENTITIES");
@@ -478,9 +476,6 @@ public class Segment {
 		}
 		setTileEntityNBTs(tileEntityNBTList.toArray(new NBTTagCompound[tileEntityNBTList.size()]));
 		
-		
-		
-		
 		// set entities
 		if(!entityMap.isEmpty()) {
 			ArrayList<NBTTagCompound> entityNBTList = new ArrayList<NBTTagCompound>();
@@ -496,14 +491,10 @@ public class Segment {
 					nbt.setTag(NBT_POSITION_KEY, positionList);
 					
 					entityNBTList.add(nbt);
-					System.out.println(nbt);
-				} else {
-					System.out.println("Skipped writing nbt for: " + entity.toString());
 				}
 			}
 			setEntityNBTs(entityNBTList.toArray(new NBTTagCompound[entityNBTList.size()]));
 		}
-		System.out.println("=== END ENTITY NBT");
 	}
 	
 	@Override

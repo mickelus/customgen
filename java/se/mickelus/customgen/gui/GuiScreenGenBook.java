@@ -620,7 +620,6 @@ public class GuiScreenGenBook extends GuiScreen {
 				
 				@Override
 				public void update(Observable o, Object arg) {
-					PacketBuilder.getInstance();
 					PacketBuilder.sendGenGenerationRequest(gen.getName(), gen.getResourcePack());
 				}
 			}));

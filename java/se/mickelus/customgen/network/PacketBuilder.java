@@ -10,16 +10,6 @@ import net.minecraft.entity.player.EntityPlayerMP;
 
 public class PacketBuilder{
 	
-	private static PacketBuilder instance;
-	
-	public PacketBuilder() {
-		instance = this;
-	}
-	
-	public static PacketBuilder getInstance() {
-		return instance;
-	}
-	
 	public static void sendGenListRequest() {
 		GenListRequestPacket packet = new GenListRequestPacket();
 		Customgen.packetPipeline.sendToServer(packet);

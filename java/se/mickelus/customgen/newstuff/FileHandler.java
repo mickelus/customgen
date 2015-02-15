@@ -117,7 +117,11 @@ public class FileHandler {
 			if(genDir.isDirectory()) {
 				String[] genNames = genDir.list();
 				for (int j = 0; j < genNames.length; j++) {
-					genList.add(parseDirectoryGen(genNames[j], packNames[i]));
+					Gen gen = parseDirectoryGen(genNames[j], packNames[i]);
+					if(gen != null) {
+						genList.add(gen);
+					}
+					
 				}
 			}
 			

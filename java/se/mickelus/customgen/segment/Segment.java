@@ -359,31 +359,30 @@ public class Segment {
 				IBlockState stateEast = world.getBlockState(new BlockPos(xOffset+15, yOffset+i, zOffset+j));
 				IBlockState stateWest = world.getBlockState(new BlockPos(xOffset, yOffset+i, zOffset+j));
 				
-				
 				// top
 				if(stateTop.getBlock().equals(InterfaceBlock.getInstance())) {
 					interfaces[0] += 1 + InterfaceBlock.getInstance().getMetaFromState(stateTop);
 				}
 				// bottom
-				if(stateBot.equals(InterfaceBlock.getInstance())) {
+				if(stateBot.getBlock().equals(InterfaceBlock.getInstance())) {
 					interfaces[1] += 1 + InterfaceBlock.getInstance().getMetaFromState(stateBot);
 				}
 				
 				// south
-				if(stateSouth.equals(InterfaceBlock.getInstance())) {
+				if(stateSouth.getBlock().equals(InterfaceBlock.getInstance())) {
 					interfaces[4] += 1 + InterfaceBlock.getInstance().getMetaFromState(stateSouth);
 				}
 				// north
-				if(stateNorth.equals(InterfaceBlock.getInstance())) {
+				if(stateNorth.getBlock().equals(InterfaceBlock.getInstance())) {
 					interfaces[2] += 1 + InterfaceBlock.getInstance().getMetaFromState(stateNorth);
 				}
 				
 				// east
-				if(stateEast.equals(InterfaceBlock.getInstance())) {
+				if(stateEast.getBlock().equals(InterfaceBlock.getInstance())) {
 					interfaces[3] += 1 + InterfaceBlock.getInstance().getMetaFromState(stateEast);
 				}
 				// west
-				if(stateWest.equals(InterfaceBlock.getInstance())) {
+				if(stateWest.getBlock().equals(InterfaceBlock.getInstance())) {
 					interfaces[5] += 1 + InterfaceBlock.getInstance().getMetaFromState(stateWest);
 				}
 			}

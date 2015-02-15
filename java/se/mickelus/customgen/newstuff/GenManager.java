@@ -6,8 +6,6 @@ import java.util.Random;
 
 import net.minecraftforge.common.BiomeDictionary.Type;
 
-import se.mickelus.customgen.MLogger;
-
 public class GenManager {
 	
 	private List<Gen> genList;

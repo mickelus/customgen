@@ -2,8 +2,6 @@ package se.mickelus.customgen.segment;
 
 import java.util.Arrays;
 
-import se.mickelus.customgen.MLogger;
-
 public class SegmentPlaceholder {
 
 	

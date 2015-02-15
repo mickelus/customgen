@@ -92,7 +92,6 @@ public class PacketBuilder{
 	}
 	
 	public static void sendAddSegment(String segmentName, String genName, String packName, boolean isStart) {
-		System.out.println();
 		SegmentAddRequestPacket packet = new SegmentAddRequestPacket(segmentName, genName, packName, isStart);
 		Customgen.packetPipeline.sendToServer(packet);
 		GenListRequestPacket hpacket = new GenListRequestPacket();

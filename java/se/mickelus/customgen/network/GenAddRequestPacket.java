@@ -29,12 +29,10 @@ public class GenAddRequestPacket extends AbstractPacket {
 	public GenAddRequestPacket(Gen gen) {
 		this();
 		this.gen = gen;
-		System.out.println("BIOMES REQ: " + gen.getNumBiomes());
 	}
 
 	@Override
 	public void encodeInto(ChannelHandlerContext ctx, ByteBuf buffer) {
-		System.out.println("ENCODING ADD REQUEST");
 		NBTTagCompound nbt = gen.writeToNBT(true);
 		ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
 		DataOutputStream dataStream = new DataOutputStream(byteStream);
@@ -55,7 +53,6 @@ public class GenAddRequestPacket extends AbstractPacket {
 
 	@Override
 	public void decodeInto(ChannelHandlerContext ctx, ByteBuf buffer) {
-		System.out.println("DECODING ADD REQUEST");
 		
 		byte[] bytes = new byte[buffer.readableBytes()];
 		buffer.readBytes(bytes);

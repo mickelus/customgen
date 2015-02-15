@@ -424,10 +424,6 @@ public class GuiScreenGenBook extends GuiScreen {
     			top += i*10 + 81;
     		}
     		
-    		while(this.fontRendererObj.getStringWidth(biomeName) > maxlength && biomeName.length() > 0) {
-    			biomeName = biomeName.substring(0, biomeName.length() - 1);
-    		}
-    		
     		button = new GuiButtonCheckBox(0, left, top,
     				biomeName, 
             		stateAddGen.getNumBiomes() > 0 && stateAddGen.generatesInBiome(biomeType),
@@ -527,15 +523,6 @@ public class GuiScreenGenBook extends GuiScreen {
         			break;
         	}
         	drawList.add(new GuiText(levelText, 38, 40));
-        	
-        	// village gen
-//        	villageText = "village gen: ";
-//        	if(gen.isVillageGen()) {
-//        		villageText += "yes";
-//        	} else {
-//        		villageText += "no";
-//        	}
-//        	drawList.add(new GuiText(villageText, 38, 50));
         	
         	if(gen.getNumBiomes() == 0) {
         		drawList.add(new GuiText("biomes: all", 38, 50));

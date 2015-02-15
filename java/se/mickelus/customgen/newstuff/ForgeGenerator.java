@@ -57,7 +57,7 @@ public class ForgeGenerator implements IWorldGenerator  {
 		
 		// TODO : we should not have to handle this
 		if(segment == null) {
-			MLogger.log("Unable to generate segment");
+			MLogger.logf("Failed to generate a segment at %d %d %d.", x, y, z);
 			return;
 		}
 
@@ -110,7 +110,7 @@ public class ForgeGenerator implements IWorldGenerator  {
 						}
 					}
 				} catch(Exception e) {
-					System.out.println("Something broke when generating loot in a tile entity.");
+					MLogger.log("Failed when generating loot in a tile entity .");
 					e.printStackTrace();
 				}
 				chunk.addTileEntity(tileEntity);
@@ -123,10 +123,8 @@ public class ForgeGenerator implements IWorldGenerator  {
 			NBTTagCompound tag = segment.getEntityNBT(i);
 			tag = updateEntityNBT(tag, world, chunkX*16, y, chunkZ*16);
 			Entity entity = EntityList.createEntityFromNBT(tag, world);
-			System.out.println("ENTITY NBT: " + tag);
 			if(entity != null) {
 				world.spawnEntityInWorld(entity);
-				System.out.println("LOADED ENTITY: " + entity);
 				
 				// spawn (potentially recursively) ridden entities
                 for (NBTTagCompound tempTag = tag; entity != null && tempTag.hasKey("Riding", 10); tempTag = tempTag.getCompoundTag("Riding")) {
@@ -328,7 +326,7 @@ public class ForgeGenerator implements IWorldGenerator  {
 				break;
 			
 			default:
-				MLogger.log("attempt to generate gen with invalid level.");
+				MLogger.log("Attempt to generate gen with invalid level.");
 				return;
 		}
 		
@@ -419,7 +417,7 @@ public class ForgeGenerator implements IWorldGenerator  {
 			if(matchingGens.size() > 0) {
 				generateGen(chunkX, chunkZ, world, matchingGens.get(random.nextInt(matchingGens.size())), random);
 			} else {
-				MLogger.log("Found no matching gens when generating in biome: " + biome.toString());
+				MLogger.logf("Found no matching gens when generating in biome: %s", biome.toString());
 			}
 		}
 		

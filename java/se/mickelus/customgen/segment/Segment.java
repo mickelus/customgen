@@ -195,7 +195,7 @@ public class Segment {
 		return name;
 	}
 	
-	public NBTTagCompound writeToNBT(boolean writeBlocks) {
+	public NBTTagCompound writeToNBT(boolean writeBlocks) throws IOException {
 		NBTTagCompound nbt = new NBTTagCompound();
 		List<NBTTagCompound> tileEntityTempList = new ArrayList<NBTTagCompound>(tileEntityNBTList.size());
 		NBTTagList tileEntityTagList = new NBTTagList();

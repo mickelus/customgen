@@ -7,7 +7,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import se.mickelus.customgen.gui.GuiScreenGenBook;
-import se.mickelus.customgen.newstuff.Gen;
+import se.mickelus.customgen.models.Gen;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.entity.player.EntityPlayer;

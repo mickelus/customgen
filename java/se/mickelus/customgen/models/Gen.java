@@ -1,4 +1,4 @@
-package se.mickelus.customgen.newstuff;
+package se.mickelus.customgen.models;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -10,11 +10,10 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraftforge.common.BiomeDictionary.Type;
 import se.mickelus.customgen.MLogger;
-import se.mickelus.customgen.segment.Segment;
 
 public class Gen {
 	
-	public static final int PROTOCOL_VERSION = 1;
+	public static final int PROTOCOL_VERSION = 2;
 	
 	public static final int UNDERGROUND_LEVEL = 0;
 	public static final int SURFACE_LEVEL = 1;
@@ -452,6 +451,7 @@ public class Gen {
 	 */
 	public static Gen readFromNBT(NBTTagCompound nbt) {
 		Gen gen = new Gen(nbt.getString(NAME_KEY), nbt.getString(RESOURCEPACK_KEY));
+		boolean legacy = nbt.getInteger(PROTOCOL_KEY) < PROTOCOL_VERSION;
 		
 		// 10 is the tagid for compound tags, 8 is for string tags
 		NBTTagList biomeTagList = nbt.getTagList(BIOME_KEY, 8);
@@ -470,12 +470,12 @@ public class Gen {
 		
 		// regular segments
 		for (int i = 0; i < segmentTagList.tagCount(); i++) {
-			gen.addSegment(Segment.readFromNBT(segmentTagList.getCompoundTagAt(i)), false);
+			gen.addSegment(Segment.readFromNBT(segmentTagList.getCompoundTagAt(i), legacy), false);
 		}
 		
 		// starting segments
 		for (int i = 0; i < segmentStartTagList.tagCount(); i++) {
-			gen.addSegment(Segment.readFromNBT(segmentStartTagList.getCompoundTagAt(i)), true);
+			gen.addSegment(Segment.readFromNBT(segmentStartTagList.getCompoundTagAt(i), legacy), true);
 		}
 		
 		

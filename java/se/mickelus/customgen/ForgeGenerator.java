@@ -1,10 +1,11 @@
-package se.mickelus.customgen.newstuff;
+package se.mickelus.customgen;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockLiquid;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.inventory.IInventory;
@@ -21,15 +22,16 @@ import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.BiomeDictionary.Type;
 import net.minecraftforge.common.ChestGenHooks;
+import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.fml.common.IWorldGenerator;
 import net.minecraftforge.fml.common.registry.GameRegistry;
-import se.mickelus.customgen.Constants;
-import se.mickelus.customgen.MLogger;
 import se.mickelus.customgen.blocks.EmptyBlock;
 import se.mickelus.customgen.blocks.InterfaceBlock;
 import se.mickelus.customgen.items.PlaceholderItem;
-import se.mickelus.customgen.segment.Segment;
-import se.mickelus.customgen.segment.SegmentPlaceholder;
+import se.mickelus.customgen.models.Gen;
+import se.mickelus.customgen.models.GenManager;
+import se.mickelus.customgen.models.Segment;
+import se.mickelus.customgen.models.SegmentPlaceholder;
 
 public class ForgeGenerator implements IWorldGenerator  {
 	
@@ -71,6 +73,19 @@ public class ForgeGenerator implements IWorldGenerator  {
 							new BlockPos(x+sx, y+sy, z+sz), 
 							block.getStateFromMeta(segment.getBlockMetadata(sx, sy, sz)), 
 							2);
+				}
+			}
+		}
+		
+		for(int sy = 0; sy < 16; sy++) {
+			for(int sz = 0; sz < 16; sz++) {
+				for(int sx = 0; sx < 16; sx++) {
+					BlockPos pos = new BlockPos(x+sx, y+sy, z+sz);
+					Block block =  world.getBlockState(pos).getBlock();
+					if(block instanceof IFluidBlock || block instanceof BlockLiquid) {
+						world.notifyBlockOfStateChange(pos, block);
+					}
+					
 				}
 			}
 		}

@@ -1,9 +1,9 @@
 package se.mickelus.customgen.network;
 
 import se.mickelus.customgen.Customgen;
-import se.mickelus.customgen.newstuff.Gen;
-import se.mickelus.customgen.newstuff.GenManager;
-import se.mickelus.customgen.segment.Segment;
+import se.mickelus.customgen.models.Gen;
+import se.mickelus.customgen.models.GenManager;
+import se.mickelus.customgen.models.Segment;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 

@@ -4,7 +4,7 @@ public class Constants {
 	
 	public static final String MOD_ID = "customgen";
 	public static final String MOD_NAME = "Customgen";
-	public static final String VERSION = "R1";
+	public static final String VERSION = "R5";
 	
 	public static final String PACKS_PATH = "resourcepacks";
 	public static final String GENS_PATH = PACKS_PATH + "/%s/assets/" + MOD_ID;

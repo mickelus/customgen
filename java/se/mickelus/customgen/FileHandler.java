@@ -1,4 +1,4 @@
-package se.mickelus.customgen.newstuff;
+package se.mickelus.customgen;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -15,8 +15,7 @@ import java.util.zip.ZipFile;
 
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
-import se.mickelus.customgen.Constants;
-import se.mickelus.customgen.MLogger;
+import se.mickelus.customgen.models.Gen;
 public class FileHandler {
 	
 	private static Gen[] parseAllZippedGens() {
@@ -63,6 +62,7 @@ public class FileHandler {
 					zip.close();
 				} catch (Exception e) {
 					MLogger.logf("An error occured when reading gens from %s", packNames[i]);
+					e.printStackTrace();
 				}
 			}
 			

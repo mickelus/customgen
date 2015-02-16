@@ -13,6 +13,8 @@ import se.mickelus.customgen.blocks.EmptyBlock;
 import se.mickelus.customgen.blocks.InterfaceBlock;
 import se.mickelus.customgen.items.GenBookItem;
 import se.mickelus.customgen.items.PlaceholderItem;
+import se.mickelus.customgen.models.Gen;
+import se.mickelus.customgen.models.GenManager;
 import se.mickelus.customgen.network.GenAddRequestPacket;
 import se.mickelus.customgen.network.GenGenerationRequestPacket;
 import se.mickelus.customgen.network.GenListReponsePacket;
@@ -25,14 +27,9 @@ import se.mickelus.customgen.network.SegmentGenerationRequestPacket;
 import se.mickelus.customgen.network.SegmentRequestPacket;
 import se.mickelus.customgen.network.SegmentResponsePacket;
 import se.mickelus.customgen.network.TemplateGenerationRequestPacket;
-import se.mickelus.customgen.newstuff.FileHandler;
-import se.mickelus.customgen.newstuff.ForgeGenerator;
-import se.mickelus.customgen.newstuff.Gen;
-import se.mickelus.customgen.newstuff.GenManager;
 import se.mickelus.customgen.proxy.Proxy;
 
 @Mod (modid = Constants.MOD_ID, name = Constants.MOD_NAME, version = Constants.VERSION)
-//@NetworkMod (channels = {Constants.CHANNEL}, serverSideRequired = true, packetHandler = PacketHandler.class)
 public class Customgen {
 	
 	@Instance(Constants.MOD_ID)

@@ -1,4 +1,4 @@
-package se.mickelus.customgen.newstuff;
+package se.mickelus.customgen.models;
 
 import java.util.ArrayList;
 import java.util.List;

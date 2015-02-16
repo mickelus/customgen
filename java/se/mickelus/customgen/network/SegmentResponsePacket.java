@@ -8,7 +8,7 @@ import java.io.IOException;
 
 import se.mickelus.customgen.MLogger;
 import se.mickelus.customgen.gui.GuiScreenGenBook;
-import se.mickelus.customgen.segment.Segment;
+import se.mickelus.customgen.models.Segment;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.entity.player.EntityPlayer;

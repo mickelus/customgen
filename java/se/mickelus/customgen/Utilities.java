@@ -1,11 +1,11 @@
-package se.mickelus.customgen.newstuff;
+package se.mickelus.customgen;
 
 import java.util.ArrayList;
 import java.util.Random;
 
 import net.minecraft.world.World;
 import se.mickelus.customgen.blocks.EmptyBlock;
-import se.mickelus.customgen.segment.Segment;
+import se.mickelus.customgen.models.Segment;
 
 public class Utilities {
 	

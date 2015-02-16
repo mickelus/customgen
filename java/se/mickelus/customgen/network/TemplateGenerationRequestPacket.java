@@ -1,6 +1,6 @@
 package se.mickelus.customgen.network;
 
-import se.mickelus.customgen.newstuff.Utilities;
+import se.mickelus.customgen.Utilities;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.entity.player.EntityPlayer;

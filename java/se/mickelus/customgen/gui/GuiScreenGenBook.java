@@ -12,10 +12,10 @@ import org.lwjgl.opengl.GL11;
 import com.google.common.base.Throwables;
 
 import se.mickelus.customgen.Constants;
+import se.mickelus.customgen.Utilities;
+import se.mickelus.customgen.models.Gen;
+import se.mickelus.customgen.models.Segment;
 import se.mickelus.customgen.network.PacketBuilder;
-import se.mickelus.customgen.newstuff.Gen;
-import se.mickelus.customgen.newstuff.Utilities;
-import se.mickelus.customgen.segment.Segment;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;

@@ -1,4 +1,4 @@
-package se.mickelus.customgen.segment;
+package se.mickelus.customgen.models;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -42,6 +42,8 @@ public class Segment {
 	public static final String ENTITY_KEY = "entity";
 	public static final String INTERFACE_KEY = "interfaces";
 	
+	public static final String NBT_ITEM_KEY = "Items";
+	public static final String NBT_EQUIPMENT_KEY = "Equipment";
 	public static final String NBT_POSITION_KEY = "Pos";
 	public static final String NBT_DIMENSION_KEY = "Dimension";
 	
@@ -245,6 +247,10 @@ public class Segment {
 	}
 	
 	public static Segment readFromNBT(NBTTagCompound nbt) {
+		return readFromNBT(nbt, false);
+	}
+	
+	public static Segment readFromNBT(NBTTagCompound nbt, boolean legacy) {
 		
 		// read name and create segment
 		Segment segment = new Segment(nbt.getString("name"));
@@ -266,7 +272,16 @@ public class Segment {
 		
 		// set block "ID"s and data
 		segment.blocks = nbt.getIntArray(BLOCKS_KEY);
-		segment.data = nbt.getIntArray(DATA_KEY);
+		if(legacy) {
+			byte[] byteData = new byte[4096];
+			byteData = nbt.getByteArray(DATA_KEY);
+			for (int i = 0; i < byteData.length; i++) {
+				segment.data[i] = byteData[i];
+			}
+		} else {
+			segment.data = nbt.getIntArray(DATA_KEY);
+		}
+		
 		
 		
 		if(nbt.hasKey(BLOCK_MAP_KEY)) {
@@ -281,10 +296,14 @@ public class Segment {
 				
 				// attempt to get block references from identifier
 				for (Integer key : nameMap.keySet()) {
-					ResourceLocation resourceLocation = new ResourceLocation(nameMap.get(key));
+					String identifier = nameMap.get(key);
+					if(legacy && identifier.contains(":tile.")) {
+						identifier = identifier.replace(":tile.", ":");
+					}
+					ResourceLocation resourceLocation = new ResourceLocation(identifier);
 					
 					Block block = GameData.getBlockRegistry().getObject(resourceLocation);
-					if(block == null) {
+					if(block == Blocks.air) {
 						// if this block does not exist replace it with air
 						segment.replaceBlocks(key, 0, (byte)0);
 					} else {
@@ -314,9 +333,40 @@ public class Segment {
 			entityArray[i] = entityList.getCompoundTagAt(i);
 		}
 		segment.setEntityNBTs(entityArray);
+		
+		if(legacy && nbt.hasKey(ITEM_MAP_KEY)) {
+			try {
+				
+				// read item mappings from nbt
+				byte[] byteArray = nbt.getByteArray(ITEM_MAP_KEY);
+				ByteArrayInputStream byteStream = new ByteArrayInputStream(byteArray);
+				ObjectInputStream objectStream = new ObjectInputStream(byteStream);
+				Map<String, Integer> itemMap = (Map<String, Integer>)objectStream.readObject();
+				Map<Integer, String> itemMapInverse = new HashMap<Integer, String>();
+				objectStream.close();
+				
+				for (String key : itemMap.keySet()) {
+					String identifier = key;
+					if(identifier.contains(":item.")) {
+						identifier = identifier.replace(":item.", ":");
+					}
+					itemMapInverse.put(itemMap.get(key), identifier);
+				}
+
+				segment.restoreItemsInNBTs(itemMapInverse);
+				
+			} catch (IOException e) {
+				MLogger.logf("Failed to read item map for segment %s", segment.getName());
+				e.printStackTrace();
+			} catch (ClassNotFoundException e) {
+				MLogger.logf("Failed to read item map for segment %s", segment.getName());
+				e.printStackTrace();
+			}
+		}
 
 		return segment;
 	}
+	
 	
 	public void parseFromWorld(World world, int chunkX, int chunkY, int chunkZ) {
 		int[] interfaces = new int[6];
@@ -465,6 +515,66 @@ public class Segment {
 			if(blocks[i] == oldID) {
 				blocks[i] = newID;
 				data[i] = newData;
+			}
+		}
+	}
+	
+	/**
+	 * Removes items that do not exist in this world and update the id of those that do for all tileEntity/entity nbt tag in this segment
+	 * @param itemMap
+	 */
+	@Deprecated
+	private void restoreItemsInNBTs(Map<Integer, String> itemMap) {
+		// restore item IDs in tile entities
+		for (NBTTagCompound nbt : tileEntityNBTList) {
+			restoreItemsInNBT(itemMap, nbt);
+		}
+		
+		// restore item IDs in entities 
+		for (NBTTagCompound nbt : entityNBTList) {
+			restoreItemsInNBT(itemMap, nbt);
+			
+			// restore item IDs in (potentially recursively) ridden entities 
+			for (NBTTagCompound tempNbt = nbt;tempNbt.hasKey("Riding", 10); tempNbt = tempNbt.getCompoundTag("Riding")) {
+				restoreItemsInNBT(itemMap, tempNbt.getCompoundTag("Riding"));
+	        }
+		}
+	}
+	
+	/**
+	 * Removes items that do not exist in this world and update the id of those that do in one tileEntity/entity nbt tag
+	 * @param itemMap
+	 * @param nbt
+	 */
+	@Deprecated
+	private static void restoreItemsInNBT(Map<Integer, String> idMap, NBTTagCompound nbt) {
+		if(nbt.hasKey(NBT_ITEM_KEY)) {
+			NBTTagList itemTags = nbt.getTagList(NBT_ITEM_KEY, 10);
+			
+			restoreItemsInTagList(idMap, itemTags);
+		}
+		
+		if(nbt.hasKey(NBT_EQUIPMENT_KEY)) {
+			NBTTagList equipmentTags = nbt.getTagList(NBT_EQUIPMENT_KEY, 10);
+			
+			restoreItemsInTagList(idMap, equipmentTags);
+		}
+	}
+
+	@Deprecated
+	private static void restoreItemsInTagList(Map<Integer, String> idMap,
+			NBTTagList itemTags) {
+		for (int i = 0; i < itemTags.tagCount(); i++) {
+			NBTTagCompound itemTag = itemTags.getCompoundTagAt(i);
+			
+			if(itemTag.hasKey("id")) {
+				if(idMap.containsKey((int)itemTag.getShort("id"))) {
+					String id = idMap.get((int)itemTag.getShort("id"));
+					itemTag.setString("id", id);
+				}else {
+					itemTags.removeTag(i);
+					i--;
+				}
 			}
 		}
 	}

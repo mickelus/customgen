@@ -1,4 +1,4 @@
-package se.mickelus.customgen.segment;
+package se.mickelus.customgen.models;
 
 import java.util.Arrays;
 

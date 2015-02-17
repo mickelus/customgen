@@ -13,7 +13,11 @@ public class Constants {
 	public static final String FILE_EXT = ".nbt";
 	
 	public static final int SEGMENT_SIZE = 16;
-	public static final int DUNGEON_CHANCE = 300;
+	
+	public static int DUNGEON_CHANCE_SURFACE = 200;
+	public static int DUNGEON_CHANCE_UNDERGROUND = 100;
+	public static int DUNGEON_CHANCE_SEA = 150;
+	
 	public static final int SEGMENT_LIMIT = 50;
 	
 	public static final int GENERATION_WEIGHT = 10;

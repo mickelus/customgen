@@ -409,7 +409,23 @@ public class ForgeGenerator implements IWorldGenerator  {
 	public void generate(Random random, int chunkX, int chunkZ, World world,
 			IChunkProvider chunkGenerator, IChunkProvider chunkProvider) {
 		
-		if(random.nextInt(Constants.DUNGEON_CHANCE) == 0) {
+		int level = -1;
+		
+		if(random.nextInt(Constants.DUNGEON_CHANCE_SURFACE) == 0) {
+			level = Gen.SURFACE_LEVEL;
+		}
+		
+		if(random.nextInt(Constants.DUNGEON_CHANCE_UNDERGROUND) == 0) {
+			level = Gen.UNDERGROUND_LEVEL;	
+		}
+		
+		if(random.nextInt(Constants.DUNGEON_CHANCE_SEA) == 0) {
+			level = Gen.SEA_FLOOR_LEVEL;
+		}
+		
+			
+			
+		if(level != -1) {
 			List<Gen> matchingGens = new ArrayList<Gen>();
 			GenManager genManager = GenManager.getInstance();
 			BiomeGenBase biome = world.getBiomeGenForCoords(new BlockPos(chunkX, 0, chunkZ));
@@ -418,7 +434,7 @@ public class ForgeGenerator implements IWorldGenerator  {
 			for (int i = 0; i < genManager.getNumGens(); i++) {
 				Gen gen = genManager.getGenByIndex(i);
 				for (int j = 0; j < types.length; j++) {
-					if(gen.generatesInBiome(types[j])) {
+					if(gen.generatesInBiome(types[j]) && gen.getLevel() == level) {
 						matchingGens.add(gen);
 						break;
 					}
@@ -427,8 +443,6 @@ public class ForgeGenerator implements IWorldGenerator  {
 			
 			if(matchingGens.size() > 0) {
 				generateGen(chunkX, chunkZ, world, matchingGens.get(random.nextInt(matchingGens.size())), random);
-			} else {
-				MLogger.logf("Found no matching gens when generating in biome: %s", biome.toString());
 			}
 		}
 		

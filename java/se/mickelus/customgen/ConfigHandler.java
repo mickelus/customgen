@@ -12,11 +12,21 @@ public class ConfigHandler {
 		Configuration config = new Configuration(file);
 		config.load();
 		
-		/*Constants.EMPTY_ID = config.getBlock(Constants.EMPTY_UNLOC_NAME, Constants.EMPTY_ID).getInt();
-		Constants.INTERFACEBLOCK_ID = config.getBlock(Constants.INTERFACEBLOCK_UNLOC_NAME, Constants.INTERFACEBLOCK_ID).getInt();
+		Constants.DUNGEON_CHANCE_SURFACE = config.getInt(
+				"dungeon_distribution_surface", "dungeon_distribution",
+				Constants.DUNGEON_CHANCE_SURFACE, 1, 4096,
+				"Per how many chunks will a surface level gen generate.");
 		
+		Constants.DUNGEON_CHANCE_UNDERGROUND = config.getInt(
+				"dungeon_distribution_underground", "dungeon_distribution",
+				Constants.DUNGEON_CHANCE_UNDERGROUND, 1, 4096,
+				"Per how many chunks will a underground level gen generate.");
 		
-		Constants.PLACEHOLDERITEM_ID = config.getItem(Constants.PLACEHOLDERITEM_UNLOC_NAME, Constants.PLACEHOLDERITEM_ID).getInt() - 256;
-		*/
+		Constants.DUNGEON_CHANCE_SEA = config.getInt(
+				"dungeon_distribution_sea", "dungeon_distribution",
+				Constants.DUNGEON_CHANCE_SEA, 1, 4096,
+				"Per how many chunks will a seafloor level gen generate.");
+		
+		config.save();
 	}
 }

@@ -27,6 +27,11 @@ public class ConfigHandler {
 				Constants.DUNGEON_CHANCE_SEA, 1, 4096,
 				"Per how many chunks will a seafloor level gen generate.");
 		
+		Constants.SEGMENT_LIMIT = config.getInt(
+				"segment_limit", null,
+				Constants.SEGMENT_LIMIT, 1, 4096,
+				"The maximum amount of segments generated during the generation of a gen.");
+		
 		config.save();
 	}
 }

@@ -18,7 +18,7 @@ public class Constants {
 	public static int DUNGEON_CHANCE_UNDERGROUND = 100;
 	public static int DUNGEON_CHANCE_SEA = 150;
 	
-	public static final int SEGMENT_LIMIT = 50;
+	public static int SEGMENT_LIMIT = 100;
 	
 	public static final int GENERATION_WEIGHT = 10;
 	

@@ -1,8 +1,8 @@
 [b][size=xx-large]Customgen[/size][/b]
-[i]beta release 4 for 1.7.10[/i]
+[i]release 5 for 1.8[/i]
 
 [size=x-large][b]Description[/b][/size]
-Customgen is a mod that lets you to add player-created features to terrain generation. Generation features are saved as resource packs and may easily be shared with others. Customgen is based on the following things:
+Adds (nearly procedurally generated) dungeons, structures and other features to terrain generation. Generation features are stored as resource packs and may easily be replaced, created and shared with others. Customgen is based on the following things:
 [spoiler][b][size=large]Gens[/size][/b]
 Short for generation feature, this is the base for a feature. A gen has a set of data, describing where and how it may generate. Currently it has a name, a resourcepack name, a level, a set of allowed biome types and a set of segments. A gens level will decide on what y level it will generate, the following values are available:
 [list]
@@ -35,8 +35,16 @@ A Loot placeholder inside an inventoriy will be replaced with dungeon loot when 
 [mod]223528-customgen[/mod]
 Customgen needs minecraft forge to run, download the installer from [url=http://files.minecraftforge.net/]here[/url] and run it. There should now be a folder called "mods" in your minecraft directory, place the customgen .jar file in that folder.
 
-[b][size=large]Changelog[/size][/b]
+[b][size=large]Release notes[/size][/b]
 [spoiler]
+Release 5:
+[list]
+[*] Updated to 1.8
+[*] Gens created in R5 are not fully backwards compatible
+[*] Fluid blocks should now flow properly when generated
+[*] Generation probability for underground, surface and sea level gens now differs
+[*] Made generation probability  & segment limit configurable, check the config folder
+[/list]
 Release 4:
 [list]
 [*]Segments can now contain entities

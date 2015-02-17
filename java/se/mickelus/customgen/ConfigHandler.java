@@ -13,22 +13,22 @@ public class ConfigHandler {
 		config.load();
 		
 		Constants.DUNGEON_CHANCE_SURFACE = config.getInt(
-				"dungeon_distribution_surface", "dungeon_distribution",
+				"dungeon_distribution_surface", "generation_settings",
 				Constants.DUNGEON_CHANCE_SURFACE, 1, 4096,
 				"Per how many chunks will a surface level gen generate.");
 		
 		Constants.DUNGEON_CHANCE_UNDERGROUND = config.getInt(
-				"dungeon_distribution_underground", "dungeon_distribution",
+				"dungeon_distribution_underground", "generation_settings",
 				Constants.DUNGEON_CHANCE_UNDERGROUND, 1, 4096,
 				"Per how many chunks will a underground level gen generate.");
 		
 		Constants.DUNGEON_CHANCE_SEA = config.getInt(
-				"dungeon_distribution_sea", "dungeon_distribution",
+				"dungeon_distribution_sea", "generation_settings",
 				Constants.DUNGEON_CHANCE_SEA, 1, 4096,
 				"Per how many chunks will a seafloor level gen generate.");
 		
 		Constants.SEGMENT_LIMIT = config.getInt(
-				"segment_limit", null,
+				"segment_limit", "generation_settings",
 				Constants.SEGMENT_LIMIT, 1, 4096,
 				"The maximum amount of segments generated during the generation of a gen.");
 		

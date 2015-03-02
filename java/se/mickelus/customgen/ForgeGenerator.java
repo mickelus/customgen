@@ -412,39 +412,37 @@ public class ForgeGenerator implements IWorldGenerator  {
 		int level = -1;
 		
 		if(random.nextInt(Constants.DUNGEON_CHANCE_SURFACE) == 0) {
-			level = Gen.SURFACE_LEVEL;
-		}
-		
-		if(random.nextInt(Constants.DUNGEON_CHANCE_UNDERGROUND) == 0) {
-			level = Gen.UNDERGROUND_LEVEL;	
+			generateAtLevel(random, chunkX, chunkZ, world, Gen.SURFACE_LEVEL);
 		}
 		
 		if(random.nextInt(Constants.DUNGEON_CHANCE_SEA) == 0) {
-			level = Gen.SEA_FLOOR_LEVEL;
+			generateAtLevel(random, chunkX, chunkZ, world, Gen.SEA_FLOOR_LEVEL);
 		}
 		
-			
-			
-		if(level != -1) {
-			List<Gen> matchingGens = new ArrayList<Gen>();
-			GenManager genManager = GenManager.getInstance();
-			BiomeGenBase biome = world.getBiomeGenForCoords(new BlockPos(chunkX, 0, chunkZ));
-			Type[] types = BiomeDictionary.getTypesForBiome(biome);
-			
-			for (int i = 0; i < genManager.getNumGens(); i++) {
-				Gen gen = genManager.getGenByIndex(i);
-				for (int j = 0; j < types.length; j++) {
-					if(gen.generatesInBiome(types[j]) && gen.getLevel() == level) {
-						matchingGens.add(gen);
-						break;
-					}
+		if(random.nextInt(Constants.DUNGEON_CHANCE_UNDERGROUND) == 0) {
+			generateAtLevel(random, chunkX, chunkZ, world, Gen.UNDERGROUND_LEVEL);
+		}
+	}
+
+	private void generateAtLevel(Random random, int chunkX, int chunkZ,
+			World world, int level) {
+		List<Gen> matchingGens = new ArrayList<Gen>();
+		GenManager genManager = GenManager.getInstance();
+		BiomeGenBase biome = world.getBiomeGenForCoords(new BlockPos(chunkX*16, 0, chunkZ*16));
+		Type[] types = BiomeDictionary.getTypesForBiome(biome);
+		
+		for (int i = 0; i < genManager.getNumGens(); i++) {
+			Gen gen = genManager.getGenByIndex(i);
+			for (int j = 0; j < types.length; j++) {
+				if(gen.generatesInBiome(types[j]) && gen.getLevel() == level) {
+					matchingGens.add(gen);
+					break;
 				}
 			}
-			
-			if(matchingGens.size() > 0) {
-				generateGen(chunkX, chunkZ, world, matchingGens.get(random.nextInt(matchingGens.size())), random);
-			}
 		}
 		
+		if(matchingGens.size() > 0) {
+			generateGen(chunkX, chunkZ, world, matchingGens.get(random.nextInt(matchingGens.size())), random);
+		}
 	}
 }

@@ -1,5 +1,5 @@
 [b][size=xx-large]Customgen[/size][/b]
-[i]release 5 for 1.8[/i]
+[i]release 6 for 1.8[/i]
 
 [size=x-large][b]Description[/b][/size]
 Adds (nearly procedurally generated) dungeons, structures and other features to terrain generation. Generation features are stored as resource packs and may easily be replaced, created and shared with others. Customgen is based on the following things:
@@ -37,6 +37,11 @@ Customgen needs minecraft forge to run, download the installer from [url=http://
 
 [b][size=large]Release notes[/size][/b]
 [spoiler]
+Release 6:
+[list]
+[*] Fixed issue with generation based on wrong biome types
+[*] Gens of different level may now begin generating in the same chunk
+[/list]
 Release 5:
 [list]
 [*] Updated to 1.8
@@ -112,6 +117,13 @@ A set of underground structures. Makes use of, but does not require, buildcraft 
 Caves in different variations. Makes clever use of interfaces to generate in different lengths.
 
 [img]http://mickelus.se/upl/customgen/caves.png[/img]
+
+
+
+[url=http://mickelus.se/upl/customgen/seapack.zip][b][size=large]Seapack[/size][/b][/url] (1.8)
+A pack of features that generates at sea, arr!
+
+[img]http://mickelus.se/upl/customgen/seapack.png[/img]
 
 
 

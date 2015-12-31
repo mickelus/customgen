@@ -22,6 +22,7 @@ public class Gen {
 	public static final String NAME_KEY = "name";
 	public static final String RESOURCEPACK_KEY = "resourcepack";
 	public static final String LEVEL_KEY = "level";
+	public static final String WEIGHT_KEY = "weight";
 	public static final String VILLAGE_KEY = "village";
 	public static final String BIOME_KEY = "biome";
 	public static final String SEGMENT_KEY = "segment";
@@ -39,6 +40,8 @@ public class Gen {
 	private List<Segment> startingSegments;
 	
 	private boolean isVillage = false;
+
+	private int weight = 0;
 	
 	/**
 	 * Creates a new gen that generates in all biomes but has no segments.
@@ -80,7 +83,7 @@ public class Gen {
 	
 	/**
 	 * Sets the name of the resource pack this gen should be in.
-	 * @param resource PackThe name of the resource pack this gen should be in.
+	 * @param resourcePack The name of the resource pack this gen should be in.
 	 */
 	public void setResourcePack(String resourcePack) {
 		this.resourcePack = resourcePack;
@@ -112,7 +115,7 @@ public class Gen {
 	
 	/**
 	 * Sets the biomes this gen can generate in. An empty array equals all biomes.
-	 * @param biomes An array of strings representing values in the Type enum.
+	 * @param biomeNames An array of strings representing values in the Type enum.
 	 */
 	public void setBiomes(String[] biomeNames) {
 		biomes.clear();
@@ -192,8 +195,7 @@ public class Gen {
 	}
 	
 	/**
-	 * Sets the biomes this gen can generate in. An empty array equals all biomes.
-	 * @param biomes An array of biome types.
+	 * Gets an array with all the biomes that this gen can generate in. An empty array equals all biomes.
 	 */
 	public Type[] getBiomes() {
 		Type[] types = new Type[biomes.size()];
@@ -235,6 +237,19 @@ public class Gen {
 	 */
 	public boolean isVillageGen() {
 		return isVillage;
+	}
+
+	/**
+	 * Set additional weight on this gen. A weight above 0 increases the chance that this gen will generate compared
+	 * to other gens.
+	 * @param weight The additional generation weight on this gen. Should be equal or above 0.
+     */
+	public void setWeight(int weight) {
+		this.weight = weight;
+	}
+
+	public int getWeight() {
+		return weight;
 	}
 	
 	/**
@@ -410,6 +425,7 @@ public class Gen {
 		nbt.setString(NAME_KEY, name);
 		nbt.setString(RESOURCEPACK_KEY, resourcePack);
 		nbt.setInteger(LEVEL_KEY, genLevel);
+		nbt.setInteger(WEIGHT_KEY, weight);
 		nbt.setBoolean(VILLAGE_KEY, isVillageGen());
 		
 		// biomes
@@ -460,6 +476,7 @@ public class Gen {
 		String[] biomes = new String[biomeTagList.tagCount()];
 		
 		gen.setLevel(nbt.getInteger(LEVEL_KEY));
+		gen.setWeight(nbt.getInteger(WEIGHT_KEY));
 		gen.setVillageGen(nbt.getBoolean(VILLAGE_KEY));
 		
 		// biomes

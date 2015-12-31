@@ -436,6 +436,12 @@ public class ForgeGenerator implements IWorldGenerator  {
 			for (int j = 0; j < types.length; j++) {
 				if(gen.generatesInBiome(types[j]) && gen.getLevel() == level) {
 					matchingGens.add(gen);
+
+					/* add the gen additional times based on its weight */
+					for (int k = 0; k < gen.getWeight(); k++) {
+						matchingGens.add(gen);
+					}
+
 					break;
 				}
 			}

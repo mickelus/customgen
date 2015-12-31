@@ -98,7 +98,7 @@ public class GuiScreenGenBook extends GuiScreen {
     static final int UTILITY_STATE = 6;
     
     private static final int GEN_LIST_MAX_LENGTH = 7;
-    private static final int GEN_CREATE_BIOME_LIST_MAX_LENGTH = 12;
+    private static final int GEN_CREATE_BIOME_LIST_MAX_LENGTH = 10;
     private static final int GEN_BIOME_STRING_MAX_LENGTH = 7;
     private static final int GEN_BIOME_LIST_MAX_LENGTH = 22;
     private static final int GEN_SEGMENT_LIST_MAX_LENGTH = 6;
@@ -265,11 +265,11 @@ public class GuiScreenGenBook extends GuiScreen {
     	drawList.add(new GuiText("Create gen", 93, 17, GuiText.CENTER_ALIGN));
     	
     	// name input
-    	drawList.add(new GuiText("name:", 38, 27));
+    	drawList.add(new GuiText("name:", 44, 27));
     	buttonList.add(new GuiButtonTextInput(0,
-    		(width - bookImageWidth) / 2 + 65,
+    		(width - bookImageWidth) / 2 + 71,
     		(height - bookImageHeight) / 2 + 27
-    		, 80, stateAddGen.getName(), new Observer() {
+    		, 74, stateAddGen.getName(), new Observer() {
 				
 				@Override
 				public void update(Observable o, Object arg) {
@@ -279,11 +279,11 @@ public class GuiScreenGenBook extends GuiScreen {
 			}));
     	
     	// resourcepack input
-    	drawList.add(new GuiText("rp:", 50, 39));
+    	drawList.add(new GuiText("rp:", 56, 39));
     	buttonList.add(new GuiButtonTextInput(0,
-        		(width - bookImageWidth) / 2 + 65,
+        		(width - bookImageWidth) / 2 + 71,
         		(height - bookImageHeight) / 2 + 39
-        		, 80, stateAddGen.getResourcePack(), new Observer() {
+        		, 74, stateAddGen.getResourcePack(), new Observer() {
 					
 					@Override
 					public void update(Observable o, Object arg) {
@@ -291,14 +291,34 @@ public class GuiScreenGenBook extends GuiScreen {
 						
 					}
 				}));
+
+		// weight input
+		drawList.add(new GuiText("weight:", 38, 51));
+		buttonList.add(new GuiButtonTextInput(0,
+				(width - bookImageWidth) / 2 + 71,
+				(height - bookImageHeight) / 2 + 51
+				, 74, "" + stateAddGen.getWeight(), new Observer() {
+
+			@Override
+			public void update(Observable o, Object arg) {
+				int weight;
+				try {
+					weight = Integer.parseInt((String) arg);
+				} catch (NumberFormatException e) {
+					weight = 0;
+				}
+
+				stateAddGen.setWeight(weight);
+			}
+		}));
     	
     	
     	
     	// level checkboxes
-    	drawList.add(new GuiText("level:", 38, 51));
+    	drawList.add(new GuiText("level:", 38, 63));
     	buttonList.add(undergroundCheckBox = new GuiButtonCheckBox(0,
     			(width - bookImageWidth) / 2 + 65,
-        		(height - bookImageHeight) / 2 + 51,
+        		(height - bookImageHeight) / 2 + 63,
         		"underground", stateAddGen.getLevel() == Gen.UNDERGROUND_LEVEL, new Observer() {
 			
 			@Override
@@ -313,7 +333,7 @@ public class GuiScreenGenBook extends GuiScreen {
     	
     	buttonList.add(surfaceCheckBox = new GuiButtonCheckBox(0,
     			(width - bookImageWidth) / 2 + 38,
-        		(height - bookImageHeight) / 2 + 61,
+        		(height - bookImageHeight) / 2 + 73,
         		"surface", stateAddGen.getLevel() == Gen.SURFACE_LEVEL, new Observer() {
 			
 			@Override
@@ -328,7 +348,7 @@ public class GuiScreenGenBook extends GuiScreen {
     	
     	buttonList.add(seaCheckBox = new GuiButtonCheckBox(0,
     			(width - bookImageWidth) / 2 + 92,
-        		(height - bookImageHeight) / 2 + 61,
+        		(height - bookImageHeight) / 2 + 73,
         		"sea floor", stateAddGen.getLevel() == Gen.SEA_FLOOR_LEVEL, new Observer() {
 			
 			@Override
@@ -389,8 +409,8 @@ public class GuiScreenGenBook extends GuiScreen {
     	}
     	
     	// biome checkboxes
-    	drawList.add(new GuiText("biomes", 38, 71));
-    	drawList.add(GuiTexture.createDashedLineTexture(73, 75, 76));
+    	drawList.add(new GuiText("biomes", 38, 83));
+    	drawList.add(GuiTexture.createDashedLineTexture(73, 87, 76));
     	
     	biomeCheckBoxes.clear();
     	GuiButtonCheckBox button;
@@ -403,11 +423,11 @@ public class GuiScreenGenBook extends GuiScreen {
     		if(i>listLength/2-1) {
     			maxlength = 50;
     			left += 92;
-    			top += (i-listLength/2)*10 + 81;
+    			top += (i-listLength/2)*10 + 93;
     		} else {
     			maxlength = 43;
     			left += 38;
-    			top += i*10 + 81;
+    			top += i*10 + 93;
     		}
     		
     		button = new GuiButtonCheckBox(0, left, top,
@@ -515,9 +535,11 @@ public class GuiScreenGenBook extends GuiScreen {
         	} else {
         		drawList.add(new GuiText("biomes: " + gen.getNumBiomes(), 38, 50));
         	}
+
+			drawList.add(new GuiText("weight: " + gen.getWeight(), 38, 60));
         	
-        	drawList.add(new GuiText("normal segments: " + gen.getNumSegments(), 38, 60));
-        	drawList.add(new GuiText("starting segments: " + gen.getNumStartingSegments(), 38, 70));
+        	drawList.add(new GuiText("normal segments: " + gen.getNumSegments(), 38, 70));
+        	drawList.add(new GuiText("starting segments: " + gen.getNumStartingSegments(), 38, 80));
         	
         	
         	

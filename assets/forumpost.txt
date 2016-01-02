@@ -1,5 +1,5 @@
 [b][size=xx-large]Customgen[/size][/b]
-[i]release 6 for 1.8[/i]
+[i]release 7 for 1.8[/i]
 
 [size=x-large][b]Description[/b][/size]
 Adds (nearly procedurally generated) dungeons, structures and other features to terrain generation. Generation features are stored as resource packs and may easily be replaced, created and shared with others. Customgen is based on the following things:
@@ -37,6 +37,10 @@ Customgen needs minecraft forge to run, download the installer from [url=http://
 
 [b][size=large]Release notes[/size][/b]
 [spoiler]
+Release 7:
+[list]
+[*] Added weight to gens. Should be set to an integer value above, or equal to zero that affects how often this gen will generate. A higher value increases the chance that this gen generates instead of another.
+[/list]
 Release 6:
 [list]
 [*] Fixed issue with generation based on wrong biome types
@@ -71,7 +75,7 @@ Build all of the things, remember to use Empty Blocks for things that you do not
 If you've built multiple segments you're going to have to place interface blocks where the segments meet. With some clever use of interfaces we could create a gen with segments that repeat or are interchangeable with other segments. You can use the segment tab of the Book of Custom generation to see what interface values a segment is going to have once saved.
 
 [b][size=large]Step 4: Create a gen[/size][/b]
-Open up the book, open the gen list tab and click the "add gen" button. Fill in the name of the gen and the name of the resource pack that you want it to be placed in. If the resource pack does not exist it will be created. Select the level type and and a couple of biome types that this gen would be fit to generate in.
+Open up the book, open the gen list tab and click the "add gen" button. Fill in the name of the gen and the name of the resource pack that you want it to be placed in. If the resource pack does not exist it will be created. Select the level type and and a couple of biome types that this gen would be fit to generate in. The weight field affects how often this gen generates compared to other gens, a higher value increases its probability to generate.
 
 [b][size=large]Step 5: Adding the segments[/size][/b]
 For each segment that you've created, go stand in that segment, open up the book and open the segment tab. Give it a name (segments in the same gen cannot have the same name, you'll overwrite the previous one by giving it the same name) and input the name of the gen and the name of the gens resource pack. Check the start checkbox for the segments that should be starting segments, don't let all of them be starting segments as only one starting segment can generate when a gen is generated.
